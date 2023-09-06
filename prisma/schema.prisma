@@ -1,0 +1,37 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  email               String  @id @map("id")
+  password            String  @map("password")
+  name                String  @map("name")
+  phone_number        String? @map("phone_number")
+  parent_phone_number String? @map("parent_phone_number")
+  grade               Int     @map("grade")
+  branch              Int  @map("branch")
+
+  @@map("User")
+}
+
+model Board {
+  board_id   Int       @id @map("board_id")
+  writer     String    @map("writer")
+  title      String    @map("title")
+  content    String?   @map("content")
+  regdate    DateTime  @map("regdate")
+  updatedate DateTime? @map("updatedate")
+  deletedate DateTime? @map("deletedate")
+
+  @@map("Board_normal")
+}
+
+model branch {
+  branch_id   Int    @id @default(autoincrement())
+  branch_name String @db.VarChar(255)
+}
