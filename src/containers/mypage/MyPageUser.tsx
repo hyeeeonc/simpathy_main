@@ -33,7 +33,7 @@ const MyPageUserContainer = styled.div`
     flex-direction: column;
     justify-content: center;
 
-    height: 250px;
+    height: 220px;
     border-radius: 10px;
   }
 `
@@ -70,37 +70,6 @@ const MyPageUserContentContainer = styled.div`
   @media (max-width: 767px) {
     align-items: center;
     margin-top: 20px;
-  }
-`
-
-const MyPageUserTextContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-
-  gap: 10px;
-
-  @media (max-width: 767px) {
-    gap: 5px;
-    margin-top: 10px;
-  }
-`
-
-const MyPageUserTextWrapper = styled.span`
-  cursor: pointer;
-  transition: all 0.3s ease-in-out;
-
-  box-sizing: border-box;
-
-  line-height: 1.5rem;
-
-  &:hover {
-    opacity: 0.8;
-  }
-
-  @media (max-width: 767px) {
-    font-size: 1rem;
-
-    line-height: 1rem;
   }
 `
 

@@ -29,4 +29,11 @@ export const HeaderButtons = styled.div`
   &:hover {
     opacity: 0.5;
   }
+
+  @media (max-width: 767px) {
+    width: 75px;
+    height: 35px;
+
+    font-size: 10px;
+  }
 `

@@ -19,6 +19,10 @@ export const MyPageCellContainer = styled.div`
 export const MyPageCellTitle = styled.div`
   font-size: 1.3rem;
   font-weight: bold;
+
+  @media (max-width: 767px) {
+    font-size: 1.2rem;
+  }
 `
 
 export const MyPageCellContentContainer = styled.div`
@@ -52,8 +56,16 @@ export const MyPageCellContentWrapper = styled.div`
 
 export const MyPageCellContentTitle = styled.div`
   color: #797b84;
+
+  @media (max-width: 767px) {
+    font-size: 0.8rem;
+  }
 `
 
 export const MyPageCellContent = styled.div`
   color: black;
+
+  @media (max-width: 767px) {
+    font-size: 0.8rem;
+  }
 `

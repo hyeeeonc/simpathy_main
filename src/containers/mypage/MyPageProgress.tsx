@@ -67,16 +67,16 @@ const MyPageProgress = ({
           <MyPageCellContent>{textbook}</MyPageCellContent>
         </MyPageCellContentWrapper>
 
-        <MyPageCellContentWrapper>
-          <MyPageCellContentTitle>진도</MyPageCellContentTitle>
-          <MyPageCellContent>21p, 디지털 통신 시스템</MyPageCellContent>
-        </MyPageCellContentWrapper>
-
         <MyPageProgressWrapper>
           <Progress>
             <Dealt dealt={dealt} />
           </Progress>
         </MyPageProgressWrapper>
+
+        <MyPageCellContentWrapper>
+          <MyPageCellContentTitle>진도</MyPageCellContentTitle>
+          <MyPageCellContent>21p, 디지털 통신 시스템</MyPageCellContent>
+        </MyPageCellContentWrapper>
 
         <MyPageCellContentWrapper>
           <MyPageCellContentTitle>예습 범위</MyPageCellContentTitle>

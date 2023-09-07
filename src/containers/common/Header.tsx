@@ -7,7 +7,7 @@ const Header = () => {
       <div className="flex h-full items-center justify-between">
         <Link href={'/'}>
           <img
-            className="w-40 cursor-pointer"
+            className="w-32 md:w-40 cursor-pointer"
             src="/images/common/logo.png"
             alt="logo"
           />
