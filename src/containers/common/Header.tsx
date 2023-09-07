@@ -7,7 +7,7 @@ import NavBarProvider from './NavBar/NavBarProvider'
 const Header = async () => {
   const currentUser = await getCurrentUser()
   return (
-    <header className="w-full h-32 relative">
+    <header className="w-full h-32 relative mb-[30px]">
       <div className="flex h-full items-center justify-between">
         <Link href={'/'}>
           <img
