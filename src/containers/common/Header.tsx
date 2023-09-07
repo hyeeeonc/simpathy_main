@@ -1,7 +1,10 @@
 import Link from 'next/link'
 import { HeaderButtons } from '@/components/Buttons'
+import { SignInButton, SignOutButton } from '../auth/SignInButton'
+import getCurrentUser from '@/services/getCurrentUser'
 
-const Header = () => {
+const Header = async () => {
+  const currentUser = await getCurrentUser()
   return (
     <header className="w-full h-32 relative">
       <div className="flex h-full items-center justify-between">
@@ -16,6 +19,7 @@ const Header = () => {
           <Link href={'/mypage'}>
             <HeaderButtons>mypage</HeaderButtons>
           </Link>
+          {currentUser ? <SignOutButton /> : <SignInButton />}
         </div>
       </div>
       <div className="absolute flex inset-x-0 bottom-0 h-2 bg-black">

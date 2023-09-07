@@ -19,7 +19,6 @@ async function Mypage() {
         select: { branch_name: true },
       })
     )?.branch_name
-
     if (currentUserBranch) {
       return (
         <>
