@@ -6,6 +6,8 @@ import { Inter } from 'next/font/google'
 import StyledComponentsRegistry from '@/libs/registry'
 
 import Header from '@/containers/common/Header'
+import NavBarProvider from '@/containers/common/NavBar/NavBarProvider'
+import Footer from '@/containers/common/Footer'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -23,9 +25,13 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <StyledComponentsRegistry>
-          <div className="main-container">
-            <Header />
-            {children}
+          <div className="total-container">
+            <NavBarProvider />
+            <div className="main-container">
+              <Header />
+              {children}
+              <Footer />
+            </div>
           </div>
         </StyledComponentsRegistry>
       </body>

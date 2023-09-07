@@ -1,18 +1,41 @@
 'use client'
 
+import QR from 'qrcode.react'
 import styled from 'styled-components'
+import 'react-circular-progressbar/dist/styles.css'
+import { useEffect, useState } from 'react'
 
 const MyPageUserContainer = styled.div`
   display: flex;
   justify-content: space-between;
 
   width: 100%;
-  height: 200px;
+  height: 300px;
 
   margin-top: 40px;
   padding: 20px;
 
-  color: rgb(229 231 235);
+  color: white;
+
+  border-radius: 20px;
+
+  background: rgb(10, 24, 41);
+  background: linear-gradient(
+    90deg,
+    rgba(10, 24, 41, 1) 0%,
+    rgba(27, 89, 158, 1) 50%,
+    rgba(63, 118, 176, 1) 100%
+  );
+
+  box-shadow: 0 0 5em 0 rgba(0, 0, 0, 0.2);
+
+  @media (max-width: 767px) {
+    flex-direction: column;
+    justify-content: center;
+
+    height: 250px;
+    border-radius: 10px;
+  }
 `
 
 const MyPageUserDataContainer = styled.div`
@@ -24,28 +47,62 @@ const MyPageUserDataContainer = styled.div`
 const MyPageUserNameWrapper = styled.div`
   font-size: 1rem;
   font-weight: bold;
+  @media (max-width: 767px) {
+    font-size: 0.75rem;
+  }
 `
 
 const MyPageUserNameBold = styled.span`
   font-size: 3rem;
-`
 
-const MyPageUserSubTextWrapper = styled.div`
-  font-size: 0.8rem;
-
-  color: rgb(209 213 219);
+  @media (max-width: 767px) {
+    font-size: 2rem;
+  }
 `
 
 const MyPageUserContentContainer = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: end;
 
-  gap: 20px;
   margin-left: auto;
+
+  @media (max-width: 767px) {
+    align-items: center;
+    margin-top: 20px;
+  }
 `
 
-const MyPageUserContentWrapper = styled.div``
+const MyPageUserTextContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+
+  gap: 10px;
+
+  @media (max-width: 767px) {
+    gap: 5px;
+    margin-top: 10px;
+  }
+`
+
+const MyPageUserTextWrapper = styled.span`
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+
+  box-sizing: border-box;
+
+  line-height: 1.5rem;
+
+  &:hover {
+    opacity: 0.8;
+  }
+
+  @media (max-width: 767px) {
+    font-size: 1rem;
+
+    line-height: 1rem;
+  }
+`
 
 const MyPageUser = ({
   name,
@@ -56,21 +113,41 @@ const MyPageUser = ({
   email: string
   branchName: string
 }) => {
+  const [today, setToday] = useState<string>('')
+
+  useEffect(() => {
+    const now = new Date()
+    const year = now.getUTCFullYear()
+    const month = (now.getMonth() + 1).toString().padStart(2, '0')
+    const day = now.getDate().toString().padStart(2, '0')
+    const hours = now.getHours().toString().padStart(2, '0')
+    const minutes = now.getMinutes().toString().padStart(2, '0')
+    const seconds = now.getSeconds().toString().padStart(2, '0')
+    const kstDateTimeString = `${year}.${month}.${day}-${hours}.${minutes}.${seconds}`
+
+    setToday(kstDateTimeString)
+  }, [])
+
+  useEffect(() => {
+    console.log(today)
+  }, [today])
+
   return (
-    <MyPageUserContainer className="bg-sky-800">
+    <MyPageUserContainer>
       <MyPageUserDataContainer>
         <MyPageUserNameWrapper>
           <MyPageUserNameBold>{name}</MyPageUserNameBold>님, 반갑습니다.
         </MyPageUserNameWrapper>
-        <div>
-          <MyPageUserSubTextWrapper>{email}</MyPageUserSubTextWrapper>
-          <MyPageUserSubTextWrapper>{branchName}</MyPageUserSubTextWrapper>
-        </div>
       </MyPageUserDataContainer>
-
       <MyPageUserContentContainer>
-        <MyPageUserContentWrapper>작성한 질문: 0개</MyPageUserContentWrapper>
-        <MyPageUserContentWrapper>작성한 댓글: 0개</MyPageUserContentWrapper>
+        <QR
+          value={`${today}-${email}`}
+          size={110}
+          level={'H'}
+          includeMargin={false} //QR 테두리 여부
+          fgColor={'#fff'} //QR색
+          bgColor={'#3f76b0'}
+        />
       </MyPageUserContentContainer>
     </MyPageUserContainer>
   )

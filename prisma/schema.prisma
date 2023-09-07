@@ -14,7 +14,7 @@ model User {
   phone_number        String? @map("phone_number")
   parent_phone_number String? @map("parent_phone_number")
   grade               Int     @map("grade")
-  branch              Int  @map("branch")
+  branch              Int     @map("branch")
 
   @@map("User")
 }
@@ -31,7 +31,11 @@ model Board {
   @@map("Board_normal")
 }
 
-model branch {
-  branch_id   Int    @id @default(autoincrement())
-  branch_name String @db.VarChar(255)
+model Branch {
+  branch_id   Int      @id @default(autoincrement()) @map("branch_id")
+  branch_name String   @map("branch_name")
+  branch_week Int      @map("branch_week")
+  branch_time DateTime @map("branch_time")
+
+  @@map("Branch")
 }
