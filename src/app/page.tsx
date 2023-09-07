@@ -1,7 +1,13 @@
 // import SignInButton from '@/containers/auth/SignInButton'
-
+import LandingBranches from '@/containers/landing/LandingBranches'
+import LandingPosts from '@/containers/landing/LandingPosts'
+import LandingWindow from '@/containers/landing/LandingWindow'
 export default function Home() {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-between p-24"></div>
+    <>
+      <LandingWindow />
+      <LandingPosts />
+      <LandingBranches />
+    </>
   )
 }

@@ -3,13 +3,13 @@
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import {
-  MyPageCellContainer,
-  MyPageCellContentContainer,
-  MyPageCellTitle,
-  MyPageCellContentWrapper,
-  MyPageCellContentTitle,
-  MyPageCellContent,
-} from './MyPageCommon'
+  ContentBoxCellContainer,
+  ContentBoxCellContentContainer,
+  ContentBoxCellTitle,
+  ContentBoxCellContentWrapper,
+  ContentBoxCellContentTitle,
+  ContentBoxCellContent,
+} from '@/components/ContentBox'
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar'
 
 const MyPageProgressWrapper = styled.div`
@@ -19,7 +19,7 @@ const MyPageProgressWrapper = styled.div`
 
   padding: 0 60px;
   width: 100%;
-  margin: 10px 0 15px 0;
+  margin: 30px 0 15px 0;
 
   @media (max-width: 767px) {
     padding: 0 20px;
@@ -57,33 +57,37 @@ const MyPageProgress = ({
 }) => {
   const page = 100
   const nowPage = 20
-  const dealt = Math.floor((nowPage / page) * 100)
+  const dealt =
+    Math.floor((nowPage / page) * 100) <= 100
+      ? Math.floor((nowPage / page) * 100)
+      : 100
+
   return (
-    <MyPageCellContainer>
-      <MyPageCellTitle>{branchName} 진도 현황</MyPageCellTitle>
-      <MyPageCellContentContainer>
-        <MyPageCellContentWrapper>
-          <MyPageCellContentTitle>교재</MyPageCellContentTitle>
-          <MyPageCellContent>{textbook}</MyPageCellContent>
-        </MyPageCellContentWrapper>
+    <ContentBoxCellContainer>
+      <ContentBoxCellTitle>{branchName} 진도 현황</ContentBoxCellTitle>
+      <ContentBoxCellContentContainer>
+        <ContentBoxCellContentWrapper>
+          <ContentBoxCellContentTitle>교재</ContentBoxCellContentTitle>
+          <ContentBoxCellContent>{textbook}</ContentBoxCellContent>
+        </ContentBoxCellContentWrapper>
+
+        <ContentBoxCellContentWrapper>
+          <ContentBoxCellContentTitle>진도</ContentBoxCellContentTitle>
+          <ContentBoxCellContent>21p. 디지털 통신 시스템</ContentBoxCellContent>
+        </ContentBoxCellContentWrapper>
+
+        <ContentBoxCellContentWrapper>
+          <ContentBoxCellContentTitle>예습 범위</ContentBoxCellContentTitle>
+          <ContentBoxCellContent>24p. 사단법인</ContentBoxCellContent>
+        </ContentBoxCellContentWrapper>
 
         <MyPageProgressWrapper>
           <Progress>
             <Dealt dealt={dealt} />
           </Progress>
         </MyPageProgressWrapper>
-
-        <MyPageCellContentWrapper>
-          <MyPageCellContentTitle>진도</MyPageCellContentTitle>
-          <MyPageCellContent>21p, 디지털 통신 시스템</MyPageCellContent>
-        </MyPageCellContentWrapper>
-
-        <MyPageCellContentWrapper>
-          <MyPageCellContentTitle>예습 범위</MyPageCellContentTitle>
-          <MyPageCellContent>24p, 사단법인</MyPageCellContent>
-        </MyPageCellContentWrapper>
-      </MyPageCellContentContainer>
-    </MyPageCellContainer>
+      </ContentBoxCellContentContainer>
+    </ContentBoxCellContainer>
   )
 }
 

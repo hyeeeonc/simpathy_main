@@ -2,15 +2,15 @@
 
 import styled from 'styled-components'
 import {
-  MyPageCellContainer,
-  MyPageCellContentContainer,
-  MyPageCellTitle,
-  MyPageCellContentWrapper,
-  MyPageCellContentTitle,
-  MyPageCellContent,
-} from './MyPageCommon'
+  ContentBoxCellContainer,
+  ContentBoxCellContentContainer,
+  ContentBoxCellTitle,
+  ContentBoxCellContentWrapper,
+  ContentBoxCellContentTitle,
+  ContentBoxCellContent,
+} from '@/components/ContentBox'
 
-const MyPagePostingCellWrapper = styled(MyPageCellContentWrapper)`
+const MyPagePostingCellWrapper = styled(ContentBoxCellContentWrapper)`
   cursor: pointer;
 
   transition: all 0.5s ease-in-out;
@@ -23,27 +23,37 @@ const MyPagePostingCellWrapper = styled(MyPageCellContentWrapper)`
 
 const MyPagePosting = () => {
   return (
-    <MyPageCellContainer>
-      <MyPageCellTitle>활동 보기</MyPageCellTitle>
-      <MyPageCellContentContainer>
+    <ContentBoxCellContainer>
+      <ContentBoxCellTitle>활동 보기</ContentBoxCellTitle>
+      <ContentBoxCellContentContainer>
+        <ContentBoxCellContentWrapper>
+          <ContentBoxCellContentTitle>회원 등급</ContentBoxCellContentTitle>
+          <ContentBoxCellContent>단과 수강생</ContentBoxCellContent>
+        </ContentBoxCellContentWrapper>
+        <ContentBoxCellContentWrapper>
+          <ContentBoxCellContentTitle>가입 일자</ContentBoxCellContentTitle>
+          <ContentBoxCellContent>2021.01.01</ContentBoxCellContent>
+        </ContentBoxCellContentWrapper>
         <MyPagePostingCellWrapper>
-          <MyPageCellContentTitle>가입 일자</MyPageCellContentTitle>
-          <MyPageCellContent>2021.01.01</MyPageCellContent>
+          <ContentBoxCellContentTitle>
+            내가 작성한 질문
+          </ContentBoxCellContentTitle>
+          <ContentBoxCellContent>0개</ContentBoxCellContent>
         </MyPagePostingCellWrapper>
         <MyPagePostingCellWrapper>
-          <MyPageCellContentTitle>내가 작성한 질문</MyPageCellContentTitle>
-          <MyPageCellContent>0개</MyPageCellContent>
+          <ContentBoxCellContentTitle>
+            내가 작성한 댓글
+          </ContentBoxCellContentTitle>
+          <ContentBoxCellContent>0개</ContentBoxCellContent>
         </MyPagePostingCellWrapper>
         <MyPagePostingCellWrapper>
-          <MyPageCellContentTitle>내가 작성한 댓글</MyPageCellContentTitle>
-          <MyPageCellContent>0개</MyPageCellContent>
+          <ContentBoxCellContentTitle>
+            상담 신청 현황
+          </ContentBoxCellContentTitle>
+          <ContentBoxCellContent></ContentBoxCellContent>
         </MyPagePostingCellWrapper>
-        <MyPagePostingCellWrapper>
-          <MyPageCellContentTitle>상담 신청 현황</MyPageCellContentTitle>
-          <MyPageCellContent></MyPageCellContent>
-        </MyPagePostingCellWrapper>
-      </MyPageCellContentContainer>
-    </MyPageCellContainer>
+      </ContentBoxCellContentContainer>
+    </ContentBoxCellContainer>
   )
 }
 

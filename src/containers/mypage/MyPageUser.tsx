@@ -40,8 +40,12 @@ const MyPageUserContainer = styled.div`
 
 const MyPageUserDataContainer = styled.div`
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+
+  padding-left: 10px;
+
+  @media (max-width: 767px) {
+    padding-left: 0;
+  }
 `
 
 const MyPageUserNameWrapper = styled.div`

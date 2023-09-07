@@ -2,7 +2,7 @@
 
 import styled from 'styled-components'
 
-export const MyPageCellContainer = styled.div`
+export const ContentBoxCellContainer = styled.div`
   display: flex;
   flex-direction: column;
 
@@ -16,7 +16,7 @@ export const MyPageCellContainer = styled.div`
   }
 `
 
-export const MyPageCellTitle = styled.div`
+export const ContentBoxCellTitle = styled.div`
   font-size: 1.3rem;
   font-weight: bold;
 
@@ -25,7 +25,7 @@ export const MyPageCellTitle = styled.div`
   }
 `
 
-export const MyPageCellContentContainer = styled.div`
+export const ContentBoxCellContentContainer = styled.div`
   width: 100%;
 
   padding: 20px;
@@ -41,28 +41,32 @@ export const MyPageCellContentContainer = styled.div`
   }
 `
 
-export const MyPageCellContentWrapper = styled.div`
+export const ContentBoxCellContentWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
 
   width: 100%;
 
-  padding: 10px 20px;
+  padding: 15px 20px;
   font-weight: bold;
 
   margin: 5px 0;
 `
 
-export const MyPageCellContentTitle = styled.div`
+export const ContentBoxCellContentTitle = styled.div`
   color: #797b84;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 
   @media (max-width: 767px) {
     font-size: 0.8rem;
   }
 `
 
-export const MyPageCellContent = styled.div`
+export const ContentBoxCellContent = styled.div`
   color: black;
 
   @media (max-width: 767px) {

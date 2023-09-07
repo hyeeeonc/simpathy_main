@@ -26,12 +26,12 @@ export default function RootLayout({
       <body className={inter.className}>
         <StyledComponentsRegistry>
           <div className="total-container">
-            <NavBarProvider />
             <div className="main-container">
               <Header />
               {children}
               <Footer />
             </div>
+            <NavBarProvider />
           </div>
         </StyledComponentsRegistry>
       </body>
