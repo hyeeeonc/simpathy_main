@@ -54,6 +54,19 @@ export const ContentBoxCellContentWrapper = styled.div`
   margin: 5px 0;
 `
 
+export const ContentBoxClickableContentWrapper = styled(
+  ContentBoxCellContentWrapper,
+)`
+  cursor: pointer;
+
+  transition: all 0.3s ease-in-out;
+  &:hover {
+    background: rgba(238, 238, 238, 0.6);
+    backdrop-filter: blur(5px);
+    border-radius: 10px;
+  }
+`
+
 export const ContentBoxCellContentTitle = styled.div`
   color: #797b84;
 

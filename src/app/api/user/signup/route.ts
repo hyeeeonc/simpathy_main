@@ -12,8 +12,8 @@ export async function POST(request: Request) {
       user_name: body.user_name,
       user_phone: body.user_phone,
       user_parent_phone: body.user_parent_phone,
-      grade_id: 1,
-      branch_id: 1,
+      grade_id: body.grade_id,
+      branch_id: body.branch_id,
     },
   })
 

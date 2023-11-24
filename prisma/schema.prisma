@@ -42,11 +42,17 @@ model board {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model branch {
-  branch_id   Int          @id @default(autoincrement())
-  branch_name String       @db.VarChar(50)
-  attend      attend[]
-  consulting  consulting[]
-  user        user[]
+  branch_id               Int          @id @default(autoincrement())
+  branch_name             String       @db.VarChar(50)
+  branch_textbook         String?      @db.VarChar(50)
+  branch_textbook_total   Int?
+  branch_textbook_now     Int?
+  branch_textbook_preview Int?
+  branch_text_now         String?      @db.VarChar(50)
+  branch_text_preview     String?      @db.VarChar(50)
+  attend                  attend[]
+  consulting              consulting[]
+  user                    user[]
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -119,7 +125,7 @@ model user {
   consulting        consulting[]
   reply             reply[]
   branch            branch       @relation(fields: [branch_id], references: [branch_id], onUpdate: Restrict, map: "FK_user_branch_id_branch_branch_id")
-  grade             grade        @relation(fields: [grade_id], references: [grade_id], onUpdate: Restrict, map: "FK_user_grade_id_grade_grade_id")
+  grade             grade        @relation(fields: [grade_id], references: [grade_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_user_grade_id_grade_grade_id")
 
   @@index([branch_id], map: "FK_user_branch_id_branch_branch_id")
   @@index([grade_id], map: "FK_user_grade_id_grade_grade_id")

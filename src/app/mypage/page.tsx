@@ -8,35 +8,54 @@ import MyPageUser from '@/containers/mypage/MyPageUser'
 import MyPageProgress from '@/containers/mypage/MyPageProgress'
 import AdminMain from '@/containers/admin/AdminMain'
 import MyPagePosting from '@/containers/mypage/MyPagePosting'
+import MyPageAdmin from '@/containers/mypage/MyPageAdmin'
 // import MyPageUser from '@/containers/mypage/MyPageUser'
 
 async function Mypage() {
   const currentUser = await getCurrentUser()
 
   if (currentUser && currentUser.grade_id > 0) {
-    const currentUserBranch = (
-      await prisma.branch.findUnique({
-        where: { branch_id: currentUser?.branch_id },
-        select: { branch_name: true },
-      })
-    )?.branch_name
+    const currentUserBranch = await prisma.branch.findUnique({
+      where: { branch_id: currentUser?.branch_id },
+    })
+    const currentUserGrade = await prisma.grade.findUnique({
+      where: { grade_id: currentUser?.grade_id },
+      select: { grade_name: true },
+    })
+    const currnetUserReplies = await prisma.reply.count({
+      where: { user_id: currentUser?.user_id },
+    })
+    const currentUserBoards = await prisma.board.count({
+      where: { user_id: currentUser?.user_id },
+    })
+    console.log(currentUserBoards)
+
     if (currentUserBranch) {
       return (
         <>
           <MyPageUser
             name={currentUser?.user_name}
             email={currentUser?.user_id}
-            branchName={currentUserBranch}
+            branchName={currentUserBranch.branch_name}
           />
-          <MyPagePosting />
+          <MyPagePosting
+            grade={currentUserGrade?.grade_name || ''}
+            replies={currnetUserReplies}
+            boards={currentUserBoards}
+            questions={0}
+          />
           {currentUser.grade_id > 1 && (
             <MyPageProgress
-              branchName={currentUserBranch}
-              branchProgress={30}
-              textbook={'심찬우화 N제'}
+              totalPage={currentUserBranch.branch_textbook_total || 0}
+              nowPage={currentUserBranch.branch_textbook_now || 0}
+              previewPage={currentUserBranch.branch_textbook_preview || 0}
+              nowText={currentUserBranch.branch_text_now || ''}
+              previewText={currentUserBranch.branch_text_preview || ''}
+              branchName={currentUserBranch.branch_name}
+              textbook={currentUserBranch.branch_textbook || ''}
             />
           )}
-          {currentUser.grade_id === 1 && <AdminMain />}
+          {currentUser.grade_id === 1 && <MyPageAdmin />}
         </>
       )
     } else

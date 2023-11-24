@@ -8,50 +8,52 @@ import {
   ContentBoxCellContentWrapper,
   ContentBoxCellContentTitle,
   ContentBoxCellContent,
+  ContentBoxClickableContentWrapper,
 } from '@/components/ContentBox'
 
-const MyPagePostingCellWrapper = styled(ContentBoxCellContentWrapper)`
-  cursor: pointer;
-
-  transition: all 0.5s ease-in-out;
-  &:hover {
-    background: rgba(238, 238, 238, 0.6);
-    backdrop-filter: blur(5px);
-    border-radius: 10px;
-  }
-`
-
-const MyPagePosting = () => {
+const MyPagePosting = ({
+  grade,
+  boards,
+  replies,
+  questions,
+}: {
+  grade: string
+  boards: number
+  replies: number
+  questions: number
+}) => {
   return (
     <ContentBoxCellContainer>
       <ContentBoxCellTitle>활동 보기</ContentBoxCellTitle>
       <ContentBoxCellContentContainer>
         <ContentBoxCellContentWrapper>
           <ContentBoxCellContentTitle>회원 등급</ContentBoxCellContentTitle>
-          <ContentBoxCellContent>단과 수강생</ContentBoxCellContent>
+          <ContentBoxCellContent>{grade}</ContentBoxCellContent>
         </ContentBoxCellContentWrapper>
-        <ContentBoxCellContentWrapper>
-          <ContentBoxCellContentTitle>가입 일자</ContentBoxCellContentTitle>
-          <ContentBoxCellContent>2021.01.01</ContentBoxCellContent>
-        </ContentBoxCellContentWrapper>
-        <MyPagePostingCellWrapper>
+        <ContentBoxClickableContentWrapper>
+          <ContentBoxCellContentTitle>
+            내가 작성한 글
+          </ContentBoxCellContentTitle>
+          <ContentBoxCellContent>{boards}개</ContentBoxCellContent>
+        </ContentBoxClickableContentWrapper>
+        <ContentBoxClickableContentWrapper>
           <ContentBoxCellContentTitle>
             내가 작성한 질문
           </ContentBoxCellContentTitle>
-          <ContentBoxCellContent>0개</ContentBoxCellContent>
-        </MyPagePostingCellWrapper>
-        <MyPagePostingCellWrapper>
+          <ContentBoxCellContent>{questions}개</ContentBoxCellContent>
+        </ContentBoxClickableContentWrapper>
+        <ContentBoxClickableContentWrapper>
           <ContentBoxCellContentTitle>
             내가 작성한 댓글
           </ContentBoxCellContentTitle>
-          <ContentBoxCellContent>0개</ContentBoxCellContent>
-        </MyPagePostingCellWrapper>
-        <MyPagePostingCellWrapper>
+          <ContentBoxCellContent>{replies}개</ContentBoxCellContent>
+        </ContentBoxClickableContentWrapper>
+        <ContentBoxClickableContentWrapper>
           <ContentBoxCellContentTitle>
             상담 신청 현황
           </ContentBoxCellContentTitle>
           <ContentBoxCellContent></ContentBoxCellContent>
-        </MyPagePostingCellWrapper>
+        </ContentBoxClickableContentWrapper>
       </ContentBoxCellContentContainer>
     </ContentBoxCellContainer>
   )

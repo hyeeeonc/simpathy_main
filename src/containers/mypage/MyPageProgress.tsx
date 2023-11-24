@@ -48,18 +48,24 @@ const Dealt = styled.div<{ dealt: number }>`
 
 const MyPageProgress = ({
   branchName,
-  branchProgress,
   textbook,
+  totalPage,
+  nowPage,
+  previewPage,
+  nowText,
+  previewText,
 }: {
   branchName: string
-  branchProgress: number
   textbook: string
+  totalPage: number
+  nowPage: number
+  previewPage: number
+  nowText: string
+  previewText: string
 }) => {
-  const page = 100
-  const nowPage = 20
   const dealt =
-    Math.floor((nowPage / page) * 100) <= 100
-      ? Math.floor((nowPage / page) * 100)
+    Math.floor((nowPage / totalPage) * 100) <= 100
+      ? Math.floor((nowPage / totalPage) * 100)
       : 100
 
   return (
@@ -73,12 +79,16 @@ const MyPageProgress = ({
 
         <ContentBoxCellContentWrapper>
           <ContentBoxCellContentTitle>진도</ContentBoxCellContentTitle>
-          <ContentBoxCellContent>21p. 디지털 통신 시스템</ContentBoxCellContent>
+          <ContentBoxCellContent>
+            {nowPage}p. {nowText}
+          </ContentBoxCellContent>
         </ContentBoxCellContentWrapper>
 
         <ContentBoxCellContentWrapper>
           <ContentBoxCellContentTitle>예습 범위</ContentBoxCellContentTitle>
-          <ContentBoxCellContent>24p. 사단법인</ContentBoxCellContent>
+          <ContentBoxCellContent>
+            {previewPage}p. {previewText}
+          </ContentBoxCellContent>
         </ContentBoxCellContentWrapper>
 
         <MyPageProgressWrapper>
