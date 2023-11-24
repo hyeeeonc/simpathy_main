@@ -2,6 +2,7 @@ import NextAuth from 'next-auth/next'
 import CredentialsProvider from 'next-auth/providers/credentials'
 
 const handler = NextAuth({
+  secret: process.env.NEXTAUTH_SECRET,
   providers: [
     CredentialsProvider({
       // The name to display on the sign in form (e.g. "Sign in with...")
@@ -11,12 +12,8 @@ const handler = NextAuth({
       // e.g. domain, username, password, 2FA token, etc.
       // You can pass any HTML attribute to the <input> tag through the object.
       credentials: {
-        username: {
-          label: '이메일',
-          type: 'text',
-          placeholder: '이메일 주소 입력 요망',
-        },
-        password: { label: '비밀번호', type: 'password' },
+        user_id: { label: '계정', type: 'text' },
+        user_pw: { label: '비밀번호', type: 'password' },
       },
       async authorize(credentials, req) {
         const res = await fetch(`${process.env.NEXTAUTH_URL}/api/user/signin`, {
@@ -25,12 +22,11 @@ const handler = NextAuth({
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            email: credentials?.username,
-            password: credentials?.password,
+            user_id: credentials?.user_id,
+            user_pw: credentials?.user_pw,
           }),
         })
         const user = await res.json()
-        console.log(user)
 
         if (user) {
           // Any object returned will be saved in `user` property of the JWT
@@ -44,12 +40,14 @@ const handler = NextAuth({
       },
     }),
   ],
+
   callbacks: {
     async jwt({ token, user }) {
       return { ...token, ...user }
     },
 
     async session({ session, token }) {
+      console.log('session')
       session.user = token as any
       return session
     },

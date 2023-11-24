@@ -8,21 +8,13 @@ function Login() {
   const emailRef = useRef(null)
   const passwordRef = useRef(null)
 
-  let regex = new RegExp(
-    "([!#-'*+/-9=?A-Z^-~-]+(.[!#-'*+/-9=?A-Z^-~-]+)*|\"([]!#-[^-~ \t]|(\\[\t -~]))+\")@([!#-'*+/-9=?A-Z^-~-]+(.[!#-'*+/-9=?A-Z^-~-]+)*|[[\t -Z^-~]*])",
-  )
-
   const handleSubmit = async () => {
-    if (emailRef.current && regex.test(emailRef.current)) {
-      const result = await signIn('credentials', {
-        username: emailRef.current,
-        password: passwordRef.current,
-        redirect: true,
-        callbackUrl: '/',
-      })
-    } else {
-      alert('이메일 형식이 올바르지 않습니다.')
-    }
+    const result = await signIn('credentials', {
+      user_id: emailRef.current,
+      user_pw: passwordRef.current,
+      redirect: true,
+      callbackUrl: '/',
+    })
   }
 
   const handleOnKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {

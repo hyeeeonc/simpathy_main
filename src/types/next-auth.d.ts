@@ -3,13 +3,12 @@ import NextAuth from 'next-auth'
 declare module 'next-auth' {
   interface Session {
     user: {
-      id: number
-      name: string
-      email: string
-      grade: number
-      branch: string
-      phone_number?: string
-      parent_phone_number?: string
+      user_id: string
+      user_name: string
+      user_phone?: string
+      user_parent_phone?: string
+      grade_id: number
+      branch_id: number
       accessToken: string
     }
   }

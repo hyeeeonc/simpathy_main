@@ -7,14 +7,16 @@ export async function POST(request: Request) {
 
   const user = await prisma.user.create({
     data: {
-      name: body.name,
-      email: body.email,
-      password: await bcrypt.hash(body.password, 10),
-      grade: body.grade,
-      branch: body.branch,
+      user_id: body.user_id,
+      user_pw: await bcrypt.hash(body.user_pw, 10),
+      user_name: body.user_name,
+      user_phone: body.user_phone,
+      user_parent_phone: body.user_parent_phone,
+      grade_id: 1,
+      branch_id: 1,
     },
   })
 
-  const { password, ...result } = user
+  const { user_pw, ...result } = user
   return new Response(JSON.stringify(result))
 }

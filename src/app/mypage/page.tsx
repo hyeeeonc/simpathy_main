@@ -12,10 +12,11 @@ import MyPagePosting from '@/containers/mypage/MyPagePosting'
 
 async function Mypage() {
   const currentUser = await getCurrentUser()
-  if (currentUser && currentUser.grade > 0) {
+
+  if (currentUser && currentUser.grade_id > 0) {
     const currentUserBranch = (
       await prisma.branch.findUnique({
-        where: { branch_id: currentUser?.branch },
+        where: { branch_id: currentUser?.branch_id },
         select: { branch_name: true },
       })
     )?.branch_name
@@ -23,19 +24,19 @@ async function Mypage() {
       return (
         <>
           <MyPageUser
-            name={currentUser?.name}
-            email={currentUser?.email}
+            name={currentUser?.user_name}
+            email={currentUser?.user_id}
             branchName={currentUserBranch}
           />
           <MyPagePosting />
-          {currentUser.grade > 1 && (
+          {currentUser.grade_id > 1 && (
             <MyPageProgress
               branchName={currentUserBranch}
               branchProgress={30}
               textbook={'심찬우화 N제'}
             />
           )}
-          {currentUser.grade === 1 && <AdminMain />}
+          {currentUser.grade_id === 1 && <AdminMain />}
         </>
       )
     } else

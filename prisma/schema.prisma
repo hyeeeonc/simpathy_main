@@ -7,35 +7,120 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  email               String  @id @map("id")
-  password            String  @map("password")
-  name                String  @map("name")
-  phone_number        String? @map("phone_number")
-  parent_phone_number String? @map("parent_phone_number")
-  grade               Int     @map("grade")
-  branch              Int     @map("branch")
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model attend {
+  attend_id   Int      @id @default(autoincrement())
+  user_id     String   @db.VarChar(50)
+  attend_type Int
+  attend_time DateTime @db.DateTime(0)
+  branch_id   Int
+  branch      branch   @relation(fields: [branch_id], references: [branch_id], onUpdate: Restrict, map: "FK_attend_branch_id_branch_branch_id")
+  user        user     @relation(fields: [user_id], references: [user_id], onUpdate: Restrict, map: "FK_attend_user_id_user_user_id")
 
-  @@map("User")
+  @@index([branch_id], map: "FK_attend_branch_id_branch_branch_id")
+  @@index([user_id], map: "FK_attend_user_id_user_user_id")
 }
 
-model Board {
-  board_id   Int       @id @map("board_id")
-  writer     String    @map("writer")
-  title      String    @map("title")
-  content    String?   @map("content")
-  regdate    DateTime  @map("regdate")
-  updatedate DateTime? @map("updatedate")
-  deletedate DateTime? @map("deletedate")
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model board {
+  board_id          Int       @id @default(autoincrement())
+  category_id       Int
+  board_type        Int
+  user_id           String    @db.VarChar(50)
+  board_title       String    @db.VarChar(100)
+  board_contents    String    @db.Text
+  board_upload_time DateTime  @db.DateTime(0)
+  board_update_time DateTime? @db.DateTime(0)
+  category          category  @relation(fields: [category_id], references: [category_id], onUpdate: Restrict, map: "FK_board_category_id_category_category_id")
+  user              user      @relation(fields: [user_id], references: [user_id], onUpdate: Restrict, map: "FK_board_user_id_user_user_id")
+  file              file[]
+  reply             reply[]
 
-  @@map("Board_normal")
+  @@index([category_id], map: "FK_board_category_id_category_category_id")
+  @@index([user_id], map: "FK_board_user_id_user_user_id")
 }
 
-model Branch {
-  branch_id   Int      @id @default(autoincrement()) @map("branch_id")
-  branch_name String   @map("branch_name")
-  branch_week Int      @map("branch_week")
-  branch_time DateTime @map("branch_time")
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model branch {
+  branch_id   Int          @id @default(autoincrement())
+  branch_name String       @db.VarChar(50)
+  attend      attend[]
+  consulting  consulting[]
+  user        user[]
+}
 
-  @@map("Branch")
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model category {
+  category_id   Int     @id @default(autoincrement())
+  category_name String  @db.VarChar(50)
+  category_auth Int
+  board         board[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model consulting {
+  consulting_id      Int       @id @default(autoincrement())
+  user_id            String    @db.VarChar(50)
+  branch_id          Int
+  consulting_tag     String    @db.VarChar(500)
+  consulting_content String    @db.Text
+  consulting_checked Int
+  consulting_time    DateTime? @db.DateTime(0)
+  branch             branch    @relation(fields: [branch_id], references: [branch_id], onUpdate: Restrict, map: "FK_consulting_branch_id_branch_branch_id")
+  user               user      @relation(fields: [user_id], references: [user_id], onUpdate: Restrict, map: "FK_consulting_user_id_user_user_id")
+
+  @@index([branch_id], map: "FK_consulting_branch_id_branch_branch_id")
+  @@index([user_id], map: "FK_consulting_user_id_user_user_id")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model file {
+  file_id   Int    @id @default(autoincrement())
+  board_id  Int
+  file_name String @db.VarChar(100)
+  file_addr String @db.VarChar(1000)
+  board     board  @relation(fields: [board_id], references: [board_id], onUpdate: Restrict, map: "FK_file_board_id_board_board_id")
+
+  @@index([board_id], map: "FK_file_board_id_board_board_id")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model grade {
+  grade_id   Int    @id
+  grade_name String @db.VarChar(50)
+  user       user[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model reply {
+  reply_id          Int       @id @default(autoincrement())
+  board_id          Int?
+  user_id           String?   @db.VarChar(50)
+  reply_content     String?   @db.Text
+  reply_upload_time DateTime? @db.DateTime(0)
+  board             board?    @relation(fields: [board_id], references: [board_id], onDelete: Restrict, onUpdate: Restrict, map: "FK_reply_board_id_board_board_id")
+  user              user?     @relation(fields: [user_id], references: [user_id], onDelete: Restrict, onUpdate: Restrict, map: "FK_reply_user_id_user_user_id")
+
+  @@index([board_id], map: "FK_reply_board_id_board_board_id")
+  @@index([user_id], map: "FK_reply_user_id_user_user_id")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model user {
+  user_id           String       @id @db.VarChar(50)
+  user_pw           String       @db.VarChar(100)
+  user_name         String       @db.VarChar(50)
+  user_phone        String?      @db.VarChar(50)
+  user_parent_phone String?      @db.VarChar(50)
+  grade_id          Int
+  branch_id         Int
+  attend            attend[]
+  board             board[]
+  consulting        consulting[]
+  reply             reply[]
+  branch            branch       @relation(fields: [branch_id], references: [branch_id], onUpdate: Restrict, map: "FK_user_branch_id_branch_branch_id")
+  grade             grade        @relation(fields: [grade_id], references: [grade_id], onUpdate: Restrict, map: "FK_user_grade_id_grade_grade_id")
+
+  @@index([branch_id], map: "FK_user_branch_id_branch_branch_id")
+  @@index([grade_id], map: "FK_user_grade_id_grade_grade_id")
 }

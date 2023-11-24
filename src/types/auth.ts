@@ -1,24 +1,26 @@
 //api/signup
 
 export interface SignupRequest {
-  email: string
-  password: string
-  name: string
-  grade: number
-  branch: number
+  user_id: string
+  user_pw: string
+  user_name: string
+  user_phone?: string
+  user_parent_phone?: string
+  grade_id: number
+  branch_id: number
 }
 
 export interface SigninRequest {
-  email: string
-  password: string
+  user_id: string
+  user_pw: string
 }
 
 export interface User {
-  id: number
-  name: string
-  email: string
-  grade: number
-  branch: string
-  phone_number?: string
-  parent_phone_number?: string
+  user_id: string
+  user_pw: string
+  user_name: string
+  user_phone?: string
+  user_parent_phone?: string
+  grade_id: number
+  branch_id: number
 }

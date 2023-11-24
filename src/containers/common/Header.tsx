@@ -21,6 +21,7 @@ const Header = async () => {
             <HeaderButtons>mypage</HeaderButtons>
           </Link>
           {currentUser ? <SignOutButton /> : <SignInButton />}
+
           <div className="w-[50px]"> </div>
         </div>
       </div>
