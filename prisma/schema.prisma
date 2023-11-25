@@ -65,15 +65,19 @@ model category {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model consulting {
-  consulting_id      Int       @id @default(autoincrement())
-  user_id            String    @db.VarChar(50)
-  branch_id          Int
-  consulting_tag     String    @db.VarChar(500)
-  consulting_content String    @db.Text
-  consulting_checked Int
-  consulting_time    DateTime? @db.DateTime(0)
-  branch             branch    @relation(fields: [branch_id], references: [branch_id], onUpdate: Restrict, map: "FK_consulting_branch_id_branch_branch_id")
-  user               user      @relation(fields: [user_id], references: [user_id], onUpdate: Restrict, map: "FK_consulting_user_id_user_user_id")
+  consulting_id         Int       @id @default(autoincrement())
+  user_id               String    @db.VarChar(50)
+  branch_id             Int
+  consulting_tag        String    @db.VarChar(500)
+  consulting_content    String    @db.Text
+  consulting_detail     String    @db.Text
+  consulting_checked    Int
+  consulting_phone      String    @db.VarChar(50)
+  consulting_consultant String    @db.VarChar(50)
+  consulting_wishdate   String    @db.VarChar(50)
+  consulting_time       DateTime? @db.DateTime(0)
+  branch                branch    @relation(fields: [branch_id], references: [branch_id], onUpdate: Restrict, map: "FK_consulting_branch_id_branch_branch_id")
+  user                  user      @relation(fields: [user_id], references: [user_id], onUpdate: Restrict, map: "FK_consulting_user_id_user_user_id")
 
   @@index([branch_id], map: "FK_consulting_branch_id_branch_branch_id")
   @@index([user_id], map: "FK_consulting_user_id_user_user_id")

@@ -4,7 +4,6 @@ import { getServerSession } from 'next-auth'
 export default async function getCurrentUser() {
   try {
     const session = await getServerSession()
-    console.log(session)
     // 유저 ID가 없으면 로그인 x
     if (!session?.user?.email) {
       return null

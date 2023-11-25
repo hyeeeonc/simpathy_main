@@ -1,6 +1,5 @@
 'use client'
 
-import styled from 'styled-components'
 import {
   ContentBoxCellContainer,
   ContentBoxCellContentContainer,
@@ -10,6 +9,7 @@ import {
   ContentBoxCellContent,
   ContentBoxClickableContentWrapper,
 } from '@/components/ContentBox'
+import Link from 'next/link'
 
 const MyPagePosting = ({
   grade,
@@ -48,12 +48,14 @@ const MyPagePosting = ({
           </ContentBoxCellContentTitle>
           <ContentBoxCellContent>{replies}개</ContentBoxCellContent>
         </ContentBoxClickableContentWrapper>
-        <ContentBoxClickableContentWrapper>
-          <ContentBoxCellContentTitle>
-            상담 신청 현황
-          </ContentBoxCellContentTitle>
-          <ContentBoxCellContent></ContentBoxCellContent>
-        </ContentBoxClickableContentWrapper>
+        <Link href="/consulting/check">
+          <ContentBoxClickableContentWrapper>
+            <ContentBoxCellContentTitle>
+              상담 신청 현황
+            </ContentBoxCellContentTitle>
+            <ContentBoxCellContent></ContentBoxCellContent>
+          </ContentBoxClickableContentWrapper>
+        </Link>
       </ContentBoxCellContentContainer>
     </ContentBoxCellContainer>
   )

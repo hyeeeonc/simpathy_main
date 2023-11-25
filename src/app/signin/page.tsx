@@ -28,7 +28,7 @@ function Login() {
       <div className="flex flex-col w-full md:w-2/3">
         <div className="flex justify-center pt-12 md:justify-start md:pl-12 md:-mb-24"></div>
         <div className="flex flex-col justify-center px-8 pt-8 my-auto md:justify-start md:pt-0 md:px-24 lg:px-32">
-          <p className="text-3xl text-center">Welcome</p>
+          <p className="text-3xl text-center font-bold">반갑습니다</p>
           <div className="flex flex-col pt-3 md:pt-8">
             <div className="flex flex-col pt-4">
               <div className="flex relative ">
@@ -50,11 +50,11 @@ function Login() {
                   }}
                   id="email"
                   name="email"
-                  type="email"
+                  type="text"
                   required
                   autoFocus={true}
                   className=" flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-sky-600 focus:border-transparent"
-                  placeholder="Email"
+                  placeholder="ID"
                   onKeyUp={handleOnKeyPress}
                 />
               </div>
@@ -91,14 +91,6 @@ function Login() {
             >
               <span className="w-full">Submit</span>
             </button>
-          </div>
-          <div className="pt-12 pb-12 text-center">
-            <p>
-              계정이 없으신가요?&nbsp;
-              <a href="#" className="font-semibold underline">
-                가입하기
-              </a>
-            </p>
           </div>
         </div>
       </div>

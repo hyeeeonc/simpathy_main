@@ -24,3 +24,17 @@ export interface User {
   grade_id: number
   branch_id: number
 }
+
+export interface UserNoPw {
+  user_id: string
+  user_name: string
+  user_phone?: string
+  user_parent_phone?: string
+  grade_id: number
+  branch_id: number
+}
+
+export interface Grade {
+  grade_id: number
+  grade_name: string
+}

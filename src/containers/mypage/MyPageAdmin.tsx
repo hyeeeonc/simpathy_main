@@ -16,11 +16,22 @@ const MyPageAdmin = () => {
     <ContentBoxCellContainer>
       <ContentBoxCellTitle>관리자 페이지</ContentBoxCellTitle>
       <ContentBoxCellContentContainer>
-        <Link href="/admin">
+        <Link
+          href="/admin/manage
+        "
+        >
           <ContentBoxClickableContentWrapper>
             <ContentBoxCellContentTitle>
               홈페이지 관리
             </ContentBoxCellContentTitle>
+          </ContentBoxClickableContentWrapper>
+        </Link>
+        <Link
+          href="/admin/branch
+        "
+        >
+          <ContentBoxClickableContentWrapper>
+            <ContentBoxCellContentTitle>지점 관리</ContentBoxCellContentTitle>
           </ContentBoxClickableContentWrapper>
         </Link>
         <ContentBoxClickableContentWrapper>
