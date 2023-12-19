@@ -1,3 +1,5 @@
+'use client'
+
 import dynamic from 'next/dynamic'
 
 import ReactQuill, { ReactQuillProps } from 'react-quill'
@@ -7,7 +9,7 @@ interface ForwardedQuillComponent extends ReactQuillProps {
   forwardedRef: React.Ref<ReactQuill>
 }
 
-const WysiwygEditor = dynamic(
+const QuillNoSSRWrapper = dynamic(
   async () => {
     const { default: QuillComponent } = await import('react-quill')
     const Quill = ({ forwardedRef, ...props }: ForwardedQuillComponent) => (
@@ -18,4 +20,4 @@ const WysiwygEditor = dynamic(
   { loading: () => <div>...loading</div>, ssr: false },
 )
 
-export default WysiwygEditor
+export default QuillNoSSRWrapper
