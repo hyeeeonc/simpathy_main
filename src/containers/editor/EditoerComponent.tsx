@@ -1,9 +1,11 @@
 'use client'
 
 import QuillNoSSRWrapper from './WysiwygEditor'
-import ReactQuill from 'react-quill'
+import ReactQuill, { Quill } from 'react-quill'
 import { useRef, useState } from 'react'
 import styled from 'styled-components'
+import { ImageResize } from 'quill-image-resize-module-ts'
+Quill.register('modules/ImageResize', ImageResize)
 
 const StyledVideo = styled.div`
   iframe {
@@ -39,6 +41,15 @@ const EditorComponent = () => {
 
       ['link', 'image', 'video'],
     ],
+    ImageResize: {
+      parchment: Quill.import('parchment'),
+      modules: ['Resize', 'DisplaySize'],
+    },
+    history: {
+      delay: 1000,
+      maxStack: 500,
+      userOnly: true,
+    },
   }
 
   return (
