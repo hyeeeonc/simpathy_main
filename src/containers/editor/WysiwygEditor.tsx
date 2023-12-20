@@ -1,6 +1,7 @@
 'use client'
 
 import dynamic from 'next/dynamic'
+import { Spinner } from '@material-tailwind/react'
 
 import ReactQuill, { ReactQuillProps } from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
@@ -17,7 +18,14 @@ const QuillNoSSRWrapper = dynamic(
     )
     return Quill
   },
-  { loading: () => <div>...loading</div>, ssr: false },
+  {
+    loading: () => (
+      <div className="flex justify-center h-96">
+        <Spinner className="h-12 w-12" />
+      </div>
+    ),
+    ssr: false,
+  },
 )
 
 export default QuillNoSSRWrapper
