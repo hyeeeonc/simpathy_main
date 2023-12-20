@@ -43,7 +43,10 @@ const AdminBranchUpdateContainer = styled.div`
 
   @media (max-width: 767px) {
     width: calc(100vw - 40px);
+    overflow-y: scroll;
+    height: 60vh;
     padding: 10px;
+    border-radius: 5px;
   }
 `
 
