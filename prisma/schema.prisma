@@ -23,21 +23,16 @@ model attend {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model board {
-  board_id          Int       @id @default(autoincrement())
-  category_id       Int
-  board_type        Int
-  user_id           String    @db.VarChar(50)
-  board_title       String    @db.VarChar(100)
-  board_contents    String    @db.Text
-  board_upload_time DateTime  @db.DateTime(0)
-  board_update_time DateTime? @db.DateTime(0)
-  category          category  @relation(fields: [category_id], references: [category_id], onUpdate: Restrict, map: "FK_board_category_id_category_category_id")
-  user              user      @relation(fields: [user_id], references: [user_id], onUpdate: Restrict, map: "FK_board_user_id_user_user_id")
-  file              file[]
-  reply             reply[]
+  board_id         Int      @id @default(autoincrement())
+  board_name       String   @db.VarChar(50)
+  board_read_auth  Int
+  board_write_auth Int
+  category_id      Int
+  board_order      Int
+  category         category @relation(fields: [category_id], references: [category_id], onUpdate: Restrict, map: "FK_board_category_id_category_category_id")
+  post             post[]
 
   @@index([category_id], map: "FK_board_category_id_category_category_id")
-  @@index([user_id], map: "FK_board_user_id_user_user_id")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -57,10 +52,10 @@ model branch {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model category {
-  category_id   Int     @id @default(autoincrement())
-  category_name String  @db.VarChar(50)
-  category_auth Int
-  board         board[]
+  category_id    Int     @id @default(autoincrement())
+  category_name  String  @db.VarChar(50)
+  category_order Int
+  board          board[]
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -89,9 +84,9 @@ model file {
   board_id  Int
   file_name String @db.VarChar(100)
   file_addr String @db.VarChar(1000)
-  board     board  @relation(fields: [board_id], references: [board_id], onUpdate: Restrict, map: "FK_file_board_id_board_board_id")
+  board     post   @relation(fields: [board_id], references: [post_id], onUpdate: Restrict, map: "FK_file_board_id_board_board_id")
 
-  @@index([board_id], map: "FK_file_board_id_board_board_id")
+  @@index([board_id], map: "FK_file_board_id_post_post_id")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -104,15 +99,15 @@ model grade {
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model reply {
   reply_id          Int       @id @default(autoincrement())
-  board_id          Int?
   user_id           String?   @db.VarChar(50)
+  board_id          Int?
   reply_content     String?   @db.Text
   reply_upload_time DateTime? @db.DateTime(0)
-  board             board?    @relation(fields: [board_id], references: [board_id], onDelete: Restrict, onUpdate: Restrict, map: "FK_reply_board_id_board_board_id")
+  board             post?     @relation(fields: [board_id], references: [post_id], onDelete: Restrict, onUpdate: Restrict, map: "FK_reply_board_id_board_board_id")
   user              user?     @relation(fields: [user_id], references: [user_id], onDelete: Restrict, onUpdate: Restrict, map: "FK_reply_user_id_user_user_id")
 
-  @@index([board_id], map: "FK_reply_board_id_board_board_id")
   @@index([user_id], map: "FK_reply_user_id_user_user_id")
+  @@index([board_id], map: "FK_reply_board_id_post_post_id")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -125,12 +120,30 @@ model user {
   grade_id          Int
   branch_id         Int
   attend            attend[]
-  board             board[]
   consulting        consulting[]
+  post              post[]
   reply             reply[]
   branch            branch       @relation(fields: [branch_id], references: [branch_id], onUpdate: Restrict, map: "FK_user_branch_id_branch_branch_id")
   grade             grade        @relation(fields: [grade_id], references: [grade_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_user_grade_id_grade_grade_id")
 
   @@index([branch_id], map: "FK_user_branch_id_branch_branch_id")
   @@index([grade_id], map: "FK_user_grade_id_grade_grade_id")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model post {
+  post_id          Int       @id @default(autoincrement())
+  board_id         Int
+  user_id          String    @db.VarChar(50)
+  post_title       String    @db.VarChar(100)
+  post_contents    String    @db.Text
+  post_upload_time DateTime  @db.DateTime(0)
+  post_update_time DateTime? @db.DateTime(0)
+  file             file[]
+  board            board     @relation(fields: [board_id], references: [board_id], onUpdate: Restrict, map: "FK_post_board_id_board_board_id")
+  user             user      @relation(fields: [user_id], references: [user_id], onUpdate: Restrict, map: "FK_post_user_id_user_user_id")
+  reply            reply[]
+
+  @@index([board_id], map: "FK_post_board_id_board_board_id")
+  @@index([user_id], map: "FK_post_user_id_user_user_id")
 }

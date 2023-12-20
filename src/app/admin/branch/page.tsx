@@ -2,6 +2,7 @@ import React from 'react'
 
 import getCurrentUser from '@/services/getCurrentUser'
 import AdminBranch from '@/containers/admin/branch/AdminBranch'
+import AdminBranchAdd from '@/containers/admin/branch/AdminBranchAdd'
 
 async function BranchPage() {
   const currentUser = await getCurrentUser()
@@ -14,6 +15,7 @@ async function BranchPage() {
             지점 관리
           </div>
           <AdminBranch />
+          <AdminBranchAdd />
         </div>
       </>
     )

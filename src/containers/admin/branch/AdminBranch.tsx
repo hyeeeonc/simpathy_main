@@ -12,6 +12,7 @@ import {
   ContentBoxCellContent,
   ContentBoxClickableContentWrapper,
 } from '@/components/ContentBox'
+import AdminBranchUpdate from './AdminBranchUpdate'
 
 const AdminMainContainer = styled.div``
 
@@ -54,6 +55,8 @@ const AdminMenuItems = styled.div`
 
 const AdminBranch = () => {
   const [branches, setBranches] = useState<Branch[]>()
+  const [modalBranch, setModalBranch] = useState<Branch>()
+  const [isOpen, setIsOpen] = useState<boolean>(false)
 
   const getBranchData = async () => {
     const res = await fetch(`/api/branch/getBranchAll`)
@@ -62,6 +65,16 @@ const AdminBranch = () => {
       (item: Branch) => item.branch_name !== '운영자',
     )
     setBranches(filteredData)
+  }
+
+  const onClose = () => {
+    setIsOpen(false)
+    getBranchData()
+  }
+
+  const modalHandler = (branch: Branch) => {
+    setModalBranch(branch)
+    setIsOpen(true)
   }
 
   useEffect(() => {
@@ -128,12 +141,18 @@ const AdminBranch = () => {
                 display: 'flex',
                 justifyContent: 'center',
               }}
+              onClick={() => modalHandler(branch)}
             >
-              변경사항 저장
+              수정하기
             </ContentBoxClickableContentWrapper>
           </ContentBoxCellContentContainer>
         </ContentBoxCellContainer>
       ))}
+      <AdminBranchUpdate
+        onClose={onClose}
+        branch={modalBranch}
+        isOpen={isOpen}
+      />
     </AdminMainContainer>
   )
 }

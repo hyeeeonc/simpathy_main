@@ -26,11 +26,11 @@ const LandingWindow = () => {
     //     alt="landing"
     //   />
     // </div>
-    <div className="w-full p-4 mt-[50px] md:mt-[100px] mb-[50px] md:mb-[100px] rounded-[10px] overflow-hidden">
+    <div className="w-full flex flex-col justify-center align-center p-4 mt-[50px] md:mt-[100px] mb-[50px] md:mb-[100px] rounded-[10px] overflow-hidden">
       <LandingWindowTitle className="font-bold text-4xl mt-4 mb-6">
-        수능 국어의 본질적 접근
+        심찬우의 공감연구소
       </LandingWindowTitle>
-      <p className="text-lg">우리 모두 올바른 길을 걸어갑니다.</p>
+      <div className="text-lg">&lt; DRAMATIC EXIT &rt;</div>
     </div>
   )
 }

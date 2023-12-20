@@ -25,7 +25,7 @@ async function Mypage() {
     const currnetUserReplies = await prisma.reply.count({
       where: { user_id: currentUser?.user_id },
     })
-    const currentUserBoards = await prisma.board.count({
+    const currentUserBoards = await prisma.post.count({
       where: { user_id: currentUser?.user_id },
     })
     console.log(currentUserBoards)
