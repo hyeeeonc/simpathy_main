@@ -4,7 +4,7 @@ import getCurrentUser from '@/services/getCurrentUser'
 import AdminBranch from '@/containers/admin/branch/AdminBranch'
 import AdminBranchAdd from '@/containers/admin/branch/AdminBranchAdd'
 
-async function BranchPage() {
+async function AdminBranchPage() {
   const currentUser = await getCurrentUser()
 
   if (currentUser && currentUser.grade_id === 1) {
@@ -22,4 +22,4 @@ async function BranchPage() {
   } else return <div>접근 권한이 없습니다</div>
 }
 
-export default BranchPage
+export default AdminBranchPage

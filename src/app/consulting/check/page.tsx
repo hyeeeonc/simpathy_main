@@ -34,8 +34,6 @@ async function ConsultingPage() {
       return [...notChecked, ...checked, ...finished]
     })
 
-  console.log(checked, notChecked, finished)
-
   return (
     <>
       <div className="w-full  mt-20">

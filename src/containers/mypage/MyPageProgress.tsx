@@ -10,7 +10,6 @@ import {
   ContentBoxCellContentTitle,
   ContentBoxCellContent,
 } from '@/components/ContentBox'
-import { CircularProgressbar, buildStyles } from 'react-circular-progressbar'
 
 const MyPageProgressWrapper = styled.div`
   display: flex;

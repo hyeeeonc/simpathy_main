@@ -3,7 +3,7 @@ import prisma from '@/libs/prisma'
 import getCurrentUser from '@/services/getCurrentUser'
 import AdminManage from '@/containers/admin/manage/AdminManage'
 
-async function AdminPage() {
+async function AdminManagePage() {
   const currentUser = await getCurrentUser()
 
   if (currentUser && currentUser.grade_id === 1) {
@@ -20,4 +20,4 @@ async function AdminPage() {
   } else return <div>접근 권한이 없습니다</div>
 }
 
-export default AdminPage
+export default AdminManagePage
