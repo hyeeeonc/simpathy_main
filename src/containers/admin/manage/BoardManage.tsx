@@ -85,7 +85,7 @@ const BoardManage = () => {
     board_read_auth: 1,
     board_write_auth: 1,
     category_id: 1,
-    board_order: 1,
+    board_order: 0,
   })
 
   const getCategoryData = async () => {
@@ -185,6 +185,8 @@ const BoardManage = () => {
       return null
     }
 
+    console.log(filteredBoards)
+
     const maxBoardOrder = Math.max(
       ...filteredBoards.map(board => board.board_order),
     )
@@ -203,23 +205,27 @@ const BoardManage = () => {
     }
 
     const maxOrder = findMaxBoardOrder(newBoard.category_id)
+    const targetOrder = maxOrder === null ? 0 : maxOrder + 1
+    // console.log(maxOrder)
 
-    if (maxOrder === null) {
-      alert('게시판 추가에 실패했습니다.')
-      return
-    }
-
-    setNewBoard(prevData => ({
-      ...prevData,
-      board_order: maxOrder + 1,
-    }))
+    // setNewBoard(prevData => ({
+    //   ...prevData,
+    //   board_order: maxOrder === null ? 0 : maxOrder + 1,
+    // }))
 
     const res = await fetch(`/api/board/addBoard`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(newBoard),
+      body: JSON.stringify({
+        board_id: newBoard.board_id,
+        board_name: newBoard.board_name,
+        board_read_auth: newBoard.board_read_auth,
+        board_write_auth: newBoard.board_write_auth,
+        category_id: newBoard.category_id,
+        board_order: targetOrder,
+      }),
     })
 
     if (res.ok) {
@@ -237,6 +243,10 @@ const BoardManage = () => {
       alert('게시판 추가에 실패했습니다.')
     }
   }
+
+  useEffect(() => {
+    console.log(newBoard)
+  }, [newBoard])
 
   const findMaxCategoryOrder = () => {
     if (!categories || categories.length === 0) {
@@ -279,6 +289,37 @@ const BoardManage = () => {
     }
   }
 
+  const changeBoardOrder = async (
+    board_id: number,
+    category_id: number,
+    order: number,
+    change: number,
+  ) => {
+    const maxOrder = findMaxBoardOrder(category_id)
+    console.log(maxOrder)
+    if ((order == 0 && change == -1) || (order == maxOrder && change == 1)) {
+      return
+    }
+
+    const res = await fetch(`/api/board/changeBoardOrder`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        board_id: board_id,
+        change: change,
+      }),
+    })
+
+    if (res.ok) {
+      alert('게시판 순서 변경이 완료되었습니다.')
+      getBoardData() // 데이터를 업데이트하는 함수 호출
+    } else {
+      alert('게시판 순서 변경에 실패했습니다.')
+    }
+  }
+
   return (
     <ContentBoxCellContainer>
       <ContentBoxCellTitle style={{ width: '100%' }}>
@@ -287,7 +328,9 @@ const BoardManage = () => {
 
       <ContentBoxCellContentContainer>
         <ContentBoxCellContentWrapper>
-          <ContentBoxCellContentTitle>게시판 편집</ContentBoxCellContentTitle>
+          <ContentBoxCellContentTitle style={{ color: 'black' }}>
+            게시판 편집
+          </ContentBoxCellContentTitle>
         </ContentBoxCellContentWrapper>
         <div style={{ padding: '20px' }}>
           {categories?.map((category, index) => (
@@ -348,9 +391,10 @@ const BoardManage = () => {
                       <OrderButtonContainer>
                         <svg
                           onClick={() =>
-                            changeCategoryOrder(
-                              category.category_id,
-                              category.category_order,
+                            changeBoardOrder(
+                              board.board_id,
+                              board.category_id,
+                              board.board_order,
                               1,
                             )
                           }
@@ -364,9 +408,10 @@ const BoardManage = () => {
                         </svg>
                         <svg
                           onClick={() =>
-                            changeCategoryOrder(
-                              category.category_id,
-                              category.category_order,
+                            changeBoardOrder(
+                              board.board_id,
+                              board.category_id,
+                              board.board_order,
                               -1,
                             )
                           }
@@ -386,18 +431,9 @@ const BoardManage = () => {
             </>
           ))}
         </div>
-        <ContentBoxClickableContentWrapper
-          style={{
-            color: '#797b84',
-            display: 'flex',
-            justifyContent: 'center',
-          }}
-        >
-          변경사항 저장
-        </ContentBoxClickableContentWrapper>
 
         <ContentBoxCellContentWrapper style={{ marginTop: '40px' }}>
-          <ContentBoxCellContentTitle>
+          <ContentBoxCellContentTitle style={{ color: 'black' }}>
             새 대분류 등록
           </ContentBoxCellContentTitle>
         </ContentBoxCellContentWrapper>
@@ -427,7 +463,7 @@ const BoardManage = () => {
         </ContentBoxClickableContentWrapper>
 
         <ContentBoxCellContentWrapper style={{ marginTop: '40px' }}>
-          <ContentBoxCellContentTitle>
+          <ContentBoxCellContentTitle style={{ color: 'black' }}>
             새 게시판 등록
           </ContentBoxCellContentTitle>
         </ContentBoxCellContentWrapper>
@@ -438,6 +474,7 @@ const BoardManage = () => {
               type="text"
               label="게시판 이름"
               onChange={handleBoardNameChange}
+              value={newBoard.board_name}
               crossOrigin={undefined}
             />
           </ContentBoxCellContent>
