@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useCallback, useEffect } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import {
   Drawer,
   Button,
@@ -14,6 +14,7 @@ import {
 } from '@material-tailwind/react'
 import { styled } from 'styled-components'
 import Link from 'next/link'
+import { Board, Category } from '@/types/board'
 
 const NavButtonFixer = styled.div`
   display: flex;
@@ -36,8 +37,56 @@ const NavButtonFixer = styled.div`
   }
 `
 
+const NavCommonBoardConatiner = styled.div`
+  margin: 30px 0;
+`
+
+const NavCategoryContainer = styled.div`
+  display: flex;
+  align-items: center;
+
+  height: 50px;
+
+  padding-left: 10px;
+
+  font-weight: bold;
+
+  border-bottom: 2px double black;
+  border-top: 2px double black;
+
+  @media (max-width: 767px) {
+    font-size: 0.8rem;
+  }
+`
+
+const NavBoardContainer = styled.div`
+  display: flex;
+  align-items: center;
+
+  height: 40px;
+
+  padding-left: 10px;
+
+  svg {
+    margin: 0 5px;
+  }
+
+  @media (max-width: 767px) {
+    font-size: 0.8rem;
+  }
+`
+
+const NavBoardName = styled.p`
+  cursor: pointer;
+  &:hover {
+    text-decoration: underline;
+  }
+`
+
 export function NavBar() {
   const [open, setOpen] = React.useState(false)
+  const [categories, setCategories] = useState<Category[]>()
+  const [boards, setBoards] = useState<Board[]>()
   const openDrawer = () => setOpen(true)
   const closeDrawer = () => setOpen(false)
 
@@ -57,6 +106,31 @@ export function NavBar() {
     }
   }, [open])
 
+  const getCategoryData = async () => {
+    const res = await fetch(`/api/board/getCategory`)
+    const data = await res.json()
+    data.sort((a: Category, b: Category) => a.category_order - b.category_order)
+
+    setCategories(data)
+  }
+
+  const getBoardData = async () => {
+    const res = await fetch(`/api/board/getBoard`)
+    const data = await res.json()
+    data.sort((a: Board, b: Board) => {
+      if (a.category_id === b.category_id) {
+        return a.board_order - b.board_order
+      }
+      return a.category_id - b.category_id
+    })
+    setBoards(data)
+  }
+
+  useEffect(() => {
+    getCategoryData()
+    getBoardData()
+  }, [])
+
   return (
     <React.Fragment>
       <NavButtonFixer onClick={openDrawer}>
@@ -70,7 +144,7 @@ export function NavBar() {
         </svg>
       </NavButtonFixer>
       <Drawer
-        className="overflow-y-hidden fixed"
+        className="overflow-y-scroll fixed"
         placement="right"
         open={open}
         onClose={closeDrawer}
@@ -115,27 +189,6 @@ export function NavBar() {
               글 쓰기
             </ListItem>
           </Link>
-          <Link href={'/board/1'}>
-            <ListItem onClick={closeDrawer}>
-              <ListItemPrefix>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth="1.5"
-                  stroke="currentColor"
-                  className="w-6 h-6"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z"
-                  />
-                </svg>
-              </ListItemPrefix>
-              공지사항
-            </ListItem>
-          </Link>
 
           <Link href={'/consulting'}>
             <ListItem onClick={closeDrawer}>
@@ -175,6 +228,39 @@ export function NavBar() {
               질문 게시판
             </ListItem>
           </Link>
+          <NavCommonBoardConatiner>
+            {categories?.map((category, index) => (
+              <>
+                <NavCategoryContainer key={index}>
+                  {category.category_name}
+                </NavCategoryContainer>
+
+                {boards?.map((board, index) => (
+                  <>
+                    {board.category_id === category.category_id && (
+                      <NavBoardContainer key={index}>
+                        ┕
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="15"
+                          height="15"
+                          viewBox="0 0 24 24"
+                        >
+                          <path d="M7 22v-16h14v7.543c0 4.107-6 2.457-6 2.457s1.518 6-2.638 6h-5.362zm16-7.614v-10.386h-18v20h8.189c3.163 0 9.811-7.223 9.811-9.614zm-10 1.614h-4v-1h4v1zm6-4h-10v1h10v-1zm0-3h-10v1h10v-1zm1-7h-17v19h-2v-21h19v2z" />
+                        </svg>
+                        <Link
+                          onClick={closeDrawer}
+                          href={`/board/${board.board_id}`}
+                        >
+                          <NavBoardName>{board.board_name}</NavBoardName>
+                        </Link>
+                      </NavBoardContainer>
+                    )}
+                  </>
+                ))}
+              </>
+            ))}
+          </NavCommonBoardConatiner>
         </List>
       </Drawer>
     </React.Fragment>
