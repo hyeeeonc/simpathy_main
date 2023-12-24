@@ -14,6 +14,8 @@ import { ChangeEvent, useEffect, useState } from 'react'
 import { Board, Category } from '@/types/board'
 import { Grade } from '@/types/auth'
 import { Input } from '@material-tailwind/react'
+import CategoryUpdate from './CategoryUpdate'
+import BoardUpdate from './BoardUpdate'
 
 const CategoryItems = styled.div`
   display: flex;
@@ -29,6 +31,19 @@ const CategoryItems = styled.div`
 
   @media (max-width: 767px) {
     font-size: 0.8rem;
+  }
+`
+
+const CategoryTitle = styled.div`
+  display: flex;
+  align-items: center;
+
+  height: 40px;
+
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
   }
 `
 
@@ -49,6 +64,11 @@ const BoardTitle = styled.div`
   align-items: center;
 
   height: 40px;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
 
   svg {
     margin: 0 5px;
@@ -87,6 +107,16 @@ const BoardManage = () => {
     category_id: 1,
     board_order: 0,
   })
+
+  const [categoryModalOpen, setCategoryModalOpen] = useState<boolean>(false)
+  const [boardModalOpen, setBoardModalOpen] = useState<boolean>(false)
+  const [categoryModalElement, setCategoryModalElement] = useState<Category>()
+  const [boardModalElement, setBoardModalElement] = useState<Board>()
+
+  const onClose = () => {
+    setBoardModalOpen(false)
+    setCategoryModalOpen(false)
+  }
 
   const getCategoryData = async () => {
     const res = await fetch(`/api/board/getCategory`)
@@ -150,7 +180,7 @@ const BoardManage = () => {
 
     if (res.ok) {
       alert('카테고리 추가가 완료되었습니다.')
-      getCategoryData() // 데이터를 업데이트하는 함수 호출
+      getCategoryData()
       setNewCategoryName('')
     } else {
       alert('카테고리 추가에 실패했습니다.')
@@ -336,7 +366,14 @@ const BoardManage = () => {
           {categories?.map((category, index) => (
             <>
               <CategoryItems key={index}>
-                {category.category_name}
+                <CategoryTitle
+                  onClick={() => {
+                    setCategoryModalOpen(true)
+                    setCategoryModalElement(category)
+                  }}
+                >
+                  {category.category_name}
+                </CategoryTitle>
                 <OrderButtonContainer>
                   <svg
                     onClick={() =>
@@ -376,7 +413,13 @@ const BoardManage = () => {
                 <>
                   {board.category_id === category.category_id && (
                     <BoardItems>
-                      <BoardTitle key={index}>
+                      <BoardTitle
+                        key={index}
+                        onClick={() => {
+                          setBoardModalOpen(true)
+                          setBoardModalElement(board)
+                        }}
+                      >
                         ┕
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -431,6 +474,21 @@ const BoardManage = () => {
             </>
           ))}
         </div>
+        <CategoryUpdate
+          isOpen={categoryModalOpen}
+          category={categoryModalElement}
+          onClose={onClose}
+          categoryRefresh={getCategoryData}
+        />
+
+        <BoardUpdate
+          isOpen={boardModalOpen}
+          board={boardModalElement}
+          grades={grades}
+          categories={categories}
+          onClose={onClose}
+          boardRefresh={getBoardData}
+        />
 
         <ContentBoxCellContentWrapper style={{ marginTop: '40px' }}>
           <ContentBoxCellContentTitle style={{ color: 'black' }}>
