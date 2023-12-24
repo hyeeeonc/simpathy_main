@@ -46,11 +46,12 @@ const PostPage = async (props: any) => {
       .padStart(2, '0')}.${koreanTime.getDate().toString().padStart(2, '0')} ` +
     `${koreanTime.getHours().toString().padStart(2, '0')}.${koreanTime
       .getMinutes()
-      .toString()}`
+      .toString()
+      .padStart(2, '0')}`
 
   return (
     <>
-      <div className="w-full p-6 rounded-[5px] border-solid border border-gray-300">
+      <div className="w-full rounded-[5px] md:border-solid md:border md:border-gray-300 md:p-6">
         <Breadcrumb board_id={board_id} board_name={currentBoard?.board_name} />
 
         <div className="w-full mt-[20px] mb-[20px] border-solid border-b border-b-gray-300">
@@ -66,7 +67,7 @@ const PostPage = async (props: any) => {
           {/* <div className="text-sky-800 text-2xl font-bold mb-[100px]"></div> */}
         </div>
         <div
-          className="border-solid border-b border-b-gray-300"
+          className="border-solid border-b border-b-gray-300 py-[20px]"
           dangerouslySetInnerHTML={{ __html: currentPost.post_contents }}
         />
         <div className="text-sky-800 text-xl font-bold my-[20px]">댓글</div>
