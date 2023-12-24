@@ -3,27 +3,12 @@ import prisma from '@/libs/prisma'
 import getCurrentUser from '@/services/getCurrentUser'
 
 const BoardPage = async (props: any) => {
-  const board_id = Number(props.params.id)
-  const currentUser = await getCurrentUser()
-  const currentBoard = await prisma.board.findUnique({
-    where: { board_id },
-  })
-
-  if (!currentBoard) {
-    return <div>존재하지 않는 게시판입니다.</div>
-  }
-
-  if (
-    !currentUser ||
-    currentUser.grade_id === undefined ||
-    currentUser.grade_id > currentBoard.board_read_auth
-  ) {
-    return <div>권한이 없습니다.</div>
-  }
+  const user_id = decodeURIComponent(props.params.userid)
+  console.log(user_id)
 
   const posts = await prisma.post.findMany({
     where: {
-      board_id,
+      user_id,
     },
     orderBy: {
       post_upload_time: 'desc', // 'asc'로 설정하면 오래된 순으로 정렬
@@ -54,16 +39,15 @@ const BoardPage = async (props: any) => {
 
   return (
     <>
-      <div className="w-full mt-20">
+      {/* <div className="mb-[30px]">
+        <Breadcrumb />
+      </div>
+      <TransactionsTable /> */}
+      <div className="w-full  mt-20">
         <div className="text-sky-800 text-3xl font-bold mb-[100px]">
-          {currentBoard.board_name}
+          {user_id}님의 게시글
         </div>
-        {posts.length === 0 && (
-          <div className="w-full flex justify-center text-xl font-bold mb-[100px]">
-            등록된 게시글이 없습니다.
-          </div>
-        )}
-        {posts.length !== 0 && <BoardTable posts={formattedPosts} />}
+        <BoardTable posts={formattedPosts} />
       </div>
     </>
   )

@@ -16,11 +16,13 @@ const MyPagePosting = ({
   boards,
   replies,
   questions,
+  user_id,
 }: {
   grade: string
   boards: number
   replies: number
   questions: number
+  user_id: string
 }) => {
   return (
     <ContentBoxCellContainer>
@@ -30,12 +32,15 @@ const MyPagePosting = ({
           <ContentBoxCellContentTitle>회원 등급</ContentBoxCellContentTitle>
           <ContentBoxCellContent>{grade}</ContentBoxCellContent>
         </ContentBoxCellContentWrapper>
-        <ContentBoxClickableContentWrapper>
-          <ContentBoxCellContentTitle>
-            내가 작성한 글
-          </ContentBoxCellContentTitle>
-          <ContentBoxCellContent>{boards}개</ContentBoxCellContent>
-        </ContentBoxClickableContentWrapper>
+        <Link href={`/board/userpost/${user_id}`}>
+          <ContentBoxClickableContentWrapper>
+            <ContentBoxCellContentTitle>
+              내가 작성한 글
+            </ContentBoxCellContentTitle>
+            <ContentBoxCellContent>{boards}개</ContentBoxCellContent>
+          </ContentBoxClickableContentWrapper>
+        </Link>
+
         <ContentBoxClickableContentWrapper>
           <ContentBoxCellContentTitle>
             내가 작성한 질문

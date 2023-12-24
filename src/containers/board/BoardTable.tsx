@@ -1,9 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
 import { Button, CardFooter, IconButton, Input } from '@material-tailwind/react'
+import Link from 'next/link'
 
 const BoardTableContainer = styled.table`
   width: 100%;
@@ -45,10 +46,11 @@ const BoardTableWriter = styled.td`
   white-space: nowrap;
   text-overflow: ellipsis;
 
-  cursor: pointer;
-
-  &:hover {
-    font-weight: bold;
+  a {
+    cursor: pointer;
+    &:hover {
+      font-weight: bold;
+    }
   }
 `
 
@@ -58,14 +60,16 @@ const BoardTableCellTitle = styled.td`
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  cursor: pointer;
 
-  &:hover {
-    font-weight: bold;
+  a {
+    cursor: pointer;
+    &:hover {
+      font-weight: bold;
+    }
   }
 `
 
-const BoardTable = () => {
+const BoardTable = ({ posts }: { posts: any[] }) => {
   return (
     <>
       <BoardSearchContainer>
@@ -85,14 +89,20 @@ const BoardTable = () => {
           </tr>
         </BoardTableHeader>
         <tbody>
-          <tr>
-            <BoardTableCell>11</BoardTableCell>
-            <BoardTableCellTitle>
-              [공지] 반드시 따라주시기 바랍니다.
-            </BoardTableCellTitle>
-            <BoardTableWriter>심찬우</BoardTableWriter>
-            <BoardTableCell>2023.11.12</BoardTableCell>
-          </tr>
+          {posts.map((post: any, index: number) => (
+            <tr key={index}>
+              <BoardTableCell>{post?.post_id}</BoardTableCell>
+
+              <BoardTableCellTitle>
+                <Link href={`/board/${post?.board_id}/${post?.post_id}`}>
+                  {post?.post_title}
+                </Link>
+              </BoardTableCellTitle>
+
+              <BoardTableWriter>{post?.user_id}</BoardTableWriter>
+              <BoardTableCell>{post?.formattedDate}</BoardTableCell>
+            </tr>
+          ))}
         </tbody>
       </BoardTableContainer>
       <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">

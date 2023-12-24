@@ -42,6 +42,7 @@ async function Mypage() {
             grade={currentUserGrade?.grade_name || ''}
             replies={currnetUserReplies}
             boards={currentUserBoards}
+            user_id={currentUser?.user_id}
             questions={0}
           />
           {currentUser.grade_id > 1 && (

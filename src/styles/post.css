@@ -1,0 +1,16 @@
+iframe {
+  width: 100%;
+  height: calc(1068px / 16 * 9);
+}
+
+@media (max-width: 1159px) {
+  iframe {
+    height: calc((100vw - 93px) * 9 / 16);
+  }
+}
+
+@media (max-width: 767px) {
+  iframe {
+    height: calc((100vw - 73px) * 9 / 16);
+  }
+}

@@ -42,19 +42,19 @@ const NavCommonBoardConatiner = styled.div`
 `
 
 const NavCategoryContainer = styled.div`
-  display: flex;
-  align-items: center;
-
-  height: 50px;
+  height: 60px;
+  line-height: 60px;
 
   padding-left: 10px;
 
   font-weight: bold;
 
-  border-bottom: 2px double black;
-  border-top: 2px double black;
+  border-bottom: 1px solid lightgray;
+  border-top: 1px solid lightgray;
 
   @media (max-width: 767px) {
+    height: 50px;
+    line-height: 50px;
     font-size: 0.8rem;
   }
 `
@@ -63,7 +63,7 @@ const NavBoardContainer = styled.div`
   display: flex;
   align-items: center;
 
-  height: 40px;
+  height: 50px;
 
   padding-left: 10px;
 
@@ -72,6 +72,7 @@ const NavBoardContainer = styled.div`
   }
 
   @media (max-width: 767px) {
+    height: 45px;
     font-size: 0.8rem;
   }
 `
@@ -229,16 +230,16 @@ export function NavBar() {
             </ListItem>
           </Link>
           <NavCommonBoardConatiner>
-            {categories?.map((category, index) => (
+            {categories?.map((category, categoryIndex) => (
               <>
-                <NavCategoryContainer key={index}>
+                <NavCategoryContainer key={categoryIndex}>
                   {category.category_name}
                 </NavCategoryContainer>
 
-                {boards?.map((board, index) => (
-                  <>
+                {boards?.map((board, boardIndex) => (
+                  <div key={`${categoryIndex}-${boardIndex}`}>
                     {board.category_id === category.category_id && (
-                      <NavBoardContainer key={index}>
+                      <NavBoardContainer>
                         ┕
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -256,7 +257,7 @@ export function NavBar() {
                         </Link>
                       </NavBoardContainer>
                     )}
-                  </>
+                  </div>
                 ))}
               </>
             ))}

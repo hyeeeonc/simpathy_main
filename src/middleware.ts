@@ -6,5 +6,7 @@ export const config = {
     '/admin/:path*',
     '/editor/:path*',
     '/consulting/:path*',
+    '/board/:path*',
+    '/qna/:path*',
   ],
 }
