@@ -158,7 +158,6 @@ const ConsultingMain = ({
         console.error('Failed to submit consulting')
       }
     } catch (error) {
-      console.log('???????????')
       console.error('Error submitting consulting:', error)
     }
   }
@@ -214,7 +213,11 @@ const ConsultingMain = ({
           <ContentBoxCellContentWrapper>
             <ContentBoxCellContentTitle>희망 상담일</ContentBoxCellContentTitle>
             <ContentBoxCellContent>
-              <Input onChange={handleDateChange} crossOrigin={undefined} />
+              <Input
+                label="xx월 xx일"
+                onChange={handleDateChange}
+                crossOrigin={undefined}
+              />
             </ContentBoxCellContent>
           </ContentBoxCellContentWrapper>
           <ContentBoxCellContentTitle

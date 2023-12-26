@@ -86,7 +86,7 @@ const AdminConsultingCheck = ({
   const handleDelete = (id: number) => {}
 
   const handleDateTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newDateTime = new Date(e.target.value)
+    const newDateTime = new Date(e.target.value + 'Z')
     setSelectedDateTime(newDateTime)
   }
 
@@ -105,8 +105,25 @@ const AdminConsultingCheck = ({
     })
 
     if (response.ok) {
-      const data = await response.json()
       alert('상담이 등록되었습니다.')
+    } else {
+      console.error('Failed to update consulting record')
+    }
+  }
+
+  const FinishConsulting = async (id: number) => {
+    const response = await fetch(`/api/consulting/finishConsulting`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        consulting_id: id,
+      }),
+    })
+
+    if (response.ok) {
+      alert('상담 완료 처리가 되었습니다.')
     } else {
       console.error('Failed to update consulting record')
     }
@@ -114,116 +131,6 @@ const AdminConsultingCheck = ({
 
   return (
     <ContentBoxCellContainer>
-      <ContentBoxCellTitle>예정된 상담</ContentBoxCellTitle>
-      <ContentBoxCellContentContainer style={{ marginBottom: '40px' }}>
-        {checked.map((consult: any, idx: number) => (
-          <Accordion
-            open={checkedOpen === idx + 1}
-            icon={<Icon id={idx + 1} open={checkedOpen} />}
-          >
-            <AccordionHeader
-              style={{ fontSize: '1rem' }}
-              onClick={() => handleCheckedOpen(idx + 1)}
-            >
-              {consult.consulting_time ? consult.consulting_time : '미정'} -{' '}
-              {consult.user_id}
-            </AccordionHeader>
-            <AccordionBody>
-              <ContentBoxCellTitle>기본 정보</ContentBoxCellTitle>
-              <ContentBoxCellContentContainer style={{ marginBottom: '40px' }}>
-                <ContentBoxCellContentWrapper>
-                  <ContentBoxCellContentTitle>이름</ContentBoxCellContentTitle>
-                  <ContentBoxCellContent>
-                    {consult.user_id}
-                  </ContentBoxCellContent>
-                </ContentBoxCellContentWrapper>
-
-                <ContentBoxCellContentWrapper>
-                  <ContentBoxCellContentTitle>지점</ContentBoxCellContentTitle>
-                  <ContentBoxCellContent>
-                    {branch[consult.branch_id].branch_name}
-                  </ContentBoxCellContent>
-                </ContentBoxCellContentWrapper>
-
-                <ContentBoxCellContentWrapper>
-                  <ContentBoxCellContentTitle>
-                    연락처
-                  </ContentBoxCellContentTitle>
-                  <ContentBoxCellContent>
-                    {consult.consulting_phone}
-                  </ContentBoxCellContent>
-                </ContentBoxCellContentWrapper>
-
-                <ContentBoxCellContentWrapper>
-                  <ContentBoxCellContentTitle>
-                    희망 상담자
-                  </ContentBoxCellContentTitle>
-                  <ContentBoxCellContent>
-                    {consult.consulting_consultant}
-                  </ContentBoxCellContent>
-                </ContentBoxCellContentWrapper>
-
-                <ContentBoxCellContentWrapper>
-                  <ContentBoxCellContentTitle>
-                    희망 상담일
-                  </ContentBoxCellContentTitle>
-                  <ContentBoxCellContent>
-                    {consult.consulting_wishdate}
-                  </ContentBoxCellContent>
-                </ContentBoxCellContentWrapper>
-
-                <ContentBoxCellContentWrapper>
-                  <ContentBoxCellContentTitle>
-                    상담 주제
-                  </ContentBoxCellContentTitle>
-                  <ContentBoxCellContent>
-                    {consult.consulting_tag}
-                  </ContentBoxCellContent>
-                </ContentBoxCellContentWrapper>
-
-                <ContentBoxCellContentWrapper>
-                  <ContentBoxCellContentTitle>
-                    상담 시간
-                  </ContentBoxCellContentTitle>
-                  <ContentBoxCellContent>
-                    {consult.consulting_time ? consult.consulting_time : '미정'}
-                  </ContentBoxCellContent>
-                </ContentBoxCellContentWrapper>
-              </ContentBoxCellContentContainer>
-
-              <ContentBoxCellTitle>상세 내용</ContentBoxCellTitle>
-              <ContentBoxCellContentContainer style={{ marginBottom: '40px' }}>
-                <ContentBoxCellContentWrapper>
-                  <ContentBoxCellContentTitle>
-                    현재 국어 공부를 어떻게 하고 있나요?
-                  </ContentBoxCellContentTitle>
-                </ContentBoxCellContentWrapper>
-                <ConsultingCheckDetailContainer>
-                  {consult.consulting_content}
-                </ConsultingCheckDetailContainer>
-
-                <ContentBoxCellContentWrapper>
-                  <ContentBoxCellContentTitle>
-                    구체적인 고민은 무엇인가요?
-                  </ContentBoxCellContentTitle>
-                </ContentBoxCellContentWrapper>
-                <ConsultingCheckDetailContainer>
-                  {consult.consulting_detail}
-                </ConsultingCheckDetailContainer>
-              </ContentBoxCellContentContainer>
-            </AccordionBody>
-          </Accordion>
-        ))}
-        {checked.length === 0 && (
-          <ContentBoxCellContentWrapper>
-            <ContentBoxCellContentTitle>
-              예정된 상담이 없습니다.
-            </ContentBoxCellContentTitle>
-            <ContentBoxCellContent></ContentBoxCellContent>
-          </ContentBoxCellContentWrapper>
-        )}
-      </ContentBoxCellContentContainer>
-
       <ContentBoxCellTitle>확인 대기 상담</ContentBoxCellTitle>
       <ContentBoxCellContentContainer style={{ marginBottom: '40px' }}>
         {notChecked.map((consult: any, idx: number) => (
@@ -357,6 +264,129 @@ const AdminConsultingCheck = ({
           <ContentBoxCellContentWrapper>
             <ContentBoxCellContentTitle>
               대기 중인 상담이 없습니다.
+            </ContentBoxCellContentTitle>
+            <ContentBoxCellContent></ContentBoxCellContent>
+          </ContentBoxCellContentWrapper>
+        )}
+      </ContentBoxCellContentContainer>
+
+      <ContentBoxCellTitle>예정된 상담</ContentBoxCellTitle>
+      <ContentBoxCellContentContainer style={{ marginBottom: '40px' }}>
+        {checked.map((consult: any, idx: number) => (
+          <Accordion
+            open={checkedOpen === idx + 1}
+            icon={<Icon id={idx + 1} open={checkedOpen} />}
+          >
+            <AccordionHeader
+              style={{ fontSize: '1rem' }}
+              onClick={() => handleCheckedOpen(idx + 1)}
+            >
+              {consult.consulting_time ? consult.consulting_time : '미정'} -{' '}
+              {consult.user_id}
+            </AccordionHeader>
+            <AccordionBody>
+              <ContentBoxCellTitle>기본 정보</ContentBoxCellTitle>
+              <ContentBoxCellContentContainer style={{ marginBottom: '40px' }}>
+                <ContentBoxCellContentWrapper>
+                  <ContentBoxCellContentTitle>이름</ContentBoxCellContentTitle>
+                  <ContentBoxCellContent>
+                    {consult.user_id}
+                  </ContentBoxCellContent>
+                </ContentBoxCellContentWrapper>
+
+                <ContentBoxCellContentWrapper>
+                  <ContentBoxCellContentTitle>지점</ContentBoxCellContentTitle>
+                  <ContentBoxCellContent>
+                    {branch[consult.branch_id].branch_name}
+                  </ContentBoxCellContent>
+                </ContentBoxCellContentWrapper>
+
+                <ContentBoxCellContentWrapper>
+                  <ContentBoxCellContentTitle>
+                    연락처
+                  </ContentBoxCellContentTitle>
+                  <ContentBoxCellContent>
+                    {consult.consulting_phone}
+                  </ContentBoxCellContent>
+                </ContentBoxCellContentWrapper>
+
+                <ContentBoxCellContentWrapper>
+                  <ContentBoxCellContentTitle>
+                    희망 상담자
+                  </ContentBoxCellContentTitle>
+                  <ContentBoxCellContent>
+                    {consult.consulting_consultant}
+                  </ContentBoxCellContent>
+                </ContentBoxCellContentWrapper>
+
+                <ContentBoxCellContentWrapper>
+                  <ContentBoxCellContentTitle>
+                    희망 상담일
+                  </ContentBoxCellContentTitle>
+                  <ContentBoxCellContent>
+                    {consult.consulting_wishdate}
+                  </ContentBoxCellContent>
+                </ContentBoxCellContentWrapper>
+
+                <ContentBoxCellContentWrapper>
+                  <ContentBoxCellContentTitle>
+                    상담 주제
+                  </ContentBoxCellContentTitle>
+                  <ContentBoxCellContent>
+                    {consult.consulting_tag}
+                  </ContentBoxCellContent>
+                </ContentBoxCellContentWrapper>
+
+                <ContentBoxCellContentWrapper>
+                  <ContentBoxCellContentTitle>
+                    상담 시간
+                  </ContentBoxCellContentTitle>
+                  <ContentBoxCellContent>
+                    {consult.consulting_time ? consult.consulting_time : '미정'}
+                  </ContentBoxCellContent>
+                </ContentBoxCellContentWrapper>
+              </ContentBoxCellContentContainer>
+
+              <ContentBoxCellTitle>상세 내용</ContentBoxCellTitle>
+              <ContentBoxCellContentContainer style={{ marginBottom: '40px' }}>
+                <ContentBoxCellContentWrapper>
+                  <ContentBoxCellContentTitle>
+                    현재 국어 공부를 어떻게 하고 있나요?
+                  </ContentBoxCellContentTitle>
+                </ContentBoxCellContentWrapper>
+                <ConsultingCheckDetailContainer>
+                  {consult.consulting_content}
+                </ConsultingCheckDetailContainer>
+
+                <ContentBoxCellContentWrapper>
+                  <ContentBoxCellContentTitle>
+                    구체적인 고민은 무엇인가요?
+                  </ContentBoxCellContentTitle>
+                </ContentBoxCellContentWrapper>
+                <ConsultingCheckDetailContainer>
+                  {consult.consulting_detail}
+                </ConsultingCheckDetailContainer>
+              </ContentBoxCellContentContainer>
+
+              <ContentBoxClickableContentWrapper
+                onClick={() => FinishConsulting(consult.consulting_id)}
+                style={{
+                  color: '#797b84',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  border: '1px solid #e5e7eb',
+                  borderRadius: '10px',
+                }}
+              >
+                완료 처리
+              </ContentBoxClickableContentWrapper>
+            </AccordionBody>
+          </Accordion>
+        ))}
+        {checked.length === 0 && (
+          <ContentBoxCellContentWrapper>
+            <ContentBoxCellContentTitle>
+              예정된 상담이 없습니다.
             </ContentBoxCellContentTitle>
             <ContentBoxCellContent></ContentBoxCellContent>
           </ContentBoxCellContentWrapper>
