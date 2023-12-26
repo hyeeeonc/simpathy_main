@@ -61,6 +61,14 @@ const MyPagePosting = ({
             <ContentBoxCellContent></ContentBoxCellContent>
           </ContentBoxClickableContentWrapper>
         </Link>
+        <Link href="/mypage/update-password">
+          <ContentBoxClickableContentWrapper>
+            <ContentBoxCellContentTitle>
+              비밀번호 변경하기
+            </ContentBoxCellContentTitle>
+            <ContentBoxCellContent></ContentBoxCellContent>
+          </ContentBoxClickableContentWrapper>
+        </Link>
       </ContentBoxCellContentContainer>
     </ContentBoxCellContainer>
   )

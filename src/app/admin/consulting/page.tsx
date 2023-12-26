@@ -4,7 +4,6 @@ import prisma from '@/libs/prisma'
 import getCurrentUser from '@/services/getCurrentUser'
 import AdminConsultingCheck from '@/containers/admin/consulting/AdminConsultingCheck'
 import getBranch from '@/services/getBranch'
-import { format } from 'date-fns'
 
 async function AdminConsultingPage() {
   const currentUser = await getCurrentUser()
