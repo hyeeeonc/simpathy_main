@@ -69,6 +69,21 @@ const EditorHeaderSelectorContainer = styled.div`
   }
 `
 
+const EditorQnaNoticeContainer = styled.div`
+  width: 100%;
+
+  padding: 15px;
+  margin: 10px 0;
+
+  line-height: 24px;
+
+  font-size: 14px;
+  background: #f9f9fa;
+  color: #323232;
+
+  border: 1px solid #ebecef;
+`
+
 interface EditorComponentProps {
   user_id?: string
   grade_id?: number
@@ -250,6 +265,30 @@ const EditorComponent = ({
             질문 게시판
           </Button>
         </div>
+        {boardType === 1 && (
+          <EditorQnaNoticeContainer>
+            질문 게시판 운영에 관한 공지
+            <br />
+            ① 질문 게시판은 강의, 교재, 평가원 기출에 한해서만 질문 받습니다.
+            <br />
+            → 그 외에는 질문을 하셔도 답변하지 않습니다.
+            <br />
+            → 강의와 교재를 정확하게 적시해주셔야 정확한 답변을 받으실 수
+            있습니다.
+            <br />② 예의를 지키지 않는 질문은 답변하지 않습니다.
+            <br />③ 질문의 내용은 '정확'해야 합니다.
+            <br />→ 추상적인 질문, 떼쓰는 식의 질문은 답변하기가 참 어렵습니다.
+            <br />→ 충분히 여러번 읽어 본 이후 질문을 해주시기 바랍니다.
+            <br />④ 재질문은 '답글쓰기' 혹은 '새 게시글'로 다시 올려주세요.
+            <br />→ 기존 게시글에 그냥 댓글을 다시면 알람이 저희에게 뜨지
+            않습니다.
+            <br />
+            그러므로 만약 댓글로 재질문 하실 경우, 저희가 답변드린 댓글에
+            '답글쓰기'로 남겨주세요.
+            <br />* 댓글로 재질문을 하신 경우 간혹 누락되는 경우가 있습니다.
+            오랫동안 답글이 달리지 않는 경우, 새 게시글로 질문 부탁드립니다.
+          </EditorQnaNoticeContainer>
+        )}
         {boardType === 1 && (
           <div className="flex h-[45px] w-max gap-4 mb-[10px]">
             <Button
