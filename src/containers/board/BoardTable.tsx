@@ -155,7 +155,12 @@ const BoardTable = ({ posts }: { posts: any[] }) => {
                     </Link>
                   </BoardTableCellTitle>
 
-                  <BoardTableWriter>{post?.user_id}</BoardTableWriter>
+                  <BoardTableWriter>
+                    <Link href={`/board/userpost/${post?.user_id}`}>
+                      {post?.user_id}
+                    </Link>
+                  </BoardTableWriter>
+
                   <BoardTableCell>{post?.formattedDate}</BoardTableCell>
                 </tr>
               ))}

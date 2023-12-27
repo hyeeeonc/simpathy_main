@@ -12,7 +12,7 @@ export default function Home() {
         <img src="/images/landing/books.jpeg" className="w-1/2" />
       </div>
 
-      <LandingPosts />
+      {/* <LandingPosts /> */}
       <img src="/images/landing/timetable.png" className="w-full" />
       {/* <LandingBranches /> */}
     </>
