@@ -7,7 +7,7 @@ import AdminBranchAdd from '@/containers/admin/branch/AdminBranchAdd'
 async function AdminBranchPage() {
   const currentUser = await getCurrentUser()
 
-  if (currentUser && currentUser.grade_id === 1) {
+  if (currentUser && currentUser.grade_id <= 2) {
     return (
       <>
         <div className="w-full  mt-20">

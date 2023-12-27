@@ -8,7 +8,7 @@ import getBranch from '@/services/getBranch'
 async function AdminConsultingPage() {
   const currentUser = await getCurrentUser()
 
-  if (currentUser && currentUser.grade_id === 1) {
+  if (currentUser && currentUser.grade_id <= 2) {
     const notChecked: any[] = []
     const checked: any[] = []
     const finished: any[] = []

@@ -26,12 +26,12 @@ const BoardItems = styled.div`
   margin: 5px 0;
 `
 
-const UserManage = () => {
+const AdminUser = () => {
   const [grades, setGrades] = useState<Grade[]>()
   const [branches, setBranches] = useState<Branch[]>()
   const [user, setUser] = useState<User>({
     user_id: '',
-    user_pw: '1111',
+    user_pw: '',
     user_name: '',
     user_phone: '',
     user_parent_phone: '',
@@ -118,19 +118,8 @@ const UserManage = () => {
     getBranchData()
   }, [])
 
-  useEffect(() => {
-    console.log(user)
-  }, [user])
-
   return (
     <>
-      <ContentBoxCellContainer>
-        <ContentBoxCellTitle style={{ width: '100%' }}>
-          유저 관리
-        </ContentBoxCellTitle>
-      </ContentBoxCellContainer>
-      <UserList grades={grades} branches={branches} />
-
       <ContentBoxCellContainer>
         <ContentBoxCellTitle style={{ width: '100%' }}>
           신규 유저 등록
@@ -157,6 +146,18 @@ const UserManage = () => {
                 onChange={handleChange}
                 type="text"
                 placeholder="이름"
+              />
+            </ContentBoxCellContent>
+          </ContentBoxCellContentWrapper>
+          <ContentBoxCellContentWrapper>
+            <ContentBoxCellContentTitle>비밀번호</ContentBoxCellContentTitle>
+            <ContentBoxCellContent style={{ fontWeight: 'normal' }}>
+              <input
+                name="user_pw"
+                value={user.user_pw}
+                onChange={handleChange}
+                type="text"
+                placeholder="연락처 뒷 네자리"
               />
             </ContentBoxCellContent>
           </ContentBoxCellContentWrapper>
@@ -230,8 +231,15 @@ const UserManage = () => {
           </ContentBoxClickableContentWrapper>
         </ContentBoxCellContentContainer>
       </ContentBoxCellContainer>
+
+      <ContentBoxCellContainer>
+        <ContentBoxCellTitle style={{ width: '100%' }}>
+          유저 관리
+        </ContentBoxCellTitle>
+        <UserList grades={grades} branches={branches} />
+      </ContentBoxCellContainer>
     </>
   )
 }
 
-export default UserManage
+export default AdminUser

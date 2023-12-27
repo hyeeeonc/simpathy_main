@@ -13,7 +13,7 @@ import Link from 'next/link'
 import { Input } from '@material-tailwind/react'
 import { ChangeEvent, useState } from 'react'
 
-const MyPageUpdatePw = ({ user_id }: { user_id: string }) => {
+const MyPageUpdatePw = () => {
   const [beforePw, setBeforePw] = useState<string>('')
   const [newPw, setNewPw] = useState<string>('')
   const [checkPw, setCheckPw] = useState<string>('')
@@ -31,18 +31,22 @@ const MyPageUpdatePw = ({ user_id }: { user_id: string }) => {
   }
 
   const submitHandler = () => {
+    if (!beforePw || !newPw || !checkPw) {
+      alert('모든 항목을 입력해주세요.')
+      return
+    }
+
     if (newPw !== checkPw) {
       alert('새 비밀번호와 비밀번호 확인이 일치하지 않습니다.')
       return
     }
 
     const data = {
-      user_id: user_id,
       before_pw: beforePw,
       new_pw: newPw,
     }
 
-    fetch('/api/mypage/update-pw', {
+    fetch('/api/user/updatePassword', {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -54,12 +58,14 @@ const MyPageUpdatePw = ({ user_id }: { user_id: string }) => {
         if (res.status === 200) {
           alert('비밀번호가 변경되었습니다.')
           window.location.href = '/mypage'
+        } else if (res.status === 401) {
+          alert('기존 비밀번호를 확인해 주세요.')
         } else {
-          alert('비밀번호 변경에 실패하였습니다.')
+          alert('오류가 발생했습니다.')
         }
       })
       .catch(err => {
-        console.log(err)
+        alert('오류가 발생했습니다.')
       })
   }
 
@@ -108,6 +114,20 @@ const MyPageUpdatePw = ({ user_id }: { user_id: string }) => {
           요청하시기 바랍니다.
         </ContentBoxCellContentTitle>
       </ContentBoxCellContentContainer>
+      <ContentBoxCellContainer>
+        <ContentBoxClickableContentWrapper
+          style={{
+            color: '#797b84',
+            display: 'flex',
+            justifyContent: 'center',
+            border: '1px solid #e5e7eb',
+            borderRadius: '10px',
+          }}
+          onClick={submitHandler}
+        >
+          비밀번호 변경하기
+        </ContentBoxClickableContentWrapper>
+      </ContentBoxCellContainer>
     </>
   )
 }

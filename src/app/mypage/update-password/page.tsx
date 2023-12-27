@@ -2,8 +2,11 @@ import React from 'react'
 import prisma from '@/libs/prisma'
 import getCurrentUser from '@/services/getCurrentUser'
 import MyPageUpdatePw from '@/containers/mypage/MyPageUpdatePw'
+import { getServerSession } from 'next-auth'
 
 async function ConsultingPage() {
+  const ses = await getServerSession()
+  console.log(ses)
   const currentUser = await getCurrentUser()
 
   return (

@@ -352,10 +352,6 @@ const BoardManage = () => {
 
   return (
     <ContentBoxCellContainer>
-      <ContentBoxCellTitle style={{ width: '100%' }}>
-        게시판 관리
-      </ContentBoxCellTitle>
-
       <ContentBoxCellContentContainer>
         <ContentBoxCellContentWrapper>
           <ContentBoxCellContentTitle style={{ color: 'black' }}>

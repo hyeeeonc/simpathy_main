@@ -45,7 +45,7 @@ async function Mypage() {
             user_id={currentUser?.user_id}
             questions={0}
           />
-          {currentUser.grade_id > 1 && (
+          {currentUser.grade_id > 2 && (
             <MyPageProgress
               totalPage={currentUserBranch.branch_textbook_total || 0}
               nowPage={currentUserBranch.branch_textbook_now || 0}
@@ -56,7 +56,7 @@ async function Mypage() {
               textbook={currentUserBranch.branch_textbook || ''}
             />
           )}
-          {currentUser.grade_id === 1 && <MyPageAdmin />}
+          {currentUser.grade_id <= 2 && <MyPageAdmin />}
         </>
       )
     } else
