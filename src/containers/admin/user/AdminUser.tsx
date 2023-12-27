@@ -133,7 +133,7 @@ const AdminUser = () => {
                 value={user.user_id}
                 onChange={handleChange}
                 type="text"
-                placeholder="년도 지점 이름"
+                placeholder="지점 이름"
               />
             </ContentBoxCellContent>
           </ContentBoxCellContentWrapper>
@@ -236,7 +236,7 @@ const AdminUser = () => {
         <ContentBoxCellTitle style={{ width: '100%' }}>
           유저 관리
         </ContentBoxCellTitle>
-        <UserList grades={grades} branches={branches} />
+        <UserList />
       </ContentBoxCellContainer>
     </>
   )

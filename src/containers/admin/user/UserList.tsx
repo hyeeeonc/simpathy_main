@@ -16,6 +16,7 @@ import {
 } from '@material-tailwind/react'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
+import UserUpdate from './UserUpdate'
 
 const UserListContainer = styled.div`
   width: 100%;
@@ -71,6 +72,7 @@ const UserList = () => {
   // 유저 리스트
   const [users, setUsers] = useState<UserNoPw[]>()
   const [showUsers, setShowUsers] = useState<UserNoPw[]>()
+  const [updateUser, setUpdateUser] = useState<UserNoPw>()
 
   const getUserData = async () => {
     const res = await fetch(`/api/user/getUserAll`)
@@ -101,6 +103,13 @@ const UserList = () => {
   useEffect(() => {
     filterUsers()
   }, [name, phone, branch, grade])
+
+  // modal
+  const [isOpen, setIsOpen] = useState<boolean>(false)
+  const onClose = () => {
+    setIsOpen(false)
+    getUserData()
+  }
 
   return (
     <UserListContainer>
@@ -201,7 +210,7 @@ const UserList = () => {
           </thead>
           <tbody>
             {showUsers?.map((user, index) => {
-              const isLast = index === users.length - 1
+              const isLast = index === showUsers.length - 1
               const classes = isLast
                 ? 'p-4'
                 : 'p-4 border-b border-blue-gray-50'
@@ -261,11 +270,14 @@ const UserList = () => {
                   </td>
                   <td className={classes}>
                     <Typography
-                      as="a"
-                      href="#"
+                      style={{ cursor: 'pointer' }}
                       variant="small"
                       color="blue-gray"
                       className="font-medium"
+                      onClick={() => {
+                        setIsOpen(true)
+                        setUpdateUser(user)
+                      }}
                     >
                       Edit
                     </Typography>
@@ -276,6 +288,14 @@ const UserList = () => {
           </tbody>
         </table>
       </Card>
+
+      <UserUpdate
+        isOpen={isOpen}
+        onClose={onClose}
+        user={updateUser}
+        grades={grades}
+        branches={branches}
+      />
     </UserListContainer>
   )
 }
