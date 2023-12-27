@@ -101,10 +101,6 @@ const MyPageUser = ({
     setToday(kstDateTimeString)
   }, [])
 
-  useEffect(() => {
-    console.log(today)
-  }, [today])
-
   return (
     <MyPageUserContainer>
       <MyPageUserDataContainer>

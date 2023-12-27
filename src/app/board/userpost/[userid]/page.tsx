@@ -4,7 +4,6 @@ import getCurrentUser from '@/services/getCurrentUser'
 
 const BoardPage = async (props: any) => {
   const user_id = decodeURIComponent(props.params.userid)
-  console.log(user_id)
 
   const posts = await prisma.post.findMany({
     where: {

@@ -25,11 +25,6 @@ export async function PUT(request: Request) {
 
     const target = targetBoard.board_id
 
-    console.log('Category ID:', beforeBoard.category_id)
-    console.log('Target Board Order:', beforeBoard.board_order + change)
-
-    console.log(board_id, target, change)
-
     // 트랜잭션 시작
     await prisma.$transaction([
       prisma.board.update({

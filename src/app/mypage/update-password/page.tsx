@@ -5,10 +5,6 @@ import MyPageUpdatePw from '@/containers/mypage/MyPageUpdatePw'
 import { getServerSession } from 'next-auth'
 
 async function ConsultingPage() {
-  const ses = await getServerSession()
-  console.log(ses)
-  const currentUser = await getCurrentUser()
-
   return (
     <>
       <div className="w-full  mt-20">

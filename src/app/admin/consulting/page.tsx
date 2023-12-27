@@ -18,28 +18,28 @@ async function AdminConsultingPage() {
       .findMany()
       .then(consulting => {
         consulting.map(consult => {
-          // Prisma에서 받아온 날짜 데이터를 JavaScript Date 객체로 변환
-          const uploadTime = new Date(consult.consulting_time)
+          // if (consult.consulting_time !== null) {
+          //   // Prisma에서 받아온 날짜 데이터를 JavaScript Date 객체로 변환
+          //   const uploadTime = new Date(consult.consulting_time)
 
-          // UTC+0 기준의 날짜 및 시간을 문자열로 변환
-          const formattedDate =
-            `${uploadTime.getUTCFullYear()}.${(uploadTime.getUTCMonth() + 1)
-              .toString()
-              .padStart(2, '0')}.${uploadTime
-              .getUTCDate()
-              .toString()
-              .padStart(2, '0')} ` +
-            `${uploadTime
-              .getUTCHours()
-              .toString()
-              .padStart(2, '0')}.${uploadTime
-              .getUTCMinutes()
-              .toString()
-              .padStart(2, '0')}`
+          //   // UTC+0 기준의 날짜 및 시간을 문자열로 변환
+          //   const formattedDate =
+          //     `${uploadTime.getUTCFullYear()}.${(uploadTime.getUTCMonth() + 1)
+          //       .toString()
+          //       .padStart(2, '0')}.${uploadTime
+          //       .getUTCDate()
+          //       .toString()
+          //       .padStart(2, '0')} ` +
+          //     `${uploadTime
+          //       .getUTCHours()
+          //       .toString()
+          //       .padStart(2, '0')}.${uploadTime
+          //       .getUTCMinutes()
+          //       .toString()
+          //       .padStart(2, '0')}`
 
-          consult.consulting_time = consult.consulting_time
-            ? formattedDate
-            : '미정'
+          //   consult.consulting_time = formattedDate
+          // } else consult.consulting_time = '미정'
 
           if (consult.consulting_checked === 0) {
             notChecked.push(consult)

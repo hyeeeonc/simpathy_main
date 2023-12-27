@@ -28,7 +28,6 @@ async function Mypage() {
     const currentUserBoards = await prisma.post.count({
       where: { user_id: currentUser?.user_id },
     })
-    console.log(currentUserBoards)
 
     if (currentUserBranch) {
       return (

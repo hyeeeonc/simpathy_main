@@ -215,8 +215,6 @@ const BoardManage = () => {
       return null
     }
 
-    console.log(filteredBoards)
-
     const maxBoardOrder = Math.max(
       ...filteredBoards.map(board => board.board_order),
     )
@@ -236,12 +234,6 @@ const BoardManage = () => {
 
     const maxOrder = findMaxBoardOrder(newBoard.category_id)
     const targetOrder = maxOrder === null ? 0 : maxOrder + 1
-    // console.log(maxOrder)
-
-    // setNewBoard(prevData => ({
-    //   ...prevData,
-    //   board_order: maxOrder === null ? 0 : maxOrder + 1,
-    // }))
 
     const res = await fetch(`/api/board/addBoard`, {
       method: 'POST',
@@ -273,10 +265,6 @@ const BoardManage = () => {
       alert('게시판 추가에 실패했습니다.')
     }
   }
-
-  useEffect(() => {
-    console.log(newBoard)
-  }, [newBoard])
 
   const findMaxCategoryOrder = () => {
     if (!categories || categories.length === 0) {
@@ -326,7 +314,6 @@ const BoardManage = () => {
     change: number,
   ) => {
     const maxOrder = findMaxBoardOrder(category_id)
-    console.log(maxOrder)
     if ((order == 0 && change == -1) || (order == maxOrder && change == 1)) {
       return
     }

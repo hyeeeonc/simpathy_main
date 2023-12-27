@@ -386,7 +386,6 @@ const MyComponent = () => {
   const [inputKey, setInputKey] = useState<number>(Date.now())
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(event)
     const files = event.target.files
 
     if (files) {
@@ -409,10 +408,6 @@ const MyComponent = () => {
     // 선택된 파일들을 input에서 제거 (재선택을 위해)
     setInputKey(Date.now())
   }
-
-  useEffect(() => {
-    console.log(selectedFiles)
-  }, [selectedFiles])
 
   return (
     <>
