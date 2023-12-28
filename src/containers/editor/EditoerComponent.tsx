@@ -16,6 +16,7 @@ import { User } from '@/types/auth'
 import { Board } from '@/types/board'
 import { useRouter } from 'next/navigation'
 import AWS from 'aws-sdk'
+import dynamic from 'next/dynamic'
 
 Quill.register('modules/ImageResize', ImageResize)
 
@@ -187,6 +188,7 @@ const EditorComponent = ({
   const [selectedBoard, setSelectedBoard] = useState<number>(0) // 게시판
   const [title, setTitle] = useState<string>('') // 제목
   const [contents, setContents] = useState('') // 내용
+  const [offButton, setOffButton] = useState<boolean>(false) // 버튼 활성화 여부
 
   const boardHandler = (e: any) => {
     setSelectedBoard(Number(e))
@@ -196,19 +198,89 @@ const EditorComponent = ({
     setTitle(e.target.value)
   }
 
+  // 파일 업로드 관련
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([])
+
+  const handleRemoveFile = (index: number) => {
+    // 선택 목록에서 파일 제거
+    setSelectedFiles(prevFiles => prevFiles.filter((_, i) => i !== index))
+  }
+
+  const FileHandler = async (post_id: number) => {
+    try {
+      const uploadedUrls = []
+      for (let i = 0; i < selectedFiles.length; i++) {
+        const file = selectedFiles[i]
+
+        //업로드할 파일의 이름으로 Date 사용
+        const name = file.name
+        //생성한 s3 관련 설정들
+        AWS.config.update({
+          region: process.env.NEXT_PUBLIC_AWS_REGION,
+          accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID,
+          secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY,
+        })
+        //앞서 생성한 file을 담아 s3에 업로드하는 객체를 만든다
+        const upload = new AWS.S3.ManagedUpload({
+          params: {
+            ACL: 'public-read',
+            Bucket: `${process.env.NEXT_PUBLIC_AWS_BUCKET_NAME}`,
+            Key: `files/${name}`,
+            Body: file,
+          },
+        })
+        //이미지 업로드 후
+        //곧바로 업로드 된 이미지 url을 가져오기
+        const IMG_URL = await upload.promise().then(res => res.Location)
+        uploadedUrls.push({ name, url: IMG_URL })
+      }
+
+      try {
+        const response = await fetch('/api/editor/addFiles', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            files: uploadedUrls,
+            post_id: post_id,
+          }),
+        })
+
+        if (response.ok) {
+          alert('파일 업로드가 완료되었습니다.')
+        } else {
+          alert('파일 업로드에 실패하였습니다.')
+          // Handle errors, e.g., show an error message to the user
+        }
+      } catch (error: any) {
+        alert('파일 업로드에 실패하였습니다.')
+      }
+    } catch (error) {
+      alert('파일 업로드에 실패하였습니다.')
+    }
+  }
+
+  // 최종 제출 핸들러
+
   const handleSubmit = async () => {
+    setOffButton(true)
     if (!selectedBoard) {
       alert('게시판을 선택해주세요.')
+
+      setOffButton(false)
       return
     }
 
     if (!title) {
       alert('제목을 입력해주세요.')
+      setOffButton(false)
       return
     }
 
     if (!contents) {
       alert('내용을 입력해주세요.')
+      setOffButton(false)
       return
     }
 
@@ -229,6 +301,9 @@ const EditorComponent = ({
       if (response.ok) {
         const responseData = await response.json()
         const { post_id, board_id } = responseData // post_id 추출
+
+        // 파일 업로드
+        FileHandler(post_id)
         alert('작성이 완료되었습니다.')
         setSelectedBoard(0)
         setTitle('')
@@ -236,11 +311,13 @@ const EditorComponent = ({
         // 새로운 경로로 이동
         router.push(`/board/${board_id}/${post_id}`)
       } else {
-        alert('작성에 실패하였습니다.')
+        alert('작성에 실패하였습니다. 잠시 후 다시 시도해 주세요.')
+        setOffButton(false)
         // Handle errors, e.g., show an error message to the user
       }
     } catch (error: any) {
-      alert('작성에 실패하였습니다.')
+      alert('작성에 실패하였습니다. 잠시 후 다시 시도해 주세요.')
+      setOffButton(false)
     }
   }
 
@@ -365,13 +442,40 @@ const EditorComponent = ({
           placeholder="내용을 입력해주세요."
         />
       </StyledVideo>
-      <MyComponent />
+      <MyComponent setSelectedFiles={setSelectedFiles} />
+      <div className="my-[20px]">
+        <div className="mb-[10px] text-lg font-bold">첨부파일</div>
+
+        {selectedFiles.map((file, index) => (
+          <div key={index} className="flex items-center mb-[5px]">
+            <div>{file.name}</div>
+            {/* <button> */}
+            <svg
+              style={{ marginLeft: '10px', cursor: 'pointer' }}
+              onClick={() => handleRemoveFile(index)}
+              width={20}
+              height={20}
+              clip-rule="evenodd"
+              fill-rule="evenodd"
+              stroke-linejoin="round"
+              stroke-miterlimit="2"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path d="m12 10.93 5.719-5.72c.146-.146.339-.219.531-.219.404 0 .75.324.75.749 0 .193-.073.385-.219.532l-5.72 5.719 5.719 5.719c.147.147.22.339.22.531 0 .427-.349.75-.75.75-.192 0-.385-.073-.531-.219l-5.719-5.719-5.719 5.719c-.146.146-.339.219-.531.219-.401 0-.75-.323-.75-.75 0-.192.073-.384.22-.531l5.719-5.719-5.72-5.719c-.146-.147-.219-.339-.219-.532 0-.425.346-.749.75-.749.192 0 .385.073.531.219z" />
+            </svg>
+
+            {/* </button> */}
+          </div>
+        ))}
+      </div>
       <Button
         onClick={handleSubmit}
         color="blue-gray"
         size="lg"
         variant="outlined"
         fullWidth
+        disabled={offButton}
       >
         제출하기
       </Button>
@@ -381,8 +485,11 @@ const EditorComponent = ({
 
 export default EditorComponent
 
-const MyComponent = () => {
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([])
+const MyComponent = ({
+  setSelectedFiles,
+}: {
+  setSelectedFiles: (value: File[] | ((prevValue: File[]) => File[])) => void
+}) => {
   const [inputKey, setInputKey] = useState<number>(Date.now())
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -394,11 +501,6 @@ const MyComponent = () => {
       // 선택된 파일들을 input에서 제거 (재선택을 위해)
       setInputKey(Date.now())
     }
-  }
-
-  const handleRemoveFile = (index: number) => {
-    // 선택 목록에서 파일 제거
-    setSelectedFiles(prevFiles => prevFiles.filter((_, i) => i !== index))
   }
 
   // MyComponent 내에서 handleDroppedFiles 함수를 추가합니다.
@@ -464,12 +566,6 @@ const MyComponent = () => {
           />
         </label>
       </div>
-      {selectedFiles.map((file, index) => (
-        <div key={index}>
-          {file.name}
-          <button onClick={() => handleRemoveFile(index)}>Remove</button>
-        </div>
-      ))}
     </>
   )
 }

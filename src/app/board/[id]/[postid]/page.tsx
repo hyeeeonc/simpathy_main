@@ -8,6 +8,7 @@ import prisma from '@/libs/prisma'
 import getCurrentUser from '@/services/getCurrentUser'
 import PostUserName from '@/containers/post/PostUserName'
 import ReplyList from '@/containers/post/ReplyList'
+import FileList from '@/containers/post/FileList'
 
 const PostPage = async (props: any) => {
   const post_id = Number(props.params.postid)
@@ -26,6 +27,10 @@ const PostPage = async (props: any) => {
     orderBy: {
       reply_upload_time: 'asc',
     },
+  })
+
+  const currentFiles = await prisma.file.findMany({
+    where: { post_id },
   })
 
   if (!currentPost || currentPost.board_id !== board_id || !currentBoard) {
@@ -76,6 +81,7 @@ const PostPage = async (props: any) => {
 
           {/* <div className="text-sky-800 text-2xl font-bold mb-[100px]"></div> */}
         </div>
+        <FileList files={currentFiles} />
         <div
           className="border-solid border-b border-b-gray-300 py-[20px]"
           dangerouslySetInnerHTML={{ __html: currentPost.post_contents }}
@@ -88,9 +94,10 @@ const PostPage = async (props: any) => {
         />
         <ReplyEditor post_id={post_id} origin_id={null} />
       </div>
-      {currentPost.user_id === currentUser?.user_id && (
+      {(currentPost.user_id === currentUser?.user_id ||
+        currentUser.grade_id === 1) && (
         <>
-          <PostUtil />
+          <PostUtil post_id={post_id} board_id={board_id} />
         </>
       )}
     </>

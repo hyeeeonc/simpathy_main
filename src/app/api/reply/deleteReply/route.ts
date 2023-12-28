@@ -22,22 +22,22 @@ export async function DELETE(request: Request) {
     user &&
     (reply.user_id === user.user_id || user.grade_id === 1)
   ) {
-    const sub_reply = await prisma.reply.findMany({
-      where: {
-        origin_id: reply_id,
-      },
-    })
+    // const sub_reply = await prisma.reply.findMany({
+    //   where: {
+    //     origin_id: reply_id,
+    //   },
+    // })
 
-    if (sub_reply.length === 1)
-      for (const sub of sub_reply) {
-        const delete_sub_reply = await prisma.reply.delete({
-          where: {
-            reply_id: sub.reply_id,
-          },
-        })
+    // if (sub_reply.length === 1)
+    //   for (const sub of sub_reply) {
+    //     const delete_sub_reply = await prisma.reply.delete({
+    //       where: {
+    //         reply_id: sub.reply_id,
+    //       },
+    //     })
 
-        if (!delete_sub_reply) return new Response(null, { status: 500 })
-      }
+    //     if (!delete_sub_reply) return new Response(null, { status: 500 })
+    //   }
 
     const delete_reply = await prisma.reply.delete({
       where: {

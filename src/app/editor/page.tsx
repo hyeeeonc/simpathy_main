@@ -1,6 +1,12 @@
-import EditorComponent from '@/containers/editor/EditoerComponent'
+// import EditorComponent from '@/containers/editor/EditoerComponent'
 import getCurrentUser from '@/services/getCurrentUser'
 import prisma from '@/libs/prisma'
+import dynamic from 'next/dynamic'
+
+const EditorComponent = dynamic(
+  () => import('@/containers/editor/EditoerComponent'),
+  { ssr: false },
+)
 
 const Editor = async () => {
   const currentUser = await getCurrentUser()

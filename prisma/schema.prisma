@@ -81,12 +81,12 @@ model consulting {
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model file {
   file_id   Int    @id @default(autoincrement())
-  board_id  Int
+  post_id   Int?
   file_name String @db.VarChar(100)
   file_addr String @db.VarChar(1000)
-  board     post   @relation(fields: [board_id], references: [post_id], onUpdate: Restrict, map: "FK_file_board_id_board_board_id")
+  post      post?  @relation(fields: [post_id], references: [post_id], onDelete: Cascade, onUpdate: NoAction, map: "FK_file_post_id__post_post_id")
 
-  @@index([board_id], map: "FK_file_board_id_post_post_id")
+  @@index([post_id], map: "FK_file_post_id__post_post_id")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -104,9 +104,9 @@ model reply {
   reply_content     String?   @db.Text
   reply_upload_time DateTime? @db.DateTime(0)
   origin_id         Int?
-  post              post?     @relation(fields: [post_id], references: [post_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_reply_post_id_post_post_id")
+  post              post?     @relation(fields: [post_id], references: [post_id], onDelete: Cascade, onUpdate: NoAction, map: "FK_reply_post_id_post_post_id")
   user              user?     @relation(fields: [user_id], references: [user_id], onDelete: Restrict, onUpdate: Restrict, map: "FK_reply_user_id_user_user_id")
-  reply             reply?    @relation("replyToreply", fields: [origin_id], references: [reply_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_origin_reply")
+  reply             reply?    @relation("replyToreply", fields: [origin_id], references: [reply_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_origin_reply")
   other_reply       reply[]   @relation("replyToreply")
 
   @@index([user_id], map: "FK_reply_user_id_user_user_id")
