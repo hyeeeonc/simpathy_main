@@ -324,7 +324,7 @@ const EditorComponent = ({
   return (
     <>
       <EditorHeaderConatier>
-        <div className="flex h-[45px] w-max gap-4 mb-[10px]">
+        {/* <div className="flex h-[45px] w-max gap-4 mb-[10px]">
           <Button
             variant={boardType === 0 ? 'filled' : 'outlined'}
             onClick={() => {
@@ -341,7 +341,7 @@ const EditorComponent = ({
           >
             질문 게시판
           </Button>
-        </div>
+        </div> */}
         {boardType === 1 && (
           <EditorQnaNoticeContainer>
             질문 게시판 운영에 관한 공지

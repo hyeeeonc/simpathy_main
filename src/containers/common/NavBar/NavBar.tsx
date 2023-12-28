@@ -213,7 +213,7 @@ export function NavBar() {
             </ListItem>
           </Link>
 
-          <Link href={'/qna'}>
+          {/* <Link href={'/qna'}>
             <ListItem onClick={closeDrawer}>
               <ListItemPrefix>
                 <svg
@@ -228,7 +228,7 @@ export function NavBar() {
               </ListItemPrefix>
               질문 게시판
             </ListItem>
-          </Link>
+          </Link> */}
 
           <Link href={'/board'}>
             <ListItem onClick={closeDrawer}>
