@@ -100,14 +100,18 @@ model grade {
 model reply {
   reply_id          Int       @id @default(autoincrement())
   user_id           String?   @db.VarChar(50)
-  board_id          Int?
+  post_id           Int?
   reply_content     String?   @db.Text
   reply_upload_time DateTime? @db.DateTime(0)
-  board             post?     @relation(fields: [board_id], references: [post_id], onDelete: Restrict, onUpdate: Restrict, map: "FK_reply_board_id_board_board_id")
+  origin_id         Int?
+  post              post?     @relation(fields: [post_id], references: [post_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_reply_post_id_post_post_id")
   user              user?     @relation(fields: [user_id], references: [user_id], onDelete: Restrict, onUpdate: Restrict, map: "FK_reply_user_id_user_user_id")
+  reply             reply?    @relation("replyToreply", fields: [origin_id], references: [reply_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_origin_reply")
+  other_reply       reply[]   @relation("replyToreply")
 
   @@index([user_id], map: "FK_reply_user_id_user_user_id")
-  @@index([board_id], map: "FK_reply_board_id_post_post_id")
+  @@index([origin_id], map: "fk_origin_reply")
+  @@index([post_id], map: "FK_reply_post_id_post_post_id")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments

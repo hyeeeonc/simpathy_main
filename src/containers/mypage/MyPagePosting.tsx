@@ -32,7 +32,7 @@ const MyPagePosting = ({
           <ContentBoxCellContentTitle>회원 등급</ContentBoxCellContentTitle>
           <ContentBoxCellContent>{grade}</ContentBoxCellContent>
         </ContentBoxCellContentWrapper>
-        <Link href={`/board/userpost/${user_id}`}>
+        <Link href={`/board?searchType=writer&search=${user_id}`}>
           <ContentBoxClickableContentWrapper>
             <ContentBoxCellContentTitle>
               내가 작성한 글

@@ -5,3 +5,5 @@ export async function GET() {
   if (!grades) return new Response(null, { status: 404 })
   else return new Response(JSON.stringify(grades))
 }
+
+export const dynamic = 'force-dynamic'

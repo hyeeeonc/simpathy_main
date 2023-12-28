@@ -6,11 +6,6 @@ import BoardPagination from '@/containers/board/BoardPagination'
 
 const BoardPage = async (props: any) => {
   const pageSize = 15 // 한 페이지당 노출할 post 개수
-  const board_id = Number(props.params.id)
-  const currentUser = await getCurrentUser()
-  const currentBoard = await prisma.board.findUnique({
-    where: { board_id },
-  })
 
   const pageHandler = () => {
     const page = props.searchParams.page
@@ -19,33 +14,13 @@ const BoardPage = async (props: any) => {
     else return Number(page)
   }
 
-  const totalPost = await prisma.post.count({
-    where: { board_id },
-  })
+  const totalPost = await prisma.post.count()
 
   const page = pageHandler()
 
-  if (!currentBoard) {
-    return <div>존재하지 않는 게시판입니다.</div>
-  }
-
-  if (
-    !currentUser ||
-    currentUser.grade_id === undefined ||
-    currentUser.grade_id > currentBoard.board_read_auth
-  ) {
-    return <div>권한이 없습니다.</div>
-  }
-
   const searchText = props.searchParams.search
   const searchType = props.searchParams.searchType
-  const posts = await pagination(
-    board_id,
-    page,
-    pageSize,
-    searchText,
-    searchType,
-  )
+  const posts = await pagination(0, page, pageSize, searchText, searchType)
   const totalPage = Math.ceil(totalPost / pageSize)
 
   // posts를 순회하면서 날짜를 변경하고 포맷팅
@@ -74,7 +49,7 @@ const BoardPage = async (props: any) => {
     <>
       <div className="w-full mt-20">
         <div className="text-sky-800 text-3xl font-bold mb-[100px]">
-          {currentBoard.board_name}
+          전체 게시글
         </div>
         {posts.length === 0 && (
           <div className="w-full flex justify-center text-xl font-bold mb-[100px]">
@@ -83,12 +58,8 @@ const BoardPage = async (props: any) => {
         )}
         {posts.length !== 0 && (
           <>
-            <BoardTable posts={formattedPosts} board_id={board_id} />
-            <BoardPagination
-              board_id={board_id}
-              page={page}
-              totalPage={totalPage}
-            />
+            <BoardTable posts={formattedPosts} board_id={0} />
+            <BoardPagination board_id={0} page={page} totalPage={totalPage} />
           </>
         )}
       </div>

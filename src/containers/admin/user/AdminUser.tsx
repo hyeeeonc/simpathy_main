@@ -40,13 +40,15 @@ const AdminUser = () => {
   })
 
   const getGradeData = async () => {
-    const res = await fetch(`/api/user/grade/getUserGradeAll`)
+    const res = await fetch(`/api/user/grade/getUserGradeAll`, {
+      cache: 'no-store',
+    })
     const data = await res.json()
     setGrades(data)
   }
 
   const getBranchData = async () => {
-    const res = await fetch(`/api/branch/getBranchAll`)
+    const res = await fetch(`/api/branch/getBranchAll`, { cache: 'no-store' })
     const data = await res.json()
     setBranches(data)
   }

@@ -59,7 +59,7 @@ const AdminBranch = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
 
   const getBranchData = async () => {
-    const res = await fetch(`/api/branch/getBranchAll`)
+    const res = await fetch(`/api/branch/getBranchAll`, { cache: 'no-store' })
     const data = await res.json()
     const filteredData = data.filter(
       (item: Branch) => item.branch_name !== '운영자',

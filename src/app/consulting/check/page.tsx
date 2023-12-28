@@ -5,69 +5,65 @@ import ConsultingCheck from '@/containers/consulting/ConsultingCheck'
 
 async function ConsultingPage() {
   const currentUser = await getCurrentUser()
-  const userBranch = await prisma.branch.findUnique({
-    where: {
-      branch_id: currentUser?.branch_id,
-    },
-  })
 
-  const notChecked: any[] = []
-  const checked: any[] = []
-  const finished: any[] = []
-
-  const userConsulting = await prisma.consulting
-    .findMany({
+  if (currentUser) {
+    const userBranch = await prisma.branch.findUnique({
       where: {
-        user_id: currentUser?.user_id,
+        branch_id: currentUser?.branch_id,
       },
     })
-    .then(consulting => {
-      consulting.map(consult => {
-        // // Prisma에서 받아온 날짜 데이터를 JavaScript Date 객체로 변환
-        // const uploadTime = new Date(consult.consulting_time)
 
-        // // UTC+0 기준의 날짜 및 시간을 문자열로 변환
-        // const formattedDate =
-        //   `${uploadTime.getUTCFullYear()}.${(uploadTime.getUTCMonth() + 1)
-        //     .toString()
-        //     .padStart(2, '0')}.${uploadTime
-        //     .getUTCDate()
-        //     .toString()
-        //     .padStart(2, '0')} ` +
-        //   `${uploadTime.getUTCHours().toString().padStart(2, '0')}.${uploadTime
-        //     .getUTCMinutes()
-        //     .toString()
-        //     .padStart(2, '0')}`
+    const notChecked: any[] = []
+    const checked: any[] = []
+    const finished: any[] = []
 
-        // consult.consulting_time = consult.consulting_time
-        //   ? formattedDate
-        //   : '미정'
-
-        if (consult.consulting_checked === 0) {
-          notChecked.push(consult)
-        } else if (consult.consulting_checked === 1) {
-          checked.push(consult)
-        } else if (consult.consulting_checked === 2) {
-          finished.push(consult)
-        }
+    const userConsulting = await prisma.consulting
+      .findMany({
+        where: {
+          user_id: currentUser?.user_id,
+        },
       })
-      return [...notChecked, ...checked, ...finished]
-    })
+      .then(consulting => {
+        consulting.map(consult => {
+          if (consult.consulting_checked === 0) {
+            notChecked.push(consult)
+          } else if (consult.consulting_checked === 1) {
+            checked.push(consult)
+          } else if (consult.consulting_checked === 2) {
+            finished.push(consult)
+          }
+        })
+        return [...notChecked, ...checked, ...finished]
+      })
 
-  return (
-    <>
-      <div className="w-full  mt-20">
-        <div className="text-sky-800 text-3xl font-bold mb-10 ">상담 신청</div>
-        <ConsultingCheck
-          notChecked={notChecked}
-          checked={checked}
-          finished={finished}
-          consulting={userConsulting}
-          branch={userBranch?.branch_name}
-        />
-      </div>
-    </>
-  )
+    return (
+      <>
+        <div className="w-full  mt-20">
+          <div className="text-sky-800 text-3xl font-bold mb-10 ">
+            상담 신청
+          </div>
+          <ConsultingCheck
+            notChecked={notChecked}
+            checked={checked}
+            finished={finished}
+            consulting={userConsulting}
+            branch={userBranch?.branch_name}
+          />
+        </div>
+      </>
+    )
+  } else {
+    return (
+      <>
+        <div className="w-full  mt-20">
+          <div className="text-sky-800 text-3xl font-bold mb-10 ">
+            상담 신청
+          </div>
+          오류가 발생했습니다. 잠시 후 다시 시도해 주세요.
+        </div>
+      </>
+    )
+  }
 }
 
 export default ConsultingPage

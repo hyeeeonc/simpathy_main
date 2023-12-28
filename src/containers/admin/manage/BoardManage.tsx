@@ -119,7 +119,7 @@ const BoardManage = () => {
   }
 
   const getCategoryData = async () => {
-    const res = await fetch(`/api/board/getCategory`)
+    const res = await fetch(`/api/board/getCategory`, { cache: 'no-store' })
     const data = await res.json()
     data.sort((a: Category, b: Category) => a.category_order - b.category_order)
 
@@ -127,7 +127,7 @@ const BoardManage = () => {
   }
 
   const getBoardData = async () => {
-    const res = await fetch(`/api/board/getBoard`)
+    const res = await fetch(`/api/board/getBoard`, { cache: 'no-store' })
     const data = await res.json()
     data.sort((a: Board, b: Board) => {
       if (a.category_id === b.category_id) {
@@ -139,7 +139,9 @@ const BoardManage = () => {
   }
 
   const getGradeData = async () => {
-    const res = await fetch(`/api/user/grade/getUserGradeAll`)
+    const res = await fetch(`/api/user/grade/getUserGradeAll`, {
+      cache: 'no-store',
+    })
     const data = await res.json()
     setGrades(data)
   }

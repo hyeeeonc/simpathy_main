@@ -5,3 +5,5 @@ export async function GET() {
   if (!boards) return new Response(null, { status: 404 })
   else return new Response(JSON.stringify(boards))
 }
+
+export const dynamic = 'force-dynamic'

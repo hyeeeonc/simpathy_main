@@ -52,13 +52,15 @@ const UserList = () => {
   const [branches, setBranches] = useState<Branch[]>([])
 
   const getGradeData = async () => {
-    const res = await fetch(`/api/user/grade/getUserGradeAll`)
+    const res = await fetch(`/api/user/grade/getUserGradeAll`, {
+      cache: 'no-store',
+    })
     const data = await res.json()
     setGrades(data)
   }
 
   const getBranchData = async () => {
-    const res = await fetch(`/api/branch/getBranchAll`)
+    const res = await fetch(`/api/branch/getBranchAll`, { cache: 'no-store' })
     const data = await res.json()
     setBranches(data)
   }
@@ -75,7 +77,7 @@ const UserList = () => {
   const [updateUser, setUpdateUser] = useState<UserNoPw>()
 
   const getUserData = async () => {
-    const res = await fetch(`/api/user/getUserAll`)
+    const res = await fetch(`/api/user/getUserAll`, { cache: 'no-store' })
     const data = await res.json()
     setUsers(data)
     setShowUsers(data)

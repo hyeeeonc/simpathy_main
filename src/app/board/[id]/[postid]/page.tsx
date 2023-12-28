@@ -6,6 +6,8 @@ import Breadcrumb from '@/containers/post/Breadcrumb'
 import PostUtil from '@/containers/post/PostUtil'
 import prisma from '@/libs/prisma'
 import getCurrentUser from '@/services/getCurrentUser'
+import PostUserName from '@/containers/post/PostUserName'
+import ReplyList from '@/containers/post/ReplyList'
 
 const PostPage = async (props: any) => {
   const post_id = Number(props.params.postid)
@@ -17,6 +19,13 @@ const PostPage = async (props: any) => {
 
   const currentBoard = await prisma.board.findUnique({
     where: { board_id },
+  })
+
+  const currentReply = await prisma.reply.findMany({
+    where: { post_id },
+    orderBy: {
+      reply_upload_time: 'asc',
+    },
   })
 
   if (!currentPost || currentPost.board_id !== board_id || !currentBoard) {
@@ -58,10 +67,11 @@ const PostPage = async (props: any) => {
           <div className="text-sky-800 text-3xl font-bold mb-[40px]">
             {currentPost.post_title}
           </div>
-          <div className="text-sky-800 text-sm mb-[10px] text-right">
-            <p className="font-bold">{currentPost.user_id}</p>
-
-            <p className="text-gray-500">{formattedDate}</p>
+          <div className="flex justify-end">
+            <div className="text-sky-800 text-sm mb-[10px] text-right">
+              <PostUserName user_id={currentPost.user_id} />
+              <p className="text-gray-500">{formattedDate}</p>
+            </div>
           </div>
 
           {/* <div className="text-sky-800 text-2xl font-bold mb-[100px]"></div> */}
@@ -71,7 +81,12 @@ const PostPage = async (props: any) => {
           dangerouslySetInnerHTML={{ __html: currentPost.post_contents }}
         />
         <div className="text-sky-800 text-xl font-bold my-[20px]">댓글</div>
-        <ReplyEditor />
+        <ReplyList
+          user={currentUser}
+          replies={currentReply}
+          post_id={post_id}
+        />
+        <ReplyEditor post_id={post_id} origin_id={null} />
       </div>
       {currentPost.user_id === currentUser?.user_id && (
         <>

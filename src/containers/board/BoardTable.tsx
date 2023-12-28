@@ -1,11 +1,12 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { ChangeEvent, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
-import { Button, CardFooter, IconButton, Input } from '@material-tailwind/react'
+import { Select, Option, Input, Button } from '@material-tailwind/react'
 import Link from 'next/link'
 import { useMediaQuery } from 'react-responsive'
+import { useRouter } from 'next/navigation'
 
 const BoardTableContainer = styled.table`
   width: 100%;
@@ -15,8 +16,18 @@ const BoardTableContainer = styled.table`
 `
 
 const BoardSearchContainer = styled.div`
-  width: 300px;
+  width: 100%;
+  gap: 20px;
   margin-bottom: 20px;
+  display: flex;
+
+  @media (max-width: 767px) {
+    flex-direction: column;
+
+    padding-bottom: 20px;
+
+    border-bottom: 3px solid #ddd;
+  }
 `
 
 const BoardTableHeader = styled.thead`
@@ -116,7 +127,49 @@ const BoardTableMobileWriter = styled.div`
 
 const BoardTableMobileDate = styled.div``
 
-const BoardTable = ({ posts }: { posts: any[] }) => {
+const BoardTable = ({
+  posts,
+  board_id,
+}: {
+  posts: any[]
+  board_id: number
+}) => {
+  const router = useRouter()
+  const [search, setSearch] = useState('')
+  const [searchType, setSearchType] = useState('')
+
+  const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value)
+  }
+
+  const handleSearchType = (e: any) => {
+    setSearchType(e)
+  }
+
+  const searchSubmit = () => {
+    if (search === '' || searchType === '') {
+      alert('검색어를 입력해주세요.')
+      return
+    }
+    if (board_id === 0)
+      router.push(`/board?search=${search}&searchType=${searchType}`)
+    else
+      router.push(
+        `/board/${board_id}?search=${search}&searchType=${searchType}`,
+      )
+  }
+
+  const handleKeyPress = (e: any): void => {
+    if (e.key === 'Enter') {
+      searchSubmit()
+    }
+  }
+
+  useEffect(() => {
+    console.log('검색어', search)
+    console.log('필터', searchType)
+  }, [search, searchType])
+
   const isDesktop: boolean = useMediaQuery({
     query: '(min-width:768px)',
   })
@@ -127,9 +180,20 @@ const BoardTable = ({ posts }: { posts: any[] }) => {
   return (
     <>
       <BoardSearchContainer>
+        <Select label="검색 범위" onChange={handleSearchType}>
+          <Option value="content">글 + 제목</Option>
+          <Option value="writer">작성자</Option>
+        </Select>
         <Input
           label="검색"
-          icon={<MagnifyingGlassIcon className="h-5 w-5 cursor-pointer" />}
+          onChange={handleSearch}
+          onKeyPress={handleKeyPress}
+          icon={
+            <MagnifyingGlassIcon
+              className="h-5 w-5 cursor-pointer"
+              onClick={searchSubmit}
+            />
+          }
           crossOrigin={undefined}
         />
       </BoardSearchContainer>
@@ -156,7 +220,9 @@ const BoardTable = ({ posts }: { posts: any[] }) => {
                   </BoardTableCellTitle>
 
                   <BoardTableWriter>
-                    <Link href={`/board/userpost/${post?.user_id}`}>
+                    <Link
+                      href={`/board?search=${post?.user_id}&searchType=writer`}
+                    >
                       {post?.user_id}
                     </Link>
                   </BoardTableWriter>
@@ -166,50 +232,10 @@ const BoardTable = ({ posts }: { posts: any[] }) => {
               ))}
             </tbody>
           </BoardTableContainer>
-          <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
-            <Button variant="text" size="sm">
-              &lt; 이전
-            </Button>
-            <div className="flex items-center gap-2">
-              <IconButton variant="outlined" size="sm">
-                1
-              </IconButton>
-              <IconButton variant="text" size="sm">
-                2
-              </IconButton>
-              <IconButton variant="text" size="sm">
-                3
-              </IconButton>
-              <IconButton variant="text" size="sm">
-                ...
-              </IconButton>
-              <IconButton variant="text" size="sm">
-                8
-              </IconButton>
-              <IconButton variant="text" size="sm">
-                9
-              </IconButton>
-              <IconButton variant="text" size="sm">
-                10
-              </IconButton>
-            </div>
-            <Button variant="text" size="sm">
-              다음 &gt;
-            </Button>
-          </CardFooter>
         </>
       )}
       {isMobile && (
         <BoardTableMobileContainer>
-          {/* <BoardTableMobileItemContainer>
-            <BoardTableMobileItemTitle>
-              <Link href={`#`}>제목</Link>
-            </BoardTableMobileItemTitle>
-            <BoardTableMobileItemSubContainer>
-              <BoardTableMobileWriter>정현철</BoardTableMobileWriter>
-              <BoardTableMobileDate>2023.12.25</BoardTableMobileDate>
-            </BoardTableMobileItemSubContainer>
-          </BoardTableMobileItemContainer> */}
           {posts.map((post: any, index: number) => (
             <Link href={`/board/${post?.board_id}/${post?.post_id}`}>
               <BoardTableMobileItemContainer key={index}>

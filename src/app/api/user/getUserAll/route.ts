@@ -5,3 +5,5 @@ export async function GET() {
   if (!users) return new Response(null, { status: 404 })
   else return new Response(JSON.stringify(users))
 }
+
+export const dynamic = 'force-dynamic'
