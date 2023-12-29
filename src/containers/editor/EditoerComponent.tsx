@@ -150,7 +150,7 @@ const EditorComponent = ({
       toolbar: {
         container: [
           [{ size: ['small', false, 'large', 'huge'] }], // custom dropdown
-          ['bold', 'italic', 'underline', 'strike'], // toggled buttons
+          ['bold', 'underline', 'strike'], // toggled buttons
           [{ align: [] }],
           [{ color: [] }, { background: [] }], // dropdown with defaults from theme
 

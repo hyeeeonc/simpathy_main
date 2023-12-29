@@ -160,7 +160,7 @@ const ReplyList = ({
             .getDate()
             .toString()
             .padStart(2, '0')} ` +
-          `${koreanTime.getHours().toString().padStart(2, '0')}.${koreanTime
+          `${koreanTime.getHours().toString().padStart(2, '0')}:${koreanTime
             .getMinutes()
             .toString()
             .padStart(2, '0')}`

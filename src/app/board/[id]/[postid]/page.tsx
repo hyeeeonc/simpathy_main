@@ -58,7 +58,7 @@ const PostPage = async (props: any) => {
     `${koreanTime.getFullYear()}.${(koreanTime.getMonth() + 1)
       .toString()
       .padStart(2, '0')}.${koreanTime.getDate().toString().padStart(2, '0')} ` +
-    `${koreanTime.getHours().toString().padStart(2, '0')}.${koreanTime
+    `${koreanTime.getHours().toString().padStart(2, '0')}:${koreanTime
       .getMinutes()
       .toString()
       .padStart(2, '0')}`
