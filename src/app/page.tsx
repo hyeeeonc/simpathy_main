@@ -8,9 +8,9 @@ export default function Home() {
     <>
       <img src="/images/landing/Head.jpeg" className="w-full" />
       {/* <LandingWindow /> */}
-      <div className="flex justify-between items-center my-[50px]">
-        <img src="/images/landing/epilog.jpeg" className="w-1/3" />
-        <img src="/images/landing/books.jpeg" className="w-1/3" />
+      <div className="flex justify-between items-center my-[50px] flex-wrap">
+        <img src="/images/landing/epilog.jpeg" className="w-1/2 mob:w-1/3" />
+        <img src="/images/landing/books.jpeg" className="w-1/2 mob:w-1/3" />
         <LandingWebtoon />
       </div>
 
