@@ -94,15 +94,6 @@ function Login() {
                   onKeyUp={handleOnKeyPress}
                 />
               </div>
-              <LoginNotice>
-                초기 설정은 ID: 지점 이름(ex. 대치러셀 심찬우),
-                <br />
-                PW: 본인 전화번호 뒷자리입니다.
-                <br />
-                <br />* 비밀번호는 홈페이지 우상단
-                <br />
-                'MYPAGE' → '비밀번호 변경하기'에서 변경하실 수 있습니다.
-              </LoginNotice>
             </div>
 
             <button
@@ -113,6 +104,19 @@ function Login() {
               <span className="w-full">Submit</span>
             </button>
           </div>
+          <LoginNotice>
+            회원 초기 설정
+            <br />
+            ID: 지점 이름(ex. 대치러셀 심찬우)
+            <br />
+            PW: 본인 전화번호 뒷자리
+            <br />
+            <br />*
+            <br />
+            비밀번호는 홈페이지 우상단
+            <br />
+            'MYPAGE' → '비밀번호 변경하기'에서 변경하실 수 있습니다.
+          </LoginNotice>
         </div>
       </div>
       <div className="w-1/3 shadow-2xl flex items-center justify-center md:h-[800px] overflow-hidden">
