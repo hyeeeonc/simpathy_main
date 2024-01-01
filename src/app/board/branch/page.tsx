@@ -9,9 +9,23 @@ import BranchBoardSearch from '@/containers/board/BranchBoardSearch'
 const BoardPage = async (props: any) => {
   const user = await getCurrentUser()
   const branches = await prisma.branch.findMany()
+
+  if (!user) {
+    return <div>로그인이 필요합니다.</div>
+  }
+
   const branch = await prisma.branch.findUnique({
-    where: { branch_id: user?.branch_id },
+    where: { branch_id: user.branch_id },
   })
+
+  const posts =
+    user?.branch_id === 1
+      ? await prisma.branchpost.findMany()
+      : await prisma.branchpost.findMany({
+          where: {
+            branch_id: user.branch_id,
+          },
+        })
 
   // if (user?.grade_id === undefined || user?.grade_id >= 4) {
   //   return (
@@ -57,14 +71,6 @@ const BoardPage = async (props: any) => {
   //   searchType,
   // )
 
-  const posts =
-    user?.branch_id === 1
-      ? await prisma.branchpost.findMany()
-      : await prisma.branchpost.findMany({
-          where: {
-            branch_id: user?.branch_id,
-          },
-        })
   // const totalPage = Math.ceil(totalPost / pageSize)
 
   // posts를 순회하면서 날짜를 변경하고 포맷팅
