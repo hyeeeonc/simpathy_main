@@ -30,6 +30,7 @@ export const BranchPostDeleteButton = ({ post_id }: { post_id: number }) => {
 
       if (response.ok) {
         alert('글이 삭제되었습니다.')
+        router.refresh()
         router.push(`/board/branch`)
       } else if (response.status === 401) {
         alert('권한이 없습니다.')
