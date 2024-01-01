@@ -89,12 +89,14 @@ interface EditorComponentProps {
   user_id?: string
   grade_id?: number
   boards?: Board[]
+  branches?: any[]
 }
 
 const EditorComponent = ({
   user_id = '',
   grade_id = 0,
   boards = [],
+  branches = [],
 }: EditorComponentProps) => {
   const [boardType, setBoardType] = useState(0)
   const [qnaType, setQnaType] = useState('문학')
@@ -235,26 +237,50 @@ const EditorComponent = ({
         uploadedUrls.push({ name, url: IMG_URL })
       }
 
-      try {
-        const response = await fetch('/api/editor/addFiles', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            files: uploadedUrls,
-            post_id: post_id,
-          }),
-        })
+      if (boardType === 0) {
+        try {
+          const response = await fetch('/api/editor/addFiles', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              files: uploadedUrls,
+              post_id: post_id,
+            }),
+          })
 
-        if (response.ok) {
-          alert('파일 업로드가 완료되었습니다.')
-        } else {
+          if (response.ok) {
+            alert('파일 업로드가 완료되었습니다.')
+          } else {
+            alert('파일 업로드에 실패하였습니다.')
+            // Handle errors, e.g., show an error message to the user
+          }
+        } catch (error: any) {
           alert('파일 업로드에 실패하였습니다.')
-          // Handle errors, e.g., show an error message to the user
         }
-      } catch (error: any) {
-        alert('파일 업로드에 실패하였습니다.')
+      } else if (boardType === 2) {
+        try {
+          const response = await fetch('/api/editor/branch/addFiles', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              files: uploadedUrls,
+              post_id: post_id,
+            }),
+          })
+
+          if (response.ok) {
+            alert('파일 업로드가 완료되었습니다.')
+          } else {
+            alert('파일 업로드에 실패하였습니다.')
+            // Handle errors, e.g., show an error message to the user
+          }
+        } catch (error: any) {
+          alert('파일 업로드에 실패하였습니다.')
+        }
       }
     } catch (error) {
       alert('파일 업로드에 실패하였습니다.')
@@ -262,7 +288,6 @@ const EditorComponent = ({
   }
 
   // 최종 제출 핸들러
-
   const handleSubmit = async () => {
     setOffButton(true)
     if (!selectedBoard) {
@@ -284,115 +309,164 @@ const EditorComponent = ({
       return
     }
 
-    try {
-      const response = await fetch('/api/editor/writePost', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          board_id: selectedBoard,
-          user_id: user_id,
-          post_title: title,
-          post_contents: contents,
-        }),
-      })
+    if (boardType === 0) {
+      try {
+        const response = await fetch('/api/editor/writePost', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            board_id: selectedBoard,
+            user_id: user_id,
+            post_title: title,
+            post_contents: contents,
+          }),
+        })
 
-      if (response.ok) {
-        const responseData = await response.json()
-        const { post_id, board_id } = responseData // post_id 추출
+        if (response.ok) {
+          const responseData = await response.json()
+          const { post_id, board_id } = responseData // post_id 추출
 
-        // 파일 업로드
-        FileHandler(post_id)
-        alert('작성이 완료되었습니다.')
-        setSelectedBoard(0)
-        setTitle('')
-        setContents('')
-        // 새로운 경로로 이동
-        router.push(`/board/${board_id}/${post_id}`)
-      } else {
+          // 파일 업로드
+          FileHandler(post_id)
+          alert('작성이 완료되었습니다.')
+          setSelectedBoard(0)
+          setTitle('')
+          setContents('')
+          // 새로운 경로로 이동
+          router.push(`/board/${board_id}/${post_id}`)
+        } else {
+          alert('작성에 실패하였습니다. 잠시 후 다시 시도해 주세요.')
+          setOffButton(false)
+          // Handle errors, e.g., show an error message to the user
+        }
+      } catch (error: any) {
         alert('작성에 실패하였습니다. 잠시 후 다시 시도해 주세요.')
         setOffButton(false)
-        // Handle errors, e.g., show an error message to the user
       }
-    } catch (error: any) {
-      alert('작성에 실패하였습니다. 잠시 후 다시 시도해 주세요.')
-      setOffButton(false)
+    } else if (boardType === 2) {
+      try {
+        const response = await fetch('/api/editor/branch/writePost', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            branch_id: selectedBoard,
+            user_id: user_id,
+            post_title: title,
+            post_contents: contents,
+          }),
+        })
+
+        if (response.ok) {
+          const responseData = await response.json()
+          const { post_id, board_id } = responseData // post_id 추출
+
+          // 파일 업로드
+          FileHandler(post_id)
+          alert('작성이 완료되었습니다.')
+          setSelectedBoard(0)
+          setTitle('')
+          setContents('')
+          // 새로운 경로로 이동
+          router.push(`/board/branch`)
+        } else {
+          alert('작성에 실패하였습니다. 잠시 후 다시 시도해 주세요.')
+          setOffButton(false)
+          // Handle errors, e.g., show an error message to the user
+        }
+      } catch (error: any) {
+        alert('작성에 실패하였습니다. 잠시 후 다시 시도해 주세요.')
+        setOffButton(false)
+      }
     }
   }
 
   return (
     <>
       <EditorHeaderConatier>
-        {/* <div className="flex h-[45px] w-max gap-4 mb-[10px]">
-          <Button
-            variant={boardType === 0 ? 'filled' : 'outlined'}
-            onClick={() => {
-              boardTypeHandler(0)
-            }}
-          >
-            일반 게시판
-          </Button>
-          <Button
-            variant={boardType === 1 ? 'filled' : 'outlined'}
-            onClick={() => {
-              boardTypeHandler(1)
-            }}
-          >
-            질문 게시판
-          </Button>
-        </div> */}
-        {boardType === 1 && (
-          <EditorQnaNoticeContainer>
-            질문 게시판 운영에 관한 공지
-            <br />
-            ① 질문 게시판은 강의, 교재, 평가원 기출에 한해서만 질문 받습니다.
-            <br />
-            → 그 외에는 질문을 하셔도 답변하지 않습니다.
-            <br />
-            → 강의와 교재를 정확하게 적시해주셔야 정확한 답변을 받으실 수
-            있습니다.
-            <br />② 예의를 지키지 않는 질문은 답변하지 않습니다.
-            <br />③ 질문의 내용은 '정확'해야 합니다.
-            <br />→ 추상적인 질문, 떼쓰는 식의 질문은 답변하기가 참 어렵습니다.
-            <br />→ 충분히 여러번 읽어 본 이후 질문을 해주시기 바랍니다.
-            <br />④ 재질문은 '답글쓰기' 혹은 '새 게시글'로 다시 올려주세요.
-            <br />→ 기존 게시글에 그냥 댓글을 다시면 알람이 저희에게 뜨지
-            않습니다.
-            <br />
-            그러므로 만약 댓글로 재질문 하실 경우, 저희가 답변드린 댓글에
-            '답글쓰기'로 남겨주세요.
-            <br />* 댓글로 재질문을 하신 경우 간혹 누락되는 경우가 있습니다.
-            오랫동안 답글이 달리지 않는 경우, 새 게시글로 질문 부탁드립니다.
-          </EditorQnaNoticeContainer>
-        )}
-        {boardType === 1 && (
+        {grade_id === 1 && (
           <div className="flex h-[45px] w-max gap-4 mb-[10px]">
             <Button
-              variant={qnaType === '문학' ? 'filled' : 'outlined'}
+              variant={boardType === 0 ? 'filled' : 'outlined'}
               onClick={() => {
-                qnaTypeHandler('문학')
+                boardTypeHandler(0)
               }}
             >
-              문학
+              일반
             </Button>
-            <Button
-              variant={qnaType === '독서' ? 'filled' : 'outlined'}
+            {/* <Button
+              variant={boardType === 1 ? 'filled' : 'outlined'}
               onClick={() => {
-                qnaTypeHandler('독서')
+                boardTypeHandler(1)
               }}
             >
-              독서
-            </Button>
+              질문
+            </Button> */}
             <Button
-              variant={qnaType === '기타' ? 'filled' : 'outlined'}
+              variant={boardType === 2 ? 'filled' : 'outlined'}
               onClick={() => {
-                qnaTypeHandler('기타')
+                boardTypeHandler(2)
               }}
             >
-              기타
+              지점별
             </Button>
           </div>
+        )}
+        {boardType === 1 && (
+          <>
+            <EditorQnaNoticeContainer>
+              질문 게시판 운영에 관한 공지
+              <br />
+              ① 질문 게시판은 강의, 교재, 평가원 기출에 한해서만 질문 받습니다.
+              <br />
+              → 그 외에는 질문을 하셔도 답변하지 않습니다.
+              <br />
+              → 강의와 교재를 정확하게 적시해주셔야 정확한 답변을 받으실 수
+              있습니다.
+              <br />② 예의를 지키지 않는 질문은 답변하지 않습니다.
+              <br />③ 질문의 내용은 '정확'해야 합니다.
+              <br />→ 추상적인 질문, 떼쓰는 식의 질문은 답변하기가 참
+              어렵습니다.
+              <br />→ 충분히 여러번 읽어 본 이후 질문을 해주시기 바랍니다.
+              <br />④ 재질문은 '답글쓰기' 혹은 '새 게시글'로 다시 올려주세요.
+              <br />→ 기존 게시글에 그냥 댓글을 다시면 알람이 저희에게 뜨지
+              않습니다.
+              <br />
+              그러므로 만약 댓글로 재질문 하실 경우, 저희가 답변드린 댓글에
+              '답글쓰기'로 남겨주세요.
+              <br />* 댓글로 재질문을 하신 경우 간혹 누락되는 경우가 있습니다.
+              오랫동안 답글이 달리지 않는 경우, 새 게시글로 질문 부탁드립니다.
+            </EditorQnaNoticeContainer>
+            <div className="flex h-[45px] w-max gap-4 mb-[10px]">
+              <Button
+                variant={qnaType === '문학' ? 'filled' : 'outlined'}
+                onClick={() => {
+                  qnaTypeHandler('문학')
+                }}
+              >
+                문학
+              </Button>
+              <Button
+                variant={qnaType === '독서' ? 'filled' : 'outlined'}
+                onClick={() => {
+                  qnaTypeHandler('독서')
+                }}
+              >
+                독서
+              </Button>
+              <Button
+                variant={qnaType === '기타' ? 'filled' : 'outlined'}
+                onClick={() => {
+                  qnaTypeHandler('기타')
+                }}
+              >
+                기타
+              </Button>
+            </div>
+          </>
         )}
         <EditorHeaderSelectorContainer>
           {boardType === 0 && (
@@ -421,6 +495,15 @@ const EditorComponent = ({
                 <Option>Material Tailwind Svelte</Option>
               </Select>
             </>
+          )}
+          {boardType === 2 && (
+            <Select onChange={boardHandler} size="lg" label="지점 선택">
+              {branches.map((branch, idx) => (
+                <Option key={idx} value={branch.branch_id.toString()}>
+                  {branch.branch_name}
+                </Option>
+              ))}
+            </Select>
           )}
         </EditorHeaderSelectorContainer>
         <Input

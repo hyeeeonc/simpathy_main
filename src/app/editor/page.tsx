@@ -18,6 +18,8 @@ const Editor = async () => {
     },
   })
 
+  const branches = await prisma.branch.findMany()
+
   return (
     <div>
       <div className="w-full text-3xl font-bold mt-20 mb-[50px]">글 쓰기</div>
@@ -25,6 +27,7 @@ const Editor = async () => {
         user_id={currentUser?.user_id}
         grade_id={currentUser?.grade_id}
         boards={userBoards}
+        branches={branches}
       />
     </div>
   )

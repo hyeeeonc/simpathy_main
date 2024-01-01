@@ -8,6 +8,7 @@ import StyledComponentsRegistry from '@/libs/registry'
 import Header from '@/containers/common/Header'
 import NavBarProvider from '@/containers/common/NavBar/NavBarProvider'
 import Footer from '@/containers/common/Footer'
+import Head from 'next/head'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -23,6 +24,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <Head>
+        <meta charSet="utf-8" />
+      </Head>
       <body className={inter.className}>
         <StyledComponentsRegistry>
           <div className="total-container">

@@ -9,38 +9,30 @@ import getCurrentUser from '@/services/getCurrentUser'
 import PostUserName from '@/containers/post/PostUserName'
 import ReplyList from '@/containers/post/ReplyList'
 import FileList from '@/containers/post/FileList'
+import { BranchPostDeleteButton } from '@/containers/post/BranchPostUtil'
+import BranchBreadcrumb from '@/containers/post/BranchBreadcrumb'
 
 const PostPage = async (props: any) => {
   const post_id = Number(props.params.postid)
-  const board_id = Number(props.params.id)
   const currentUser = await getCurrentUser()
-  const currentPost = await prisma.post.findUnique({
+  const currentPost = await prisma.branchpost.findUnique({
     where: { post_id },
   })
 
-  const currentBoard = await prisma.board.findUnique({
-    where: { board_id },
-  })
-
-  const currentReply = await prisma.reply.findMany({
-    where: { post_id },
-    orderBy: {
-      reply_upload_time: 'asc',
-    },
-  })
-
-  const currentFiles = await prisma.file.findMany({
+  const currentFiles = await prisma.branchfile.findMany({
     where: { post_id },
   })
 
-  if (!currentPost || currentPost.board_id !== board_id || !currentBoard) {
+  if (!currentPost) {
     return <div>존재하지 않는 게시물입니다.</div>
   }
 
   if (
     !currentUser ||
     currentUser.grade_id === undefined ||
-    currentUser.grade_id > currentBoard.board_read_auth
+    currentUser.grade_id >= 4 ||
+    (currentUser.branch_id != 1 &&
+      currentUser.branch_id !== currentPost.branch_id)
   ) {
     return <div>권한이 없습니다.</div>
   }
@@ -66,7 +58,7 @@ const PostPage = async (props: any) => {
   return (
     <>
       <div className="w-full rounded-[5px] md:border-solid md:border md:border-gray-300 md:p-6">
-        <Breadcrumb board_id={board_id} board_name={currentBoard?.board_name} />
+        <BranchBreadcrumb />
 
         <div className="w-full mt-[20px] mb-[20px] border-solid border-b border-b-gray-300">
           <div className="text-sky-800 text-3xl font-bold mb-[40px]">
@@ -78,7 +70,6 @@ const PostPage = async (props: any) => {
               <p className="text-gray-500">{formattedDate}</p>
             </div>
           </div>
-
           {/* <div className="text-sky-800 text-2xl font-bold mb-[100px]"></div> */}
         </div>
         <FileList files={currentFiles} />
@@ -86,22 +77,18 @@ const PostPage = async (props: any) => {
           className="border-solid border-b border-b-gray-300 py-[20px]"
           dangerouslySetInnerHTML={{ __html: currentPost.post_contents }}
         />
-        <div className="text-sky-800 text-xl font-bold my-[20px]">댓글</div>
+        {/* <div className="text-sky-800 text-xl font-bold my-[20px]">댓글</div>
         <ReplyList
           user={currentUser}
           replies={currentReply}
           post_id={post_id}
         />
-        <ReplyEditor post_id={post_id} origin_id={null} />
+        <ReplyEditor post_id={post_id} origin_id={null} /> */}
       </div>
       <div className="flex justify-end items-center w-full my-[20px]">
         {currentUser.grade_id === 1 && (
-          <PostNoticeButton post_id={post_id} board_id={board_id} />
-        )}
-        {(currentPost.user_id === currentUser?.user_id ||
-          currentUser.grade_id === 1) && (
           <>
-            <PostDeleteButton post_id={post_id} board_id={board_id} />
+            <BranchPostDeleteButton post_id={post_id} />
           </>
         )}
       </div>

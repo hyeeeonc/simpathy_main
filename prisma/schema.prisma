@@ -46,6 +46,7 @@ model branch {
   branch_text_now         String?      @db.VarChar(50)
   branch_text_preview     String?      @db.VarChar(50)
   attend                  attend[]
+  branchpost              branchpost[]
   consulting              consulting[]
   user                    user[]
 }
@@ -124,6 +125,7 @@ model user {
   grade_id          Int
   branch_id         Int
   attend            attend[]
+  branchpost        branchpost[]
   consulting        consulting[]
   post              post[]
   reply             reply[]
@@ -143,6 +145,7 @@ model post {
   post_contents    String    @db.Text
   post_upload_time DateTime  @db.DateTime(0)
   post_update_time DateTime? @db.DateTime(0)
+  isNotice         Boolean?  @default(false)
   file             file[]
   board            board     @relation(fields: [board_id], references: [board_id], onUpdate: Restrict, map: "FK_post_board_id_board_board_id")
   user             user      @relation(fields: [user_id], references: [user_id], onUpdate: Restrict, map: "FK_post_user_id_user_user_id")
@@ -150,4 +153,30 @@ model post {
 
   @@index([board_id], map: "FK_post_board_id_board_board_id")
   @@index([user_id], map: "FK_post_user_id_user_user_id")
+}
+
+model branchfile {
+  file_id    Int        @id @default(autoincrement())
+  post_id    Int
+  file_name  String     @db.VarChar(100)
+  file_addr  String     @db.VarChar(1000)
+  branchpost branchpost @relation(fields: [post_id], references: [post_id], onDelete: Cascade, onUpdate: NoAction, map: "branchfile_ibfk_1")
+
+  @@index([post_id], map: "post_id")
+}
+
+model branchpost {
+  post_id          Int          @id @default(autoincrement())
+  branch_id        Int
+  user_id          String       @db.VarChar(50)
+  post_title       String       @db.VarChar(100)
+  post_contents    String       @db.Text
+  post_upload_time DateTime     @db.DateTime(0)
+  post_update_time DateTime?    @db.DateTime(0)
+  branchfile       branchfile[]
+  branch           branch       @relation(fields: [branch_id], references: [branch_id], onDelete: Cascade, onUpdate: NoAction, map: "branchpost_ibfk_1")
+  user             user         @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "branchpost_ibfk_2")
+
+  @@index([branch_id], map: "branch_id")
+  @@index([user_id], map: "user_id")
 }

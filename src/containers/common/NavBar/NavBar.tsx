@@ -247,7 +247,7 @@ export function NavBar() {
             </ListItem>
           </Link>
 
-          <Link href={'/consulting'}>
+          <Link href={'/board/branch'}>
             <ListItem onClick={closeDrawer}>
               <ListItemPrefix>
                 <svg
