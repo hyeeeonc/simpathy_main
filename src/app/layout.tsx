@@ -1,5 +1,6 @@
 import '../styles/reset.css'
 import '../styles/global.css'
+import 'react-quill/dist/quill.snow.css'
 
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'

@@ -3,6 +3,17 @@
 import React, { useRef } from 'react'
 import { signIn } from 'next-auth/react'
 import { Alert } from '@material-tailwind/react'
+import styled from 'styled-components'
+
+const LoginNotice = styled.div`
+  width: 100%;
+  text-align: center;
+
+  font-size: 0.8rem;
+  color: gray;
+
+  margin-top: 20px;
+`
 
 function Login() {
   const emailRef = useRef(null)
@@ -83,7 +94,17 @@ function Login() {
                   onKeyUp={handleOnKeyPress}
                 />
               </div>
+              <LoginNotice>
+                초기 설정은 ID: 지점 이름(ex. 대치러셀 심찬우),
+                <br />
+                PW: 본인 전화번호 뒷자리입니다.
+                <br />
+                <br />* 비밀번호는 홈페이지 우상단
+                <br />
+                'MYPAGE' → '비밀번호 변경하기'에서 변경하실 수 있습니다.
+              </LoginNotice>
             </div>
+
             <button
               type="submit"
               onClick={handleSubmit}

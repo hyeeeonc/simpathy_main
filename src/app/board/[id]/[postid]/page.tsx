@@ -1,4 +1,5 @@
 import ReplyEditor from '@/containers/editor/ReplyEditor'
+import 'react-quill/dist/quill.snow.css'
 import '../../../../styles/post.css'
 
 import BoardTable from '@/containers/board/BoardTable'
@@ -83,7 +84,7 @@ const PostPage = async (props: any) => {
         </div>
         <FileList files={currentFiles} />
         <div
-          className="border-solid border-b border-b-gray-300 py-[20px]"
+          className="border-solid border-b border-b-gray-300 py-[20px] view ql-editor"
           dangerouslySetInnerHTML={{ __html: currentPost.post_contents }}
         />
         <div className="text-sky-800 text-xl font-bold my-[20px]">댓글</div>

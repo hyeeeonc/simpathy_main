@@ -106,6 +106,7 @@ const AdminUser = () => {
 
       if (response.ok) {
         alert('정상적으로 반영되었습니다.')
+        location.reload()
       } else {
         console.error('Error creating branch:', response.statusText)
         // Handle errors, e.g., show an error message to the user

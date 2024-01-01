@@ -65,14 +65,15 @@ const AdminBranchAdd = () => {
       })
 
       if (response.ok) {
-        console.log('Branch created successfully!')
+        alert('정상적으로 반영되었습니다.')
+        location.reload()
         // Handle success, e.g., redirect or show a success message
       } else {
-        console.error('Error creating branch:', response.statusText)
+        alert('서버 오류로 인해 반영에 실패하였습니다. 다시 시도해주세요.')
         // Handle errors, e.g., show an error message to the user
       }
     } catch (error: any) {
-      console.error('Error creating branch:', error.message)
+      alert('서버 오류로 인해 반영에 실패하였습니다. 다시 시도해주세요.')
     }
   }
 

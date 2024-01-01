@@ -57,17 +57,16 @@ const BoardPage = async (props: any) => {
       },
     })
 
-    posts.unshift(...noticePosts)
-    // // noticePosts의 post_title에 "[공지] "를 추가하여 수정
-    // const modifiedNoticePosts = noticePosts.map(post => ({
-    //   ...post,
-    //   post_title: `[필독] ${post.post_title}`,
-    // }))
+    // 중복된 id 확인을 위해 Set 사용
+    const postIds = new Set(posts.map(post => post.post_id))
 
-    // // 새로운 배열을 만들어서 합침
-    // posts.unshift(...modifiedNoticePosts)
-    // // 또는
-    // // posts = modifiedNoticePosts.concat(posts);
+    // 중복된 id를 가지는 noticePosts 필터링
+    const uniqueNoticePosts = noticePosts.filter(
+      post => !postIds.has(post.post_id),
+    )
+
+    // 중복된 id를 제거한 noticePosts를 posts 배열에 추가
+    posts.unshift(...uniqueNoticePosts)
   }
 
   // posts를 순회하면서 날짜를 변경하고 포맷팅
