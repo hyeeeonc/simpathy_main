@@ -13,7 +13,7 @@ import Head from 'next/head'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Simpathy',
+  title: '심찬우의 공감연구소',
   description: '심찬우의 공감연구소',
 }
 

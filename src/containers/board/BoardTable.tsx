@@ -92,18 +92,17 @@ const BoardTableMobileItemContainer = styled.div`
 
   border-bottom: 1px solid #ddd;
 
-  padding: 11px 12px 11px 0;
+  padding: 11px;
 `
 
 const BoardTableMobileItemTitle = styled.div`
+  display: flex;
+  align-items: center;
+
   width: 100%;
   font-size: 16px;
   line-height: 19px;
   font-weight: 400;
-
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 
   a {
     cursor: pointer;
@@ -111,6 +110,16 @@ const BoardTableMobileItemTitle = styled.div`
       font-weight: bold;
     }
   }
+`
+
+const BoardTableMobileItemTitleText = styled.div`
+  text-overflow: ellipsis;
+  overflow: hidden;
+  word-break: break-word;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 2; // 원하는 라인수
+  -webkit-box-orient: vertical;
 `
 
 const BoardTableMobileItemSubContainer = styled.div`
@@ -126,6 +135,19 @@ const BoardTableMobileWriter = styled.div`
 `
 
 const BoardTableMobileDate = styled.div``
+
+const BoardTableMobileNoticeIndicater = styled.div`
+  white-space: nowrap;
+  padding: 2px 5px;
+
+  font-size: 12px;
+  background: red;
+  color: white;
+
+  border-radius: 5px;
+
+  margin-right: 5px;
+`
 
 const BoardTable = ({
   posts,
@@ -239,9 +261,22 @@ const BoardTable = ({
         <BoardTableMobileContainer>
           {posts.map((post: any, index: number) => (
             <Link href={`/board/${post?.board_id}/${post?.post_id}`}>
-              <BoardTableMobileItemContainer key={index}>
+              <BoardTableMobileItemContainer
+                key={index}
+                style={{
+                  background: post?.isNotice ? '#f5f5f5' : 'white',
+                  color: post?.isNotice ? 'red' : 'black',
+                }}
+              >
                 <BoardTableMobileItemTitle>
-                  {post?.post_title}
+                  {post?.isNotice && (
+                    <BoardTableMobileNoticeIndicater>
+                      공지
+                    </BoardTableMobileNoticeIndicater>
+                  )}
+                  <BoardTableMobileItemTitleText>
+                    {post?.post_title}
+                  </BoardTableMobileItemTitleText>
                 </BoardTableMobileItemTitle>
                 <BoardTableMobileItemSubContainer>
                   <BoardTableMobileWriter>
