@@ -41,13 +41,7 @@ const BoardPage = async (props: any) => {
   const searchType = props.searchParams.searchType
   const totalPage = Math.ceil(totalPost / pageSize)
 
-  const posts = await pagination(
-    board_id,
-    page,
-    pageSize,
-    searchText,
-    searchType,
-  )
+  let posts = await pagination(board_id, page, pageSize, searchText, searchType)
 
   if (page === 1) {
     const noticePosts = await prisma.post.findMany({
@@ -58,15 +52,13 @@ const BoardPage = async (props: any) => {
     })
 
     // 중복된 id 확인을 위해 Set 사용
-    const postIds = new Set(posts.map(post => post.post_id))
+    const postIds = new Set(noticePosts.map(post => post.post_id))
 
     // 중복된 id를 가지는 noticePosts 필터링
-    const uniqueNoticePosts = noticePosts.filter(
-      post => !postIds.has(post.post_id),
-    )
+    posts = posts.filter(post => !postIds.has(post.post_id))
 
     // 중복된 id를 제거한 noticePosts를 posts 배열에 추가
-    posts.unshift(...uniqueNoticePosts)
+    posts.unshift(...noticePosts)
   }
 
   // posts를 순회하면서 날짜를 변경하고 포맷팅

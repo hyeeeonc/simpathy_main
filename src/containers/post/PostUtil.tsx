@@ -46,6 +46,7 @@ export const PostDeleteButton = ({
 
       if (response.ok) {
         alert('글이 삭제되었습니다.')
+        router.refresh()
         router.push(`/board/${board_id}`)
       } else if (response.status === 401) {
         alert('권한이 없습니다.')

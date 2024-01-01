@@ -147,9 +147,10 @@ const ConsultingMain = ({
         },
         body: JSON.stringify(data),
       })
-      console.log(response)
 
       if (response.ok) {
+        alert('상담 신청이 완료되었습니다.')
+        window.location.href = '/'
         setShowOkAlert(true)
         setTimeout(() => {
           window.location.href = '/'

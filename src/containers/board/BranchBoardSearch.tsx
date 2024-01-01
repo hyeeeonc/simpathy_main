@@ -52,11 +52,6 @@ const BranchBoardSearch = ({ branches }: { branches: any[] }) => {
     }
   }
 
-  useEffect(() => {
-    console.log(searchType)
-    console.log(search)
-  }, [search, searchType])
-
   return (
     <BoardSearchContainer>
       <Select label="검색 범위" onChange={handleSearchType}>

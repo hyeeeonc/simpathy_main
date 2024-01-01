@@ -152,10 +152,6 @@ const BranchBoardTable = ({
     query: '(max-width:767px)',
   })
 
-  useEffect(() => {
-    console.log(showPosts)
-  })
-
   return (
     <>
       {branch_id === 1 && (
