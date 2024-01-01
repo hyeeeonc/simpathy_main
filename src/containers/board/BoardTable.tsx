@@ -165,11 +165,6 @@ const BoardTable = ({
     }
   }
 
-  useEffect(() => {
-    console.log('검색어', search)
-    console.log('필터', searchType)
-  }, [search, searchType])
-
   const isDesktop: boolean = useMediaQuery({
     query: '(min-width:768px)',
   })
@@ -210,7 +205,13 @@ const BoardTable = ({
             </BoardTableHeader>
             <tbody>
               {posts.map((post: any, index: number) => (
-                <tr key={index}>
+                <tr
+                  key={index}
+                  style={{
+                    background: post?.isNotice ? '#f5f5f5' : 'white',
+                    color: post?.isNotice ? 'red' : 'black',
+                  }}
+                >
                   <BoardTableCell>{post?.post_id}</BoardTableCell>
 
                   <BoardTableCellTitle>

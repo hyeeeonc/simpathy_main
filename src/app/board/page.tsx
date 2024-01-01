@@ -23,6 +23,27 @@ const BoardPage = async (props: any) => {
   const posts = await pagination(0, page, pageSize, searchText, searchType)
   const totalPage = Math.ceil(totalPost / pageSize)
 
+  if (page === 1) {
+    const noticePosts = await prisma.post.findMany({
+      where: { isNotice: true },
+      orderBy: {
+        post_upload_time: 'desc',
+      },
+    })
+
+    posts.unshift(...noticePosts)
+    // // noticePosts의 post_title에 "[공지] "를 추가하여 수정
+    // const modifiedNoticePosts = noticePosts.map(post => ({
+    //   ...post,
+    //   post_title: `[필독] ${post.post_title}`,
+    // }))
+
+    // // 새로운 배열을 만들어서 합침
+    // posts.unshift(...modifiedNoticePosts)
+    // // 또는
+    // // posts = modifiedNoticePosts.concat(posts);
+  }
+
   // posts를 순회하면서 날짜를 변경하고 포맷팅
   const formattedPosts = posts.map(post => {
     // Prisma에서 받아온 날짜 데이터를 JavaScript Date 객체로 변환

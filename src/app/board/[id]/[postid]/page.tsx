@@ -96,7 +96,11 @@ const PostPage = async (props: any) => {
       </div>
       <div className="flex justify-end items-center w-full my-[20px]">
         {currentUser.grade_id === 1 && (
-          <PostNoticeButton post_id={post_id} board_id={board_id} />
+          <PostNoticeButton
+            post_id={post_id}
+            board_id={board_id}
+            isNotice={currentPost.isNotice}
+          />
         )}
         {(currentPost.user_id === currentUser?.user_id ||
           currentUser.grade_id === 1) && (

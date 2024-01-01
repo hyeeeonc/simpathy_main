@@ -91,66 +91,67 @@ export const PostDeleteButton = ({
 export const PostNoticeButton = ({
   post_id,
   board_id,
+  isNotice,
 }: {
   post_id: number
   board_id: number
+  isNotice: boolean | null
 }) => {
-  const router = useRouter()
-  const [open, setOpen] = useState(false)
-  const handleOpen = () => setOpen(!open)
+  const postNoticeHandler = async () => {
+    if (isNotice === true) {
+      try {
+        const response = await fetch('/api/board/deleteNotice', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            post_id,
+          }),
+        })
 
-  const PostNoticeHandler = async () => {
-    try {
-      const response = await fetch('/api/editor/deletePost', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          post_id,
-        }),
-      })
-
-      if (response.ok) {
-        alert('글이 삭제되었습니다.')
-        router.push(`/board/${board_id}`)
-      } else if (response.status === 401) {
-        alert('권한이 없습니다.')
-        // Handle errors, e.g., show an error message to the user
-      } else {
+        if (response.ok) {
+          alert('공지에서 해제되었습니다.')
+          location.reload()
+        } else {
+          alert('서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.')
+        }
+      } catch (error: any) {
         alert('서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.')
       }
-    } catch (error: any) {
-      alert('서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.')
+    } else {
+      try {
+        const response = await fetch('/api/board/addNotice', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            post_id,
+          }),
+        })
+
+        if (response.ok) {
+          alert('공지로 등록되었습니다.')
+          location.reload()
+        } else {
+          alert('서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.')
+        }
+      } catch (error: any) {
+        alert('서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.')
+      }
     }
   }
 
   return (
     <>
-      <Button variant="outlined" style={{ marginRight: '10px' }}>
-        공지 해제
+      <Button
+        variant="outlined"
+        style={{ marginRight: '10px' }}
+        onClick={postNoticeHandler}
+      >
+        {isNotice ? '공지 해제' : '공지 설정'}
       </Button>
-      {/* <Button onClick={handleOpen} variant="gradient">
-        삭제
-      </Button>
-      <Dialog open={open} handler={handleOpen}>
-        <DialogBody style={{ color: 'black', fontWeight: 'bold' }}>
-          공지로 등록하면 지점별 게시판 제외 모든 게시판에 노출됩니다.
-        </DialogBody>
-        <DialogFooter>
-          <Button
-            variant="text"
-            color="gray"
-            onClick={handleOpen}
-            className="mr-1"
-          >
-            <span>공지 해제</span>
-          </Button>
-          <Button variant="gradient" color="red" onClick={PostNoticeHandler}>
-            <span>등록</span>
-          </Button>
-        </DialogFooter>
-      </Dialog> */}
     </>
   )
 }
