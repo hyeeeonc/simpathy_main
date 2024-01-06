@@ -3,6 +3,7 @@ import prisma from '@/libs/prisma'
 import getCurrentUser from '@/services/getCurrentUser'
 import pagination from '@/services/board/pagination'
 import BoardPagination from '@/containers/board/BoardPagination'
+import BoardWriteButton from '@/containers/board/BoardWriteButton'
 
 const BoardPage = async (props: any) => {
   const pageSize = 15 // 한 페이지당 노출할 post 개수
@@ -89,6 +90,9 @@ const BoardPage = async (props: any) => {
         <div className="text-sky-800 text-3xl font-bold mb-[100px]">
           {currentBoard.board_name}
         </div>
+        {currentBoard.board_write_auth >= currentUser.grade_id && (
+          <BoardWriteButton board_id={board_id} />
+        )}
         {posts.length === 0 && (
           <div className="w-full flex justify-center text-xl font-bold mb-[100px]">
             등록된 게시글이 없습니다.

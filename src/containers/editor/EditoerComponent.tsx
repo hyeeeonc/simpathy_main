@@ -90,6 +90,7 @@ interface EditorComponentProps {
   grade_id?: number
   boards?: Board[]
   branches?: any[]
+  board_id?: number
 }
 
 const EditorComponent = ({
@@ -97,6 +98,7 @@ const EditorComponent = ({
   grade_id = 0,
   boards = [],
   branches = [],
+  board_id = 0,
 }: EditorComponentProps) => {
   const [boardType, setBoardType] = useState(0)
   const [qnaType, setQnaType] = useState('문학')
@@ -199,6 +201,11 @@ const EditorComponent = ({
   const titleHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value)
   }
+
+  // board 선택자
+  useEffect(() => {
+    if (board_id > 0) setSelectedBoard(board_id)
+  }, [])
 
   // 파일 업로드 관련
   const [selectedFiles, setSelectedFiles] = useState<File[]>([])
@@ -470,7 +477,12 @@ const EditorComponent = ({
         )}
         <EditorHeaderSelectorContainer>
           {boardType === 0 && (
-            <Select onChange={boardHandler} size="lg" label="게시판 선택">
+            <Select
+              value={board_id.toString()}
+              onChange={boardHandler}
+              size="lg"
+              label="게시판 선택"
+            >
               {boards.map((board, idx) => (
                 <Option key={idx} value={board.board_id.toString()}>
                   {board.board_name}

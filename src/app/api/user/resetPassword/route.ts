@@ -12,11 +12,8 @@ export async function PUT(request: Request) {
     })
 
     const { user_id } = await request.json()
-    console.log(user)
-    console.log(user_id)
 
     if (user && user.grade_id === 1) {
-      console.log(user_id)
       const new_user = await prisma.user.update({
         where: {
           user_id,

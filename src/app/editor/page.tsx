@@ -8,7 +8,14 @@ const EditorComponent = dynamic(
   { ssr: false },
 )
 
-const Editor = async () => {
+const Editor = async (props: any) => {
+  const boardParamHandler = () => {
+    const board = props.searchParams.board_id
+    if (!/^\d+$/.test(board) || board === undefined || board === null) return 0
+    else if (Number(board) < 1) return 0
+    else return Number(board)
+  }
+
   const currentUser = await getCurrentUser()
   const userBoards = await prisma.board.findMany({
     where: {
@@ -26,6 +33,7 @@ const Editor = async () => {
       <EditorComponent
         user_id={currentUser?.user_id}
         grade_id={currentUser?.grade_id}
+        board_id={boardParamHandler()}
         boards={userBoards}
         branches={branches}
       />
