@@ -170,49 +170,72 @@ const BranchBoardTable = ({
               <tr>
                 <BoardTableHead style={{ width: '5%' }}>번호</BoardTableHead>
                 <BoardTableHead style={{ width: '60%' }}>제목</BoardTableHead>
-                <BoardTableHead>작성자</BoardTableHead>
+                <BoardTableHead>지점</BoardTableHead>
                 <BoardTableHead>게시일</BoardTableHead>
               </tr>
             </BoardTableHeader>
             <tbody>
-              {showPosts.map((post: any, index: number) => (
-                <tr key={index}>
-                  <BoardTableCell>{post?.post_id}</BoardTableCell>
+              {showPosts.map((post: any, index: number) => {
+                // branch_id가 post_id와 같은 객체 찾기
+                const matchingBranch = branches.find(
+                  item => item.branch_id === post.branch_id,
+                )
 
-                  <BoardTableCellTitle>
-                    <Link href={`/board/branch/${post?.post_id}`}>
-                      {post?.post_title}
-                    </Link>
-                  </BoardTableCellTitle>
+                // matchingBranch에서 branch_name 추출
+                const branchName = matchingBranch
+                  ? matchingBranch.branch_name
+                  : null
 
-                  <BoardTableWriter>{post?.user_id}</BoardTableWriter>
+                return (
+                  <tr key={index}>
+                    <BoardTableCell>{post?.post_id}</BoardTableCell>
 
-                  <BoardTableCell>{post?.formattedDate}</BoardTableCell>
-                </tr>
-              ))}
+                    <BoardTableCellTitle>
+                      <Link href={`/board/branch/${post?.post_id}`}>
+                        {post?.post_title}
+                      </Link>
+                    </BoardTableCellTitle>
+
+                    <BoardTableWriter>{branchName}</BoardTableWriter>
+
+                    <BoardTableCell>{post?.formattedDate}</BoardTableCell>
+                  </tr>
+                )
+              })}
             </tbody>
           </BoardTableContainer>
         </>
       )}
       {isMobile && (
         <BoardTableMobileContainer>
-          {showPosts.map((post: any, index: number) => (
-            <Link href={`/board/branch/${post?.post_id}`}>
-              <BoardTableMobileItemContainer key={index}>
-                <BoardTableMobileItemTitle>
-                  {post?.post_title}
-                </BoardTableMobileItemTitle>
-                <BoardTableMobileItemSubContainer>
-                  <BoardTableMobileWriter>
-                    {post?.user_id}
-                  </BoardTableMobileWriter>
-                  <BoardTableMobileDate>
-                    {post?.formattedDate}
-                  </BoardTableMobileDate>
-                </BoardTableMobileItemSubContainer>
-              </BoardTableMobileItemContainer>
-            </Link>
-          ))}
+          {showPosts.map((post: any, index: number) => {
+            // branch_id가 post_id와 같은 객체 찾기
+            const matchingBranch = branches.find(
+              item => item.branch_id === post.branch_id,
+            )
+
+            // matchingBranch에서 branch_name 추출
+            const branchName = matchingBranch
+              ? matchingBranch.branch_name
+              : null
+            return (
+              <Link href={`/board/branch/${post?.post_id}`}>
+                <BoardTableMobileItemContainer key={index}>
+                  <BoardTableMobileItemTitle>
+                    {post?.post_title}
+                  </BoardTableMobileItemTitle>
+                  <BoardTableMobileItemSubContainer>
+                    <BoardTableMobileWriter>
+                      {branchName}
+                    </BoardTableMobileWriter>
+                    <BoardTableMobileDate>
+                      {post?.formattedDate}
+                    </BoardTableMobileDate>
+                  </BoardTableMobileItemSubContainer>
+                </BoardTableMobileItemContainer>
+              </Link>
+            )
+          })}
         </BoardTableMobileContainer>
       )}
     </>
