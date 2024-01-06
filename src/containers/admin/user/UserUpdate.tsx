@@ -11,7 +11,7 @@ import {
   ContentBoxCellContent,
   ContentBoxClickableContentWrapper,
 } from '@/components/ContentBox'
-import { Input } from '@material-tailwind/react'
+import { Input, Button } from '@material-tailwind/react'
 import { Board, Category } from '@/types/board'
 import { Grade, UserNoPw } from '@/types/auth'
 import { Branch } from '@/types/branch'
@@ -48,6 +48,12 @@ const AdminBranchUpdateContainer = styled.div`
     padding: 10px;
     border-radius: 5px;
   }
+`
+
+const AdminBoardButtonContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
 `
 
 interface BoardUpdateProps {
@@ -116,6 +122,33 @@ const UserUpdate: React.FC<BoardUpdateProps> = ({
       if (response.ok) {
         alert('정상적으로 반영되었습니다.')
         onClose()
+      } else {
+        alert('반영에 실패하였습니다.')
+      }
+    } catch (error: any) {
+      alert('반영에 실패하였습니다.')
+    }
+  }
+
+  const handlePasswordReset = async (e: FormEvent) => {
+    e.preventDefault()
+
+    try {
+      const response = await fetch('/api/user/resetPassword', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          user_id: userData.user_id,
+        }),
+      })
+
+      if (response.ok) {
+        alert('정상적으로 반영되었습니다.')
+        onClose()
+      } else if (response.status === 403) {
+        alert('권한이 없습니다.')
       } else {
         alert('반영에 실패하였습니다.')
       }
@@ -221,7 +254,7 @@ const UserUpdate: React.FC<BoardUpdateProps> = ({
                 </ContentBoxCellContent>
               </ContentBoxCellContentWrapper>
 
-              <ContentBoxClickableContentWrapper
+              {/* <ContentBoxClickableContentWrapper
                 style={{
                   color: '#797b84',
                   display: 'flex',
@@ -231,6 +264,28 @@ const UserUpdate: React.FC<BoardUpdateProps> = ({
               >
                 수정하기
               </ContentBoxClickableContentWrapper>
+              <ContentBoxClickableContentWrapper
+                style={{
+                  color: '#797b84',
+                  display: 'flex',
+                  justifyContent: 'center',
+                }}
+                onClick={handleSubmit}
+              >
+                비밀번호 초기화
+              </ContentBoxClickableContentWrapper> */}
+              <AdminBoardButtonContainer>
+                <Button
+                  style={{ marginRight: '10px' }}
+                  color="red"
+                  onClick={handlePasswordReset}
+                >
+                  비번초기화
+                </Button>
+                <Button color="blue" onClick={handleSubmit}>
+                  수정하기
+                </Button>
+              </AdminBoardButtonContainer>
             </ContentBoxCellContentContainer>
           </ContentBoxCellContainer>
         </AdminBranchUpdateContainer>
