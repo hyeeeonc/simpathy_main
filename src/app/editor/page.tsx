@@ -9,13 +9,6 @@ const EditorComponent = dynamic(
 )
 
 const Editor = async (props: any) => {
-  const boardParamHandler = () => {
-    const board = props.searchParams.board_id
-    if (!/^\d+$/.test(board) || board === undefined || board === null) return 0
-    else if (Number(board) < 1) return 0
-    else return Number(board)
-  }
-
   const currentUser = await getCurrentUser()
   const userBoards = await prisma.board.findMany({
     where: {
@@ -26,6 +19,18 @@ const Editor = async (props: any) => {
   })
 
   const branches = await prisma.branch.findMany()
+
+  const boardParamHandler = () => {
+    const board = props.searchParams.board_id
+    if (!/^\d+$/.test(board) || board === undefined || board === null) return 0
+    else if (Number(board) < 1) return 0
+
+    const boardExists = userBoards.some(
+      userBoard => userBoard.board_id === Number(board),
+    )
+    if (!boardExists) return 0
+    return Number(board)
+  }
 
   return (
     <div>
