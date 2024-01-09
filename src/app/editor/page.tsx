@@ -32,6 +32,14 @@ const Editor = async (props: any) => {
     return Number(board)
   }
 
+  if (currentUser?.grade_id === undefined || currentUser?.grade_id === 6) {
+    return (
+      <div className="w-full flex justify-center text-xl font-bold mb-[100px]">
+        접근 권한이 없습니다.
+      </div>
+    )
+  }
+
   return (
     <div>
       <div className="w-full text-3xl font-bold mt-20 mb-[50px]">글 쓰기</div>

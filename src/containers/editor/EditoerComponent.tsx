@@ -101,7 +101,6 @@ const EditorComponent = ({
   board_id = 0,
 }: EditorComponentProps) => {
   const [boardType, setBoardType] = useState(0)
-  const [qnaType, setQnaType] = useState('문학')
 
   const quillInstance = useRef<ReactQuill>(null)
 
@@ -181,10 +180,6 @@ const EditorComponent = ({
 
   const boardTypeHandler = (type: number) => {
     setBoardType(type)
-  }
-
-  const qnaTypeHandler = (type: string) => {
-    setQnaType(type)
   }
 
   // 글 작성 관련
@@ -294,15 +289,22 @@ const EditorComponent = ({
     }
   }
 
+  // 질문게시판 관련
+  const [qnaType, setQnaType] = useState('문학')
+  const [qnaTarget, setQnaTarget] = useState('강의')
+
+  const qnaTypeHandler = (type: string) => {
+    setQnaType(type)
+    setQnaTarget('')
+  }
+
+  const qnaTargetHandler = (e: any) => {
+    setQnaTarget(e)
+  }
+
   // 최종 제출 핸들러
   const handleSubmit = async () => {
     setOffButton(true)
-    if (!selectedBoard) {
-      alert('게시판을 선택해주세요.')
-
-      setOffButton(false)
-      return
-    }
 
     if (!title) {
       alert('제목을 입력해주세요.')
@@ -317,6 +319,12 @@ const EditorComponent = ({
     }
 
     if (boardType === 0) {
+      if (!selectedBoard) {
+        alert('게시판을 선택해주세요.')
+
+        setOffButton(false)
+        return
+      }
       try {
         const response = await fetch('/api/editor/writePost', {
           method: 'POST',
@@ -353,6 +361,12 @@ const EditorComponent = ({
         setOffButton(false)
       }
     } else if (boardType === 2) {
+      if (!selectedBoard) {
+        alert('게시판을 선택해주세요.')
+
+        setOffButton(false)
+        return
+      }
       try {
         const response = await fetch('/api/editor/branch/writePost', {
           method: 'POST',
@@ -369,7 +383,7 @@ const EditorComponent = ({
 
         if (response.ok) {
           const responseData = await response.json()
-          const { post_id, board_id } = responseData // post_id 추출
+          const { post_id } = responseData // post_id 추출
 
           // 파일 업로드
           FileHandler(post_id)
@@ -388,13 +402,96 @@ const EditorComponent = ({
         alert('작성에 실패하였습니다. 잠시 후 다시 시도해 주세요.')
         setOffButton(false)
       }
+    } else if (boardType === 1) {
+      // 질문게시판
+      if (!qnaType) {
+        alert('질문 유형을 선택해주세요.')
+
+        setOffButton(false)
+        return
+      }
+
+      if (!qnaTarget) {
+        alert('질문 대상을 선택해주세요.')
+
+        setOffButton(false)
+        return
+      }
+
+      try {
+        const response = await fetch('/api/editor/qna/writePost', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            post_qnatype: qnaType,
+            post_qnatarget: qnaTarget,
+            user_id: user_id,
+            post_title: title,
+            post_contents: contents,
+          }),
+        })
+
+        if (response.ok) {
+          const responseData = await response.json()
+          const { post_id } = responseData // post_id 추출
+
+          // 파일 업로드
+          alert('작성이 완료되었습니다.')
+          setSelectedBoard(0)
+          setTitle('')
+          setContents('')
+          // 새로운 경로로 이동
+          router.refresh()
+          router.push(`/board/qna/${post_id}`)
+          setOffButton(false)
+        } else {
+          alert('작성에 실패하였습니다. 잠시 후 다시 시도해 주세요.')
+          setOffButton(false)
+          // Handle errors, e.g., show an error message to the user
+        }
+      } catch (error: any) {
+        alert('작성에 실패하였습니다. 잠시 후 다시 시도해 주세요.')
+        setOffButton(false)
+      }
     }
   }
 
   return (
     <>
       <EditorHeaderConatier>
-        {grade_id === 1 && (
+        {/* {grade_id >= 5 && ( */}
+        <div className="flex h-[45px] w-max gap-4 mb-[10px]">
+          <Button
+            variant={boardType === 0 ? 'filled' : 'outlined'}
+            onClick={() => {
+              boardTypeHandler(0)
+            }}
+          >
+            일반
+          </Button>
+          <Button
+            variant={boardType === 1 ? 'filled' : 'outlined'}
+            onClick={() => {
+              boardTypeHandler(1)
+            }}
+          >
+            질문
+          </Button>
+          {grade_id === 1 && (
+            <Button
+              variant={boardType === 2 ? 'filled' : 'outlined'}
+              onClick={() => {
+                boardTypeHandler(2)
+              }}
+            >
+              지점별
+            </Button>
+          )}
+        </div>
+        {/* )} */}
+        {/* {grade_id < 1 && grade_id >= 5 && (
           <div className="flex h-[45px] w-max gap-4 mb-[10px]">
             <Button
               variant={boardType === 0 ? 'filled' : 'outlined'}
@@ -404,24 +501,16 @@ const EditorComponent = ({
             >
               일반
             </Button>
-            {/* <Button
+            <Button
               variant={boardType === 1 ? 'filled' : 'outlined'}
               onClick={() => {
                 boardTypeHandler(1)
               }}
             >
               질문
-            </Button> */}
-            <Button
-              variant={boardType === 2 ? 'filled' : 'outlined'}
-              onClick={() => {
-                boardTypeHandler(2)
-              }}
-            >
-              지점별
             </Button>
           </div>
-        )}
+        )} */}
         {boardType === 1 && (
           <>
             <EditorQnaNoticeContainer>
@@ -438,14 +527,10 @@ const EditorComponent = ({
               <br />→ 추상적인 질문, 떼쓰는 식의 질문은 답변하기가 참
               어렵습니다.
               <br />→ 충분히 여러번 읽어 본 이후 질문을 해주시기 바랍니다.
-              <br />④ 재질문은 '답글쓰기' 혹은 '새 게시글'로 다시 올려주세요.
-              <br />→ 기존 게시글에 그냥 댓글을 다시면 알람이 저희에게 뜨지
-              않습니다.
+              <br />④ 한 번 게시된 질문은 삭제할 수 없습니다.
+              <br />→ 신중하게 질문해 주시기 바랍니다.
               <br />
-              그러므로 만약 댓글로 재질문 하실 경우, 저희가 답변드린 댓글에
-              '답글쓰기'로 남겨주세요.
-              <br />* 댓글로 재질문을 하신 경우 간혹 누락되는 경우가 있습니다.
-              오랫동안 답글이 달리지 않는 경우, 새 게시글로 질문 부탁드립니다.
+              {/* <br />* 댓글로 재질문을 하신 경우 간혹 누락되는 경우가 있습니다. */}
             </EditorQnaNoticeContainer>
             <div className="flex h-[45px] w-max gap-4 mb-[10px]">
               <Button
@@ -492,20 +577,28 @@ const EditorComponent = ({
           )}
           {boardType === 1 && (
             <>
-              <Select size="lg" label="출제년도">
+              <Select
+                value={qnaTarget}
+                size="lg"
+                label="질문사항"
+                onChange={qnaTargetHandler}
+              >
+                <Option value="강의">강의</Option>
+                <Option value="교재(강의교재)">교재(강의교재)</Option>
+                <Option value="교재(학습자료)">
+                  교재(학습자료 - 복습시트, 에필로그 등)
+                </Option>
+                <Option value="기출문제">평가원 기출</Option>
+                <Option value="기타">기타</Option>
+              </Select>
+
+              {/* <Select size="lg" label="문항">
                 <Option>Material Tailwind HTML</Option>
                 <Option>Material Tailwind React</Option>
                 <Option>Material Tailwind Vue</Option>
                 <Option>Material Tailwind Angular</Option>
                 <Option>Material Tailwind Svelte</Option>
-              </Select>
-              <Select size="lg" label="문항">
-                <Option>Material Tailwind HTML</Option>
-                <Option>Material Tailwind React</Option>
-                <Option>Material Tailwind Vue</Option>
-                <Option>Material Tailwind Angular</Option>
-                <Option>Material Tailwind Svelte</Option>
-              </Select>
+              </Select> */}
             </>
           )}
           {boardType === 2 && (
@@ -537,33 +630,38 @@ const EditorComponent = ({
           placeholder="내용을 입력해주세요."
         />
       </StyledVideo>
-      <MyComponent setSelectedFiles={setSelectedFiles} />
-      <div className="my-[20px]">
-        <div className="mb-[10px] text-lg font-bold">첨부파일</div>
+      {(boardType === 0 || boardType === 2) && (
+        <>
+          <MyComponent setSelectedFiles={setSelectedFiles} />
 
-        {selectedFiles.map((file, index) => (
-          <div key={index} className="flex items-center mb-[5px]">
-            <div>{file.name}</div>
-            {/* <button> */}
-            <svg
-              style={{ marginLeft: '10px', cursor: 'pointer' }}
-              onClick={() => handleRemoveFile(index)}
-              width={20}
-              height={20}
-              clip-rule="evenodd"
-              fill-rule="evenodd"
-              stroke-linejoin="round"
-              stroke-miterlimit="2"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path d="m12 10.93 5.719-5.72c.146-.146.339-.219.531-.219.404 0 .75.324.75.749 0 .193-.073.385-.219.532l-5.72 5.719 5.719 5.719c.147.147.22.339.22.531 0 .427-.349.75-.75.75-.192 0-.385-.073-.531-.219l-5.719-5.719-5.719 5.719c-.146.146-.339.219-.531.219-.401 0-.75-.323-.75-.75 0-.192.073-.384.22-.531l5.719-5.719-5.72-5.719c-.146-.147-.219-.339-.219-.532 0-.425.346-.749.75-.749.192 0 .385.073.531.219z" />
-            </svg>
+          <div className="my-[20px]">
+            <div className="mb-[10px] text-lg font-bold">첨부파일</div>
 
-            {/* </button> */}
+            {selectedFiles.map((file, index) => (
+              <div key={index} className="flex items-center mb-[5px]">
+                <div>{file.name}</div>
+                {/* <button> */}
+                <svg
+                  style={{ marginLeft: '10px', cursor: 'pointer' }}
+                  onClick={() => handleRemoveFile(index)}
+                  width={20}
+                  height={20}
+                  clip-rule="evenodd"
+                  fill-rule="evenodd"
+                  stroke-linejoin="round"
+                  stroke-miterlimit="2"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="m12 10.93 5.719-5.72c.146-.146.339-.219.531-.219.404 0 .75.324.75.749 0 .193-.073.385-.219.532l-5.72 5.719 5.719 5.719c.147.147.22.339.22.531 0 .427-.349.75-.75.75-.192 0-.385-.073-.531-.219l-5.719-5.719-5.719 5.719c-.146.146-.339.219-.531.219-.401 0-.75-.323-.75-.75 0-.192.073-.384.22-.531l5.719-5.719-5.72-5.719c-.146-.147-.219-.339-.219-.532 0-.425.346-.749.75-.749.192 0 .385.073.531.219z" />
+                </svg>
+
+                {/* </button> */}
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+        </>
+      )}
       <Button
         onClick={handleSubmit}
         color="blue-gray"

@@ -128,6 +128,8 @@ model user {
   branchpost        branchpost[]
   consulting        consulting[]
   post              post[]
+  qnapost           qnapost[]
+  qnareply          qnareply[]
   reply             reply[]
   branch            branch       @relation(fields: [branch_id], references: [branch_id], onUpdate: Restrict, map: "FK_user_branch_id_branch_branch_id")
   grade             grade        @relation(fields: [grade_id], references: [grade_id], onDelete: NoAction, onUpdate: NoAction, map: "FK_user_grade_id_grade_grade_id")
@@ -178,5 +180,38 @@ model branchpost {
   user             user         @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "branchpost_ibfk_2")
 
   @@index([branch_id], map: "branch_id")
+  @@index([user_id], map: "user_id")
+}
+
+model qnapost {
+  post_id          Int        @id @default(autoincrement())
+  user_id          String     @db.VarChar(50)
+  post_title       String     @db.VarChar(100)
+  post_contents    String     @db.Text
+  post_qnatype     String     @db.VarChar(50)
+  post_qnatarget   String     @db.VarChar(100)
+  post_isAnswered  Int
+  post_upload_time DateTime   @db.DateTime(0)
+  post_update_time DateTime?  @db.DateTime(0)
+  user             user       @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "user_id_fk")
+  qnareply         qnareply[]
+
+  @@index([user_id], map: "user_id_fk")
+}
+
+model qnareply {
+  reply_id          Int        @id @default(autoincrement())
+  user_id           String?    @db.VarChar(50)
+  post_id           Int?
+  reply_content     String?    @db.Text
+  reply_upload_time DateTime?  @db.DateTime(0)
+  origin_id         Int?
+  qnareply          qnareply?  @relation("qnareplyToqnareply", fields: [origin_id], references: [reply_id], onDelete: Cascade, onUpdate: NoAction, map: "origin_id_fk_qna_reply")
+  other_qnareply    qnareply[] @relation("qnareplyToqnareply")
+  qnapost           qnapost?   @relation(fields: [post_id], references: [post_id], onDelete: Cascade, onUpdate: NoAction, map: "post_id_fk_qna_reply")
+  user              user?      @relation(fields: [user_id], references: [user_id], onDelete: Restrict, onUpdate: Restrict, map: "user_id_fk_qna_reply")
+
+  @@index([origin_id], map: "origin_id")
+  @@index([post_id], map: "post_id")
   @@index([user_id], map: "user_id")
 }
