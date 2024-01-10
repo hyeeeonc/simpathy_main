@@ -41,12 +41,15 @@ const MyPagePosting = ({
           </ContentBoxClickableContentWrapper>
         </Link>
 
-        <ContentBoxClickableContentWrapper>
-          <ContentBoxCellContentTitle>
-            내가 작성한 질문
-          </ContentBoxCellContentTitle>
-          <ContentBoxCellContent>{questions}개</ContentBoxCellContent>
-        </ContentBoxClickableContentWrapper>
+        <Link href={`/board/qna/user/${user_id}`}>
+          <ContentBoxClickableContentWrapper>
+            <ContentBoxCellContentTitle>
+              내가 작성한 질문
+            </ContentBoxCellContentTitle>
+            <ContentBoxCellContent>{questions}개</ContentBoxCellContent>
+          </ContentBoxClickableContentWrapper>
+        </Link>
+
         <ContentBoxClickableContentWrapper>
           <ContentBoxCellContentTitle>
             내가 작성한 댓글

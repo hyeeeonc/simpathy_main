@@ -1,11 +1,25 @@
-import BoardTable from '@/containers/board/BoardTable'
 import prisma from '@/libs/prisma'
 import getCurrentUser from '@/services/getCurrentUser'
-import BoardPagination from '@/containers/board/BoardPagination'
-import branchPagenation from '@/services/board/branchPagenation'
-import BranchBoardTable from '@/containers/board/BranchBoardTable'
-import BranchBoardSearch from '@/containers/board/BranchBoardSearch'
 import QnaBoardTable from '@/containers/board/QnaBoardTable'
+import QnaPagination from '@/containers/board/QnaPagination'
+// import qnaPagination from '@/services/board/qnaPagination'
+
+export const revalidate = 1
+interface WhereCondition {
+  post_isAnswered?: number | undefined
+  post_qnatype?: '문학' | '독서' | '기타' | undefined
+  post_qnatarget?:
+    | '기출문제'
+    | '강의'
+    | '기타'
+    | '교재(강의교재)'
+    | '교재(학습자료)'
+    | undefined
+  OR?: {
+    post_title?: { contains: string } | undefined
+    post_contents?: { contains: string } | undefined
+  }[]
+}
 
 const BoardPage = async (props: any) => {
   const user = await getCurrentUser()
@@ -14,53 +28,71 @@ const BoardPage = async (props: any) => {
     return <div>로그인이 필요합니다.</div>
   }
 
-  const posts = await prisma.qnapost.findMany()
+  // const posts = await prisma.qnapost.findMany()
 
-  // if (user?.grade_id === undefined || user?.grade_id >= 4) {
-  //   return (
-  //     <div className="w-full flex justify-center text-xl font-bold mb-[100px]">
-  //       접근 권한이 없습니다.
-  //     </div>
-  //   )
-  // }
+  if (user?.grade_id === undefined || user?.grade_id >= 6) {
+    return (
+      <div className="w-full flex justify-center text-xl font-bold mb-[100px]">
+        접근 권한이 없습니다.
+      </div>
+    )
+  }
 
-  // const pageSize = 15 // 한 페이지당 노출할 post 개수
+  const pageSize = 15 // 한 페이지당 노출할 post 개수
 
-  // const pageHandler = () => {
-  //   const page = props.searchParams.page
-  //   if (!/^\d+$/.test(page) || page === undefined || page === null) return 1
-  //   else if (Number(page) < 1) return 1
-  //   else return Number(page)
-  // }
+  const pageHandler = () => {
+    const page = props.searchParams.page
+    if (!/^\d+$/.test(page) || page === undefined || page === null) return 1
+    else if (Number(page) < 1) return 1
+    else return Number(page)
+  }
 
-  // const totalPost = await prisma.branchpost.count()
+  const page = pageHandler()
 
-  // const page = pageHandler()
+  const searchText = props.searchParams.search
+  const isAnswered = props.searchParams.isAnswered
+  const qnaType = props.searchParams.qnaType
+  const qnaTarget = props.searchParams.qnaTarget
 
-  // const searchText = props.searchParams.search
-  // const searchType = props.searchParams.searchType
-  // console.log(searchText, searchType)
+  const whereCondition: WhereCondition = {
+    post_isAnswered:
+      isAnswered === '0' || isAnswered === '1' || isAnswered === '2'
+        ? Number(isAnswered)
+        : undefined,
+    post_qnatype:
+      qnaType === '문학' || qnaType === '독서' || qnaType === '기타'
+        ? qnaType
+        : undefined,
+    post_qnatarget:
+      qnaTarget === '기출문제' ||
+      qnaTarget === '강의' ||
+      qnaTarget === '기타' ||
+      qnaTarget === '교재(강의교재)' ||
+      qnaTarget === '교재(학습자료)'
+        ? qnaTarget
+        : undefined,
+  }
 
-  // if (
-  //   (user?.grade_id === undefined || user?.grade_id >= 3) &&
-  //   (searchType != undefined || searchText != undefined)
-  // ) {
-  //   return (
-  //     <div className="w-full flex justify-center text-xl font-bold mb-[100px]">
-  //       접근 권한이 없습니다.
-  //     </div>
-  //   )
-  // }
+  if (searchText) {
+    whereCondition.OR = [
+      { post_title: { contains: searchText } },
+      { post_contents: { contains: searchText } },
+    ]
+  }
 
-  // const posts = await branchPagenation(
-  //   user?.branch_id,
-  //   page,
-  //   pageSize,
-  //   searchText,
-  //   searchType,
-  // )
+  const posts = await prisma.qnapost.findMany({
+    where: whereCondition,
+    take: pageSize,
+    skip: (page - 1) * pageSize,
+    orderBy: {
+      post_upload_time: 'desc', // 'asc'로 설정하면 오래된 순으로 정렬
+    },
+  })
+  const totalPost = await prisma.qnapost.count({
+    where: whereCondition,
+  })
 
-  // const totalPage = Math.ceil(totalPost / pageSize)
+  const totalPage = Math.ceil(totalPost / pageSize)
 
   // posts를 순회하면서 날짜를 변경하고 포맷팅
   const formattedPosts = posts.map(post => {
@@ -90,16 +122,16 @@ const BoardPage = async (props: any) => {
         <div className="text-sky-800 text-3xl font-bold mb-[100px]">
           질문게시판
         </div>
-        {posts.length === 0 && (
+        {/* {posts.length === 0 && (
           <div className="w-full flex justify-center text-xl font-bold mb-[100px]">
             등록된 게시글이 없습니다.
           </div>
-        )}
-        {posts.length !== 0 && (
-          <>
-            <QnaBoardTable posts={formattedPosts} />
-          </>
-        )}
+        )} */}
+
+        <>
+          <QnaBoardTable isUser={false} posts={formattedPosts} />
+          <QnaPagination page={page} totalPage={totalPage} />
+        </>
       </div>
     </>
   )

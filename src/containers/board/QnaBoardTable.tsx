@@ -3,8 +3,10 @@
 import styled from 'styled-components'
 import Link from 'next/link'
 import { useMediaQuery } from 'react-responsive'
-import { Select, Option, Input } from '@material-tailwind/react'
-import { useEffect, useState } from 'react'
+import { ChangeEvent, useEffect, useState } from 'react'
+import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
+import { Select, Option, Input, Button } from '@material-tailwind/react'
+import { useRouter } from 'next/navigation'
 
 const BoardTableContainer = styled.table`
   width: 100%;
@@ -16,15 +18,11 @@ const BoardTableContainer = styled.table`
 const BoardSearchContainer = styled.div`
   width: 100%;
   gap: 20px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   display: flex;
 
-  @media (max-width: 767px) {
+  @media (max-width: 920px) {
     flex-direction: column;
-
-    padding-bottom: 20px;
-
-    border-bottom: 3px solid #ddd;
   }
 `
 
@@ -94,14 +92,13 @@ const BoardTableMobileItemContainer = styled.div`
 `
 
 const BoardTableMobileItemTitle = styled.div`
+  display: flex;
+  align-items: center;
+
   width: 100%;
   font-size: 16px;
   line-height: 19px;
   font-weight: 400;
-
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 
   a {
     cursor: pointer;
@@ -109,6 +106,16 @@ const BoardTableMobileItemTitle = styled.div`
       font-weight: bold;
     }
   }
+`
+
+const BoardTableMobileDoublelineTitle = styled.div`
+  text-overflow: ellipsis;
+  overflow: hidden;
+  word-break: break-word;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 2; // 원하는 라인수
+  -webkit-box-orient: vertical;
 `
 
 const BoardTableMobileItemSubContainer = styled.div`
@@ -133,9 +140,20 @@ const BoardTableAnsweredIndicator = styled.div`
   border-radius: 5px;
 
   margin-right: 5px;
+
+  @media (max-width: 767px) {
+    display: inline;
+  }
 `
 
 const BoardTableMobileDate = styled.div``
+
+const BoardQnaTypeButtonContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+
+  margin-bottom: 10px;
+`
 
 const QnaAnswerType = ({ isAnswered }: { isAnswered: number }) => {
   if (isAnswered === 1) {
@@ -160,15 +178,84 @@ const QnaAnswerType = ({ isAnswered }: { isAnswered: number }) => {
   )
 }
 
-const QnaBoardTable = ({ posts }: { posts: any[] }) => {
+const QnaBoardTable = ({
+  isUser,
+  posts,
+}: {
+  isUser: boolean
+  posts: any[]
+}) => {
   const [showPosts, setShowPosts] = useState<any[]>(posts)
+  const router = useRouter()
 
-  const handleBranchSearch = (e: any) => {
-    if (e === 1) {
-      setShowPosts(posts)
-    } else {
-      const filteredPosts = posts.filter(post => post.branch_id === e)
-      setShowPosts(filteredPosts)
+  const [isAnswered, setIsAnswered] = useState<string>('')
+
+  const handleAnswered = (e: any) => {
+    setIsAnswered(e)
+  }
+
+  const [qnaType, setQnaType] = useState<string>('')
+
+  const handleQnaType = (e: any) => {
+    setQnaType(e)
+  }
+
+  const [qnaTarget, setQnaTarget] = useState<string>('')
+
+  const handleQnaTarget = (e: any) => {
+    setQnaTarget(e)
+  }
+
+  const [search, setSearch] = useState('')
+
+  const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value)
+  }
+
+  const searchSubmit = () => {
+    if (
+      isAnswered === '' &&
+      qnaType === '' &&
+      qnaTarget === '' &&
+      search === ''
+    ) {
+      router.refresh()
+      router.push('/board/qna')
+    }
+
+    let addr = '/board/qna?'
+
+    let flag = false
+    if (isAnswered !== '') {
+      flag = true
+      addr += `isAnswered=${isAnswered}`
+    }
+
+    if (qnaType !== '') {
+      if (flag) addr += `&`
+      else flag = true
+      addr += `qnaType=${qnaType}`
+    }
+
+    if (qnaTarget !== '') {
+      if (flag) addr += `&`
+      else flag = true
+      addr += `qnaTarget=${qnaTarget}`
+    }
+
+    if (search !== '') {
+      if (flag) addr += `&`
+      else flag = true
+      addr += `search=${search}`
+    }
+    router.refresh()
+    router.push(addr)
+    // location.reload()
+  }
+
+  const handleKeyPress = (e: any): void => {
+    if (e.key === 'Enter') {
+      searchSubmit()
     }
   }
 
@@ -179,8 +266,59 @@ const QnaBoardTable = ({ posts }: { posts: any[] }) => {
     query: '(max-width:767px)',
   })
 
+  useEffect(() => {
+    setShowPosts(posts)
+  }, [posts])
+
   return (
     <>
+      {!isUser && (
+        <>
+          <BoardSearchContainer>
+            <Select label="상태" value={isAnswered} onChange={handleAnswered}>
+              <Option value={''}>전체</Option>
+              <Option value={'0'}>답변대기</Option>
+              <Option value={'1'}>답변완료</Option>
+              <Option value={'2'}>재질문</Option>
+            </Select>
+            <Select label="종류" value={qnaType} onChange={handleQnaType}>
+              <Option value={''}>전체</Option>
+              <Option value={'문학'}>문학</Option>
+              <Option value={'독서'}>독서</Option>
+              <Option value={'기타'}>기타</Option>
+            </Select>
+            <Select
+              label="질문대상"
+              value={qnaTarget}
+              onChange={handleQnaTarget}
+            >
+              <Option value={''}>전체</Option>
+              <Option value={'강의'}>강의</Option>
+              <Option value={'교재(강의교재)'}>교재(강의교재)</Option>
+              <Option value={'교재(학습자료)'}>교재(학습자료)</Option>
+              <Option value={'기출문제'}>평가원 기출</Option>
+              <Option value={'기타'}>기타</Option>
+            </Select>
+            <Input
+              label="제목, 내용 검색"
+              onChange={handleSearch}
+              onKeyPress={handleKeyPress}
+              icon={
+                <MagnifyingGlassIcon
+                  className="h-5 w-5 cursor-pointer"
+                  onClick={searchSubmit}
+                />
+              }
+              crossOrigin={undefined}
+            />
+          </BoardSearchContainer>
+          <BoardQnaTypeButtonContainer>
+            <Button onClick={searchSubmit} variant="outlined">
+              적용하기
+            </Button>
+          </BoardQnaTypeButtonContainer>
+        </>
+      )}
       {isDesktop && (
         <>
           <BoardTableContainer>
@@ -201,7 +339,14 @@ const QnaBoardTable = ({ posts }: { posts: any[] }) => {
                     </BoardTableCell>
 
                     <BoardTableCellTitle>
-                      <Link href={`/board/branch/${post?.post_id}`}>
+                      <Link href={`/board/qna/${post?.post_id}`}>
+                        <span style={{ fontWeight: 'bold' }}>
+                          &#91;
+                          {post?.post_qnatype}
+                          &#93;&#91;
+                          {post?.post_qnatarget}
+                          &#93;
+                        </span>
                         {post?.post_title}
                       </Link>
                     </BoardTableCellTitle>
@@ -220,11 +365,20 @@ const QnaBoardTable = ({ posts }: { posts: any[] }) => {
         <BoardTableMobileContainer>
           {showPosts.map((post: any, index: number) => {
             return (
-              <Link href={`/board/branch/${post?.post_id}`}>
+              <Link href={`/board/qna/${post?.post_id}`}>
                 <BoardTableMobileItemContainer key={index}>
                   <BoardTableMobileItemTitle>
-                    <QnaAnswerType isAnswered={post?.post_isAnswered} />
-                    {post?.post_title}
+                    <BoardTableMobileDoublelineTitle>
+                      <QnaAnswerType isAnswered={post?.post_isAnswered} />
+                      <span style={{ fontWeight: 'bold' }}>
+                        &#91;
+                        {post?.post_qnatype}
+                        &#93;&#91;
+                        {post?.post_qnatarget}
+                        &#93;
+                      </span>
+                      {post?.post_title}
+                    </BoardTableMobileDoublelineTitle>
                   </BoardTableMobileItemTitle>
                   <BoardTableMobileItemSubContainer>
                     <BoardTableMobileWriter>

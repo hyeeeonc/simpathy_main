@@ -28,6 +28,9 @@ async function Mypage() {
     const currentUserBoards = await prisma.post.count({
       where: { user_id: currentUser?.user_id },
     })
+    const currentUserQuestions = await prisma.qnapost.count({
+      where: { user_id: currentUser?.user_id },
+    })
 
     if (currentUserBranch) {
       return (
@@ -42,7 +45,7 @@ async function Mypage() {
             replies={currnetUserReplies}
             boards={currentUserBoards}
             user_id={currentUser?.user_id}
-            questions={0}
+            questions={currentUserQuestions}
           />
           {currentUser.grade_id > 2 && (
             <MyPageProgress
