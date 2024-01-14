@@ -17,6 +17,7 @@ import { Board } from '@/types/board'
 import { useRouter } from 'next/navigation'
 import AWS from 'aws-sdk'
 import dynamic from 'next/dynamic'
+import QnaNotice from '../post/QnaNotice'
 
 Quill.register('modules/ImageResize', ImageResize)
 
@@ -513,7 +514,8 @@ const EditorComponent = ({
         )} */}
         {boardType === 1 && (
           <>
-            <EditorQnaNoticeContainer>
+            <QnaNotice />
+            {/* <EditorQnaNoticeContainer>
               질문 게시판 운영에 관한 공지
               <br />
               ① 질문 게시판은 강의, 교재, 평가원 기출에 한해서만 질문 받습니다.
@@ -530,8 +532,7 @@ const EditorComponent = ({
               <br />④ 한 번 게시된 질문은 삭제할 수 없습니다.
               <br />→ 신중하게 질문해 주시기 바랍니다.
               <br />
-              {/* <br />* 댓글로 재질문을 하신 경우 간혹 누락되는 경우가 있습니다. */}
-            </EditorQnaNoticeContainer>
+            </EditorQnaNoticeContainer> */}
             <div className="flex h-[45px] w-max gap-4 mb-[10px]">
               <Button
                 variant={qnaType === '문학' ? 'filled' : 'outlined'}

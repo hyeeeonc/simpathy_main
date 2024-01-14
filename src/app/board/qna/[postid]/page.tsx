@@ -16,6 +16,7 @@ import {
 } from '@/containers/post/QnaUtil'
 import QnaReplyList from '@/containers/post/QnaReplyList'
 import QnaReplyEditor from '@/containers/editor/QnaReplyEditor'
+import QnaNotice from '@/containers/post/QnaNotice'
 
 const PostPage = async (props: any) => {
   const post_id = Number(props.params.postid)
@@ -87,6 +88,7 @@ const PostPage = async (props: any) => {
 
           {/* <div className="text-sky-800 text-2xl font-bold mb-[100px]"></div> */}
         </div>
+        <QnaNotice />
         <div
           className="border-solid border-b border-b-gray-300 py-[20px] view ql-editor"
           dangerouslySetInnerHTML={{ __html: currentPost.post_contents }}
