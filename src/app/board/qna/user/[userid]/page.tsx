@@ -7,7 +7,7 @@ import QnaPagination from '@/containers/board/QnaPagination'
 export const revalidate = 1
 
 const BoardPage = async (props: any) => {
-  const user_id = props.params.user_id
+  const user_id = decodeURIComponent(props.params.userid)
   const user = await getCurrentUser()
 
   if (!user) {

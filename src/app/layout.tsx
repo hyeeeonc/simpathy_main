@@ -24,9 +24,10 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="ko">
       <Head>
         <meta charSet="utf-8" />
+        <meta name="google" content="notranslate" />
       </Head>
       <body className={inter.className}>
         <StyledComponentsRegistry>
