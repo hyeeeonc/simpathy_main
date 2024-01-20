@@ -10,7 +10,7 @@ import {
   ContentBoxCellContent,
   ContentBoxClickableContentWrapper,
 } from '@/components/ContentBox'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Textarea, Input, Alert } from '@material-tailwind/react'
 import { useRouter } from 'next/router'
 
@@ -151,10 +151,6 @@ const ConsultingMain = ({
       if (response.ok) {
         alert('상담 신청이 완료되었습니다.')
         window.location.href = '/'
-        setShowOkAlert(true)
-        setTimeout(() => {
-          window.location.href = '/'
-        }, 2000)
       } else {
         console.error('Failed to submit consulting')
       }

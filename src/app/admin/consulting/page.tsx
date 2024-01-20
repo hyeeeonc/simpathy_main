@@ -26,6 +26,44 @@ async function AdminConsultingPage() {
             finished.push(consult)
           }
         })
+
+        console.log(typeof checked[0].consulting_time)
+        console.log(checked[0].consulting_time)
+
+        // checked 배열을 consulting_time을 기준으로 정렬
+        checked.sort((a, b) => {
+          const timeA = a.consulting_time
+          const timeB = b.consulting_time
+
+          // null 값이 있다면 null을 맨 앞으로 오도록 처리
+          if (timeA === null && timeB === null) return 0
+          if (timeA === null) return -1
+          if (timeB === null) return 1
+
+          // Date 객체로 변환하여 비교
+          const dateA = new Date(timeA as string)
+          const dateB = new Date(timeB as string)
+
+          return dateA.getTime() - dateB.getTime()
+        })
+
+        // checked 배열을 consulting_time을 기준으로 정렬
+        finished.sort((a, b) => {
+          const timeA = a.consulting_time
+          const timeB = b.consulting_time
+
+          // null 값이 있다면 null을 맨 앞으로 오도록 처리
+          if (timeA === null && timeB === null) return 0
+          if (timeA === null) return -1
+          if (timeB === null) return 1
+
+          // Date 객체로 변환하여 비교
+          const dateA = new Date(timeA as string)
+          const dateB = new Date(timeB as string)
+
+          return dateA.getTime() - dateB.getTime()
+        })
+
         return [...notChecked, ...checked, ...finished]
       })
 

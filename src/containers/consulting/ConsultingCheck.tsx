@@ -43,6 +43,8 @@ const ConsultingCheckDetailContainer = styled.div`
   color: black;
   opacity: 1;
   font-weight: normal;
+
+  white-space: pre-line;
   word-break: break-all;
 
   padding: 0 25px 20px 25px;
