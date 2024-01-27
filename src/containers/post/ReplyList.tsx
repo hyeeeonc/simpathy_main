@@ -226,7 +226,7 @@ const ReplyList = ({
                     `${koreanTime
                       .getHours()
                       .toString()
-                      .padStart(2, '0')}.${koreanTime
+                      .padStart(2, '0')}:${koreanTime
                       .getMinutes()
                       .toString()
                       .padStart(2, '0')}`
