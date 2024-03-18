@@ -236,7 +236,7 @@ const QnaReplyList = ({
                           <ReplyItemWriter>{subreply.user_id}</ReplyItemWriter>
 
                           <ReplyItemButtons>
-                            {(user.user_id === reply.user_id ||
+                            {(user.user_id === subreply.user_id ||
                               user.grade_id === 1) && (
                               <Button
                                 onClick={() => {

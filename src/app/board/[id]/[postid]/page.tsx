@@ -87,13 +87,18 @@ const PostPage = async (props: any) => {
           className="border-solid border-b border-b-gray-300 py-[20px] view ql-editor"
           dangerouslySetInnerHTML={{ __html: currentPost.post_contents }}
         />
-        <div className="text-sky-800 text-xl font-bold my-[20px]">댓글</div>
-        <ReplyList
-          user={currentUser}
-          replies={currentReply}
-          post_id={post_id}
-        />
-        <ReplyEditor post_id={post_id} origin_id={null} />
+
+        {board_id !== 11 && (
+          <>
+            <div className="text-sky-800 text-xl font-bold my-[20px]">댓글</div>
+            <ReplyList
+              user={currentUser}
+              replies={currentReply}
+              post_id={post_id}
+            />
+            <ReplyEditor post_id={post_id} origin_id={null} />
+          </>
+        )}
       </div>
       <div className="flex justify-end items-center w-full my-[20px]">
         {currentUser.grade_id === 1 && (

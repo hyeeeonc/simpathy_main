@@ -24,6 +24,14 @@ const BoardPage = async (props: any) => {
     )
   }
 
+  if (user?.grade_id >= 3 && user?.user_id !== user_id) {
+    return (
+      <div className="w-full flex justify-center text-xl font-bold mb-[100px]">
+        접근 권한이 없습니다.
+      </div>
+    )
+  }
+
   const posts = await prisma.qnapost.findMany({
     where: { user_id },
   })

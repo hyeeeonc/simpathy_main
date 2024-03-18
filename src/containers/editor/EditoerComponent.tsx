@@ -590,6 +590,7 @@ const EditorComponent = ({
                   교재(학습자료 - 복습시트, 에필로그 등)
                 </Option>
                 <Option value="기출문제">평가원 기출</Option>
+                <Option value="학습법">학습법</Option>
                 <Option value="기타">기타</Option>
               </Select>
 
