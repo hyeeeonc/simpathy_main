@@ -191,7 +191,7 @@ export function NavBar() {
             </ListItem>
           </Link>
 
-          <Link href={'/consulting'}>
+          {/* <Link href={'/consulting'}>
             <ListItem onClick={closeDrawer}>
               <ListItemPrefix>
                 <svg
@@ -211,7 +211,7 @@ export function NavBar() {
               </ListItemPrefix>
               상담 신청
             </ListItem>
-          </Link>
+          </Link> */}
 
           <Link href={'/board'}>
             <ListItem onClick={closeDrawer}>

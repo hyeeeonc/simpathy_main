@@ -27,9 +27,6 @@ async function AdminConsultingPage() {
           }
         })
 
-        console.log(typeof checked[0].consulting_time)
-        console.log(checked[0].consulting_time)
-
         // checked 배열을 consulting_time을 기준으로 정렬
         checked.sort((a, b) => {
           const timeA = a.consulting_time

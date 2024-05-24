@@ -47,7 +47,7 @@ export default async function Home() {
         <br />
         <br />
 
-        <h1 className="text-3xl font-bold">공지사항</h1>
+        <h1 className="text-2xl font-bold md:text-3xl">공지사항</h1>
         <br />
         <MainNoticeBoard posts={formattedPosts} />
 
