@@ -112,6 +112,7 @@ const PostPage = async (props: any) => {
           currentUser.grade_id === 1) && (
           <>
             <PostDeleteButton
+              can_edit={currentPost.user_id === currentUser?.user_id}
               board_type={0}
               post_id={post_id}
               board_id={board_id}

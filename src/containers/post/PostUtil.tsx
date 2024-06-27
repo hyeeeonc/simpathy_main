@@ -8,7 +8,7 @@ import {
   DialogBody,
   DialogFooter,
 } from '@material-tailwind/react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 
 const PostUtilContainer = styled.div`
@@ -25,10 +25,12 @@ export const PostDeleteButton = ({
   post_id,
   board_id,
   board_type,
+  can_edit,
 }: {
   post_id: number
   board_id: number
   board_type: number
+  can_edit: boolean
 }) => {
   const router = useRouter()
   const [open, setOpen] = useState(false)
@@ -67,13 +69,15 @@ export const PostDeleteButton = ({
 
   return (
     <>
-      <Button
-        onClick={handleUpdate}
-        variant="outlined"
-        style={{ marginRight: '10px' }}
-      >
-        수정
-      </Button>
+      {can_edit && (
+        <Button
+          onClick={handleUpdate}
+          variant="outlined"
+          style={{ marginRight: '10px' }}
+        >
+          수정
+        </Button>
+      )}
       {board_type !== 1 && (
         <Button onClick={handleOpen} variant="gradient">
           삭제

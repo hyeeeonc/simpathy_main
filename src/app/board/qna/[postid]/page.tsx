@@ -112,7 +112,12 @@ const PostPage = async (props: any) => {
           )}
         {currentPost.user_id === currentUser?.user_id && (
           <>
-            <PostDeleteButton board_type={1} post_id={post_id} board_id={0} />
+            <PostDeleteButton
+              can_edit={currentPost.user_id === currentUser?.user_id}
+              board_type={1}
+              post_id={post_id}
+              board_id={0}
+            />
           </>
         )}
       </div>
