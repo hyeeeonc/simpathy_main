@@ -56,14 +56,14 @@ const MyPagePosting = ({
           </ContentBoxCellContentTitle>
           <ContentBoxCellContent>{replies}개</ContentBoxCellContent>
         </ContentBoxClickableContentWrapper>
-        <Link href="/consulting/check">
+        {/* <Link href="/consulting/check">
           <ContentBoxClickableContentWrapper>
             <ContentBoxCellContentTitle>
               상담 신청 현황
             </ContentBoxCellContentTitle>
             <ContentBoxCellContent></ContentBoxCellContent>
           </ContentBoxClickableContentWrapper>
-        </Link>
+        </Link> */}
         <Link href="/mypage/update-password">
           <ContentBoxClickableContentWrapper>
             <ContentBoxCellContentTitle>

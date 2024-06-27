@@ -19,8 +19,16 @@ const BoardPagination = ({
   const currentEndPage = Math.min((currentSection + 1) * pageSize, totalPage)
 
   const navigatePage = (page: number) => {
-    if (board_id === 0) router.push(`/board?page=${page}`)
-    else router.push(`/board/${board_id}?page=${page}`)
+    const url = new URL(window.location.href)
+    const queryParams = url.searchParams
+
+    // 쿼리 파라미터를 문자열로 변환
+    const queryParamsString = Array.from(queryParams)
+      .filter(([key]) => key !== 'page')
+      .map(([key, value]) => `${key}=${value}`)
+      .join('&')
+    if (board_id === 0) router.push(`/board?page=${page}&${queryParamsString}`)
+    else router.push(`/board/${board_id}?page=${page}&${queryParamsString}`)
   }
   const nextSectionHandler = () => {
     if (currentEndPage === totalPage) return
