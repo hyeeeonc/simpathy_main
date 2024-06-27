@@ -88,6 +88,31 @@ const BoardPage = async (props: any) => {
       post_upload_time: 'desc', // 'asc'로 설정하면 오래된 순으로 정렬
     },
   })
+
+  const postIds = posts.map(post => post.post_id)
+
+  const repliesCount = await prisma.qnareply.groupBy({
+    by: ['post_id'],
+    _count: {
+      post_id: true,
+    },
+    where: {
+      post_id: {
+        in: postIds,
+      },
+    },
+  })
+
+  const postsWithReplyCount = posts.map(post => {
+    const replyCount =
+      repliesCount.find(reply => reply.post_id === post.post_id)?._count
+        .post_id || 0
+    return {
+      ...post,
+      replyCount,
+    }
+  })
+
   const totalPost = await prisma.qnapost.count({
     where: whereCondition,
   })
@@ -95,7 +120,7 @@ const BoardPage = async (props: any) => {
   const totalPage = Math.ceil(totalPost / pageSize)
 
   // posts를 순회하면서 날짜를 변경하고 포맷팅
-  const formattedPosts = posts.map(post => {
+  const formattedPosts = postsWithReplyCount.map(post => {
     // Prisma에서 받아온 날짜 데이터를 JavaScript Date 객체로 변환
     const uploadTime = new Date(post.post_upload_time)
 

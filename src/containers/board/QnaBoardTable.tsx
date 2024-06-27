@@ -155,6 +155,10 @@ const BoardQnaTypeButtonContainer = styled.div`
   margin-bottom: 10px;
 `
 
+const BoardTableReplyIndicator = styled.p`
+  color: red;
+`
+
 const QnaAnswerType = ({ isAnswered }: { isAnswered: number }) => {
   if (isAnswered === 1) {
     return (
@@ -348,6 +352,11 @@ const QnaBoardTable = ({
                           &#93;
                         </span>
                         {post?.post_title}
+                        {post?.replyCount > 0 && (
+                          <span style={{ color: 'red' }}>
+                            &nbsp;&#91;{post?.replyCount}&#93;
+                          </span>
+                        )}
                       </Link>
                     </BoardTableCellTitle>
 
@@ -378,6 +387,11 @@ const QnaBoardTable = ({
                         &#93;
                       </span>
                       {post?.post_title}
+                      {post?.replyCount > 0 && (
+                        <span style={{ color: 'red' }}>
+                          &nbsp;&#91;{post?.replyCount}&#93;
+                        </span>
+                      )}
                     </BoardTableMobileDoublelineTitle>
                   </BoardTableMobileItemTitle>
                   <BoardTableMobileItemSubContainer>

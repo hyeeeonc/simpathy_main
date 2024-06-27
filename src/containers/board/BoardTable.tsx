@@ -239,6 +239,11 @@ const BoardTable = ({
                   <BoardTableCellTitle>
                     <Link href={`/board/${post?.board_id}/${post?.post_id}`}>
                       {post?.post_title}
+                      {post?.replyCount > 0 && (
+                        <span style={{ color: 'red' }}>
+                          &nbsp;&#91;{post?.replyCount}&#93;
+                        </span>
+                      )}
                     </Link>
                   </BoardTableCellTitle>
 
@@ -276,6 +281,11 @@ const BoardTable = ({
                   )}
                   <BoardTableMobileItemTitleText>
                     {post?.post_title}
+                    {post?.replyCount > 0 && (
+                      <span style={{ color: 'red' }}>
+                        &nbsp;&#91;{post?.replyCount}&#93;
+                      </span>
+                    )}
                   </BoardTableMobileItemTitleText>
                 </BoardTableMobileItemTitle>
                 <BoardTableMobileItemSubContainer>

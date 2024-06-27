@@ -8,7 +8,7 @@ import {
   DialogBody,
   DialogFooter,
 } from '@material-tailwind/react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 
 const PostUtilContainer = styled.div`
@@ -24,9 +24,13 @@ const PostUtilContainer = styled.div`
 export const PostDeleteButton = ({
   post_id,
   board_id,
+  board_type,
+  can_edit,
 }: {
   post_id: number
   board_id: number
+  board_type: number
+  can_edit: boolean
 }) => {
   const router = useRouter()
   const [open, setOpen] = useState(false)
@@ -59,14 +63,26 @@ export const PostDeleteButton = ({
     }
   }
 
+  const handleUpdate = () => {
+    router.push(`/editor/update/${board_type}/${post_id}`)
+  }
+
   return (
     <>
-      {/* <Button variant="outlined" style={{ marginRight: '10px' }}>
-        수정
-      </Button> */}
-      <Button onClick={handleOpen} variant="gradient">
-        삭제
-      </Button>
+      {can_edit && (
+        <Button
+          onClick={handleUpdate}
+          variant="outlined"
+          style={{ marginRight: '10px' }}
+        >
+          수정
+        </Button>
+      )}
+      {board_type !== 1 && (
+        <Button onClick={handleOpen} variant="gradient">
+          삭제
+        </Button>
+      )}
       <Dialog open={open} handler={handleOpen}>
         <DialogBody style={{ color: 'black', fontWeight: 'bold' }}>
           삭제된 게시물은 복구할 수 없습니다.
