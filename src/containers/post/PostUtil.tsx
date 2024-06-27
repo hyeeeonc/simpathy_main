@@ -74,9 +74,11 @@ export const PostDeleteButton = ({
       >
         수정
       </Button>
-      <Button onClick={handleOpen} variant="gradient">
-        삭제
-      </Button>
+      {board_type !== 1 && (
+        <Button onClick={handleOpen} variant="gradient">
+          삭제
+        </Button>
+      )}
       <Dialog open={open} handler={handleOpen}>
         <DialogBody style={{ color: 'black', fontWeight: 'bold' }}>
           삭제된 게시물은 복구할 수 없습니다.

@@ -110,12 +110,11 @@ const PostPage = async (props: any) => {
               user_id={currentPost.user_id}
             />
           )}
-        {/* {(currentPost.user_id === currentUser?.user_id ||
-          currentUser.grade_id === 1) && (
+        {currentPost.user_id === currentUser?.user_id && (
           <>
-            <PostDeleteButton post_id={post_id} board_id={board_id} />
+            <PostDeleteButton board_type={1} post_id={post_id} board_id={0} />
           </>
-        )} */}
+        )}
       </div>
     </>
   )

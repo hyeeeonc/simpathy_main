@@ -415,15 +415,15 @@ const UpdateEditorComponent = ({
       }
 
       try {
-        const response = await fetch('/api/editor/qna/writePost', {
-          method: 'POST',
+        const response = await fetch('/api/editor/qna/updatePost', {
+          method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
+            post_id: post.post_id,
             post_qnatype: qnaType,
             post_qnatarget: qnaTarget,
-            user_id: user_id,
             post_title: title,
             post_contents: contents,
           }),
@@ -434,7 +434,7 @@ const UpdateEditorComponent = ({
           const { post_id } = responseData // post_id 추출
 
           // 파일 업로드
-          alert('작성이 완료되었습니다.')
+          alert('수정이 완료되었습니다.')
           setSelectedBoard(0)
           setTitle('')
           setContents('')
@@ -443,16 +443,23 @@ const UpdateEditorComponent = ({
           router.push(`/board/qna/${post_id}`)
           setOffButton(false)
         } else {
-          alert('작성에 실패하였습니다. 잠시 후 다시 시도해 주세요.')
+          alert('수정에 실패하였습니다. 잠시 후 다시 시도해 주세요.')
           setOffButton(false)
           // Handle errors, e.g., show an error message to the user
         }
       } catch (error: any) {
-        alert('작성에 실패하였습니다. 잠시 후 다시 시도해 주세요.')
+        alert('수정에 실패하였습니다. 잠시 후 다시 시도해 주세요.')
         setOffButton(false)
       }
     }
   }
+
+  useEffect(() => {
+    if (boardType === 1) {
+      setQnaType(post.post_qnatype)
+      setQnaTarget(post.post_qnatarget)
+    }
+  }, [])
 
   return (
     <>
@@ -463,48 +470,9 @@ const UpdateEditorComponent = ({
             {boardType === 0 ? '일반' : boardType === 1 ? '질문' : '지점별'}
           </Button>
         </div>
-        {/* )} */}
-        {/* {grade_id < 1 && grade_id >= 5 && (
-          <div className="flex h-[45px] w-max gap-4 mb-[10px]">
-            <Button
-              variant={boardType === 0 ? 'filled' : 'outlined'}
-              onClick={() => {
-                boardTypeHandler(0)
-              }}
-            >
-              일반
-            </Button>
-            <Button
-              variant={boardType === 1 ? 'filled' : 'outlined'}
-              onClick={() => {
-                boardTypeHandler(1)
-              }}
-            >
-              질문
-            </Button>
-          </div>
-        )} */}
         {boardType === 1 && (
           <>
             <QnaNotice />
-            {/* <EditorQnaNoticeContainer>
-              질문 게시판 운영에 관한 공지
-              <br />
-              ① 질문 게시판은 강의, 교재, 평가원 기출에 한해서만 질문 받습니다.
-              <br />
-              → 그 외에는 질문을 하셔도 답변하지 않습니다.
-              <br />
-              → 강의와 교재를 정확하게 적시해주셔야 정확한 답변을 받으실 수
-              있습니다.
-              <br />② 예의를 지키지 않는 질문은 답변하지 않습니다.
-              <br />③ 질문의 내용은 '정확'해야 합니다.
-              <br />→ 추상적인 질문, 떼쓰는 식의 질문은 답변하기가 참
-              어렵습니다.
-              <br />→ 충분히 여러번 읽어 본 이후 질문을 해주시기 바랍니다.
-              <br />④ 한 번 게시된 질문은 삭제할 수 없습니다.
-              <br />→ 신중하게 질문해 주시기 바랍니다.
-              <br />
-            </EditorQnaNoticeContainer> */}
             <div className="flex h-[45px] w-max gap-4 mb-[10px]">
               <Button
                 variant={qnaType === '문학' ? 'filled' : 'outlined'}
