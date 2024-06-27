@@ -193,11 +193,6 @@ const UpdateEditorComponent = ({
     if (board_id > 0) setSelectedBoard(board_id)
   }, [])
 
-  useEffect(() => {
-    console.log(post.post_content)
-    console.log(contents)
-  }, [contents])
-
   // 파일 업로드 관련
   const [selectedFiles, setSelectedFiles] = useState<File[]>([])
 
