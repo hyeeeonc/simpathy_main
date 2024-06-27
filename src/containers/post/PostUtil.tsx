@@ -24,9 +24,11 @@ const PostUtilContainer = styled.div`
 export const PostDeleteButton = ({
   post_id,
   board_id,
+  board_type,
 }: {
   post_id: number
   board_id: number
+  board_type: number
 }) => {
   const router = useRouter()
   const [open, setOpen] = useState(false)
@@ -59,11 +61,19 @@ export const PostDeleteButton = ({
     }
   }
 
+  const handleUpdate = () => {
+    router.push(`/editor/update/${board_type}/${post_id}`)
+  }
+
   return (
     <>
-      {/* <Button variant="outlined" style={{ marginRight: '10px' }}>
+      <Button
+        onClick={handleUpdate}
+        variant="outlined"
+        style={{ marginRight: '10px' }}
+      >
         수정
-      </Button> */}
+      </Button>
       <Button onClick={handleOpen} variant="gradient">
         삭제
       </Button>
