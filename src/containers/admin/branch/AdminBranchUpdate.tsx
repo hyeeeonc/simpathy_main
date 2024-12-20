@@ -64,12 +64,6 @@ const AdminBranchUpdate: React.FC<AdminBranchUpdateProps> = ({
   const [branchData, setBranchData] = useState<Branch>({
     branch_id: branch ? branch.branch_id : 0,
     branch_name: branch ? branch.branch_name : '',
-    branch_textbook: branch ? branch.branch_textbook : '',
-    branch_textbook_total: branch?.branch_textbook_total,
-    branch_textbook_now: branch?.branch_textbook_now,
-    branch_textbook_preview: branch?.branch_textbook_preview,
-    branch_text_now: branch ? branch.branch_text_now : '',
-    branch_text_preview: branch ? branch.branch_text_preview : '',
   })
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -126,12 +120,6 @@ const AdminBranchUpdate: React.FC<AdminBranchUpdateProps> = ({
       ...prevData,
       branch_id: branch ? branch.branch_id : 0,
       branch_name: branch ? branch.branch_name : '',
-      branch_textbook: branch ? branch.branch_textbook : '',
-      branch_textbook_total: branch ? branch.branch_textbook_total : 0,
-      branch_textbook_now: branch ? branch.branch_textbook_now : 0,
-      branch_textbook_preview: branch ? branch.branch_textbook_preview : 0,
-      branch_text_now: branch ? branch.branch_text_now : '',
-      branch_text_preview: branch ? branch.branch_text_preview : '',
     }))
   }, [branch])
 
@@ -160,7 +148,7 @@ const AdminBranchUpdate: React.FC<AdminBranchUpdateProps> = ({
                 </ContentBoxCellContent>
               </ContentBoxCellContentWrapper>
 
-              <ContentBoxCellContentWrapper>
+              {/* <ContentBoxCellContentWrapper>
                 <ContentBoxCellContentTitle>
                   교재 이름
                 </ContentBoxCellContentTitle>
@@ -251,7 +239,7 @@ const AdminBranchUpdate: React.FC<AdminBranchUpdateProps> = ({
                     crossOrigin={undefined}
                   />
                 </ContentBoxCellContent>
-              </ContentBoxCellContentWrapper>
+              </ContentBoxCellContentWrapper> */}
 
               <ContentBoxClickableContentWrapper
                 style={{

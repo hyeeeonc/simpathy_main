@@ -37,18 +37,12 @@ model board {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model branch {
-  branch_id               Int          @id @default(autoincrement())
-  branch_name             String       @db.VarChar(50)
-  branch_textbook         String?      @db.VarChar(50)
-  branch_textbook_total   Int?
-  branch_textbook_now     Int?
-  branch_textbook_preview Int?
-  branch_text_now         String?      @db.VarChar(50)
-  branch_text_preview     String?      @db.VarChar(50)
-  attend                  attend[]
-  branchpost              branchpost[]
-  consulting              consulting[]
-  user                    user[]
+  branch_id   Int          @id @default(autoincrement())
+  branch_name String       @db.VarChar(50)
+  attend      attend[]
+  branchpost  branchpost[]
+  consulting  consulting[]
+  user        user[]
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments

@@ -20,12 +20,6 @@ const AdminBranchAdd = () => {
   const [branchData, setBranchData] = useState<Branch>({
     branch_id: 1,
     branch_name: '',
-    branch_textbook: '',
-    branch_textbook_total: undefined,
-    branch_textbook_now: undefined,
-    branch_textbook_preview: undefined,
-    branch_text_now: '',
-    branch_text_preview: '',
   })
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -95,7 +89,7 @@ const AdminBranchAdd = () => {
             </ContentBoxCellContent>
           </ContentBoxCellContentWrapper>
 
-          <ContentBoxCellContentWrapper>
+          {/* <ContentBoxCellContentWrapper>
             <ContentBoxCellContentTitle>교재 이름</ContentBoxCellContentTitle>
             <ContentBoxCellContent>
               <Input
@@ -176,7 +170,7 @@ const AdminBranchAdd = () => {
                 crossOrigin={undefined}
               />
             </ContentBoxCellContent>
-          </ContentBoxCellContentWrapper>
+          </ContentBoxCellContentWrapper> */}
 
           <ContentBoxClickableContentWrapper
             style={{

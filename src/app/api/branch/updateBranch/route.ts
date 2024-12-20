@@ -2,16 +2,7 @@ import prisma from '@/libs/prisma'
 import { Branch } from '@/types/branch'
 
 export async function PUT(request: Request) {
-  const {
-    branch_id,
-    branch_name,
-    branch_textbook,
-    branch_textbook_total,
-    branch_textbook_now,
-    branch_textbook_preview,
-    branch_text_now,
-    branch_text_preview,
-  } = (await request.json()) as Branch
+  const { branch_id, branch_name } = (await request.json()) as Branch
 
   try {
     const existingBranch = await prisma.branch.findUnique({
@@ -26,12 +17,6 @@ export async function PUT(request: Request) {
       where: { branch_id },
       data: {
         branch_name,
-        branch_textbook,
-        branch_textbook_total,
-        branch_textbook_now,
-        branch_textbook_preview,
-        branch_text_now,
-        branch_text_preview,
       },
     })
 

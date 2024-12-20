@@ -38,11 +38,11 @@ const MyPageAdmin = () => {
           <ContentBoxCellContentTitle>출석 관리</ContentBoxCellContentTitle>
         </ContentBoxClickableContentWrapper>
 
-        <Link href="/admin/consulting">
+        {/* <Link href="/admin/consulting">
           <ContentBoxClickableContentWrapper>
             <ContentBoxCellContentTitle>상담 관리</ContentBoxCellContentTitle>
           </ContentBoxClickableContentWrapper>
-        </Link>
+        </Link> */}
       </ContentBoxCellContentContainer>
     </ContentBoxCellContainer>
   )
