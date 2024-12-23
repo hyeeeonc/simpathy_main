@@ -87,6 +87,14 @@ const BoardPage = async (props: any) => {
     orderBy: {
       post_id: 'desc', // 'asc'로 설정하면 오래된 순으로 정렬
     },
+    include: {
+      user: {
+        select: {
+          user_name: true, // user 테이블에서 user_name 필드만 가져옵니다.
+          grade_id: true,
+        },
+      },
+    },
   })
 
   const postIds = posts.map(post => post.post_id)
@@ -103,7 +111,38 @@ const BoardPage = async (props: any) => {
     },
   })
 
-  const postsWithReplyCount = posts.map(post => {
+  // *표 넣기
+  const updatedPosts = posts.map(post => {
+    const { user_id, user } = post
+
+    if (user && user.grade_id >= 3) {
+      const { user_name } = user
+
+      // user_name의 두 번째 글자를 '*'로 교체
+      let modifiedUserName = user_name
+      if (user_name.length > 1) {
+        modifiedUserName = user_name[0] + '*' + user_name.slice(2)
+      }
+
+      // user_id에서 기존 user_name을 수정된 user_name으로 교체
+      const modifiedUserId = user_id.replace(user_name, modifiedUserName)
+
+      // 결과 반환
+      return {
+        ...post,
+        user_id: modifiedUserId,
+        user: {
+          ...user,
+          user_name: modifiedUserName, // user_name도 수정된 값을 반영
+        },
+      }
+    }
+
+    // 조건을 만족하지 않으면 원본 데이터 유지
+    return post
+  })
+
+  const postsWithReplyCount = updatedPosts.map(post => {
     const replyCount =
       repliesCount.find(reply => reply.post_id === post.post_id)?._count
         .post_id || 0
