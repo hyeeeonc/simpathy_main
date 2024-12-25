@@ -34,9 +34,17 @@ const MyPageAdmin = () => {
           </ContentBoxClickableContentWrapper>
         </Link>
 
-        <ContentBoxClickableContentWrapper>
+        <Link href="/admin/modal">
+          <ContentBoxClickableContentWrapper>
+            <ContentBoxCellContentTitle>
+              팝업 공지 관리
+            </ContentBoxCellContentTitle>
+          </ContentBoxClickableContentWrapper>
+        </Link>
+
+        {/* <ContentBoxClickableContentWrapper>
           <ContentBoxCellContentTitle>출석 관리</ContentBoxCellContentTitle>
-        </ContentBoxClickableContentWrapper>
+        </ContentBoxClickableContentWrapper> */}
 
         {/* <Link href="/admin/consulting">
           <ContentBoxClickableContentWrapper>
