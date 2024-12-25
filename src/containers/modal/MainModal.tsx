@@ -22,6 +22,14 @@ const MainModalContent = styled.div`
   background-color: white;
   border-radius: 10px;
   padding: 20px;
+
+  max-height: 80%; /* 길어질 경우 제한 */
+  overflow-y: auto; /* 스크롤 활성화 */
+
+  @media (max-width: 767px) {
+    width: 90%;
+    padding: 15px 5px;
+  }
 `
 
 interface MainModalProps {
@@ -54,7 +62,11 @@ const MainModal = ({ modal }: MainModalProps) => {
       }}
       style={{ display: isOpen ? 'flex' : 'none' }}
     >
-      <MainModalContent>
+      <MainModalContent
+        onClick={e => {
+          e.stopPropagation() // 클릭 이벤트 전파 방지
+        }}
+      >
         <div
           className="border-solid border-b-gray-300 py-[20px] view ql-editor"
           dangerouslySetInnerHTML={{ __html: modal.modal_contents }}
