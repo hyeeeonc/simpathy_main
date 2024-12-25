@@ -1,7 +1,8 @@
 import prisma from '@/libs/prisma'
 import getCurrentUser from '@/services/getCurrentUser'
 import QnaBoardTable from '@/containers/board/QnaBoardTable'
-import QnaPagination from '@/containers/board/QnaPagination'
+
+import AdminQnaPagination from '@/containers/board/AdminQnaPagination'
 // import qnaPagination from '@/services/board/qnaPagination'
 
 export const revalidate = 1
@@ -19,9 +20,7 @@ interface WhereCondition {
     post_title?: { contains: string } | undefined
     post_contents?: { contains: string } | undefined
   }[]
-  NOT?: {
-    user_id?: string
-  }
+  user_id: string
 }
 
 const BoardPage = async (props: any) => {
@@ -74,10 +73,7 @@ const BoardPage = async (props: any) => {
       qnaTarget === '교재(학습자료)'
         ? qnaTarget
         : undefined,
-    // user_id가 "(알 수 없음)"인 데이터를 제외하는 조건 추가
-    NOT: {
-      user_id: '(알 수 없음)',
-    },
+    user_id: '(알 수 없음)',
   }
 
   if (searchText) {
@@ -92,15 +88,7 @@ const BoardPage = async (props: any) => {
     take: pageSize,
     skip: (page - 1) * pageSize,
     orderBy: {
-      post_id: 'desc', // 'asc'로 설정하면 오래된 순으로 정렬
-    },
-    include: {
-      user: {
-        select: {
-          user_name: true, // user 테이블에서 user_name 필드만 가져옵니다.
-          grade_id: true,
-        },
-      },
+      post_upload_time: 'desc', // 'asc'로 설정하면 오래된 순으로 정렬
     },
   })
 
@@ -118,47 +106,7 @@ const BoardPage = async (props: any) => {
     },
   })
 
-  // *표 넣기
-  const updatedPosts = posts.map(post => {
-    const { user_id, user } = post
-
-    if (user && user.grade_id >= 3) {
-      const { user_name } = user
-
-      let modifiedUserName = user_name
-      if (user_name.length === 4) {
-        // 마지막 글자가 숫자 또는 영어인 경우
-        const lastChar = user_name[user_name.length - 1]
-        if (/[0-9A-Za-z]/.test(lastChar)) {
-          modifiedUserName = user_name[0] + '*' + user_name.slice(2)
-        } else {
-          // 한글 이름인 경우
-          modifiedUserName = user_name.slice(0, 2) + '*' + user_name.slice(3)
-        }
-      } else if (user_name.length > 1) {
-        // 일반적인 경우 (두 번째 글자를 *)
-        modifiedUserName = user_name[0] + '*' + user_name.slice(2)
-      }
-
-      // user_id에서 기존 user_name을 수정된 user_name으로 교체
-      const modifiedUserId = user_id.replace(user_name, modifiedUserName)
-
-      // 결과 반환
-      return {
-        ...post,
-        user_id: modifiedUserId,
-        user: {
-          ...user,
-          user_name: modifiedUserName, // user_name도 수정된 값을 반영
-        },
-      }
-    }
-
-    // 조건을 만족하지 않으면 원본 데이터 유지
-    return post
-  })
-
-  const postsWithReplyCount = updatedPosts.map(post => {
+  const postsWithReplyCount = posts.map(post => {
     const replyCount =
       repliesCount.find(reply => reply.post_id === post.post_id)?._count
         .post_id || 0
@@ -210,7 +158,7 @@ const BoardPage = async (props: any) => {
 
         <>
           <QnaBoardTable isUser={false} posts={formattedPosts} />
-          <QnaPagination page={page} totalPage={totalPage} />
+          <AdminQnaPagination page={page} totalPage={totalPage} />
         </>
       </div>
     </>
