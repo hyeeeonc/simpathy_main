@@ -43,7 +43,17 @@ const PostPage = async (props: any) => {
 
       // `user_name`의 두 번째 글자를 '*'로 교체
       let modifiedUserName = user_name
-      if (user_name.length > 1) {
+      if (user_name.length === 4) {
+        // 마지막 글자가 숫자 또는 영어인 경우
+        const lastChar = user_name[user_name.length - 1]
+        if (/[0-9A-Za-z]/.test(lastChar)) {
+          modifiedUserName = user_name[0] + '*' + user_name.slice(2)
+        } else {
+          // 한글 이름인 경우
+          modifiedUserName = user_name.slice(0, 2) + '*' + user_name.slice(3)
+        }
+      } else if (user_name.length > 1) {
+        // 일반적인 경우 (두 번째 글자를 *)
         modifiedUserName = user_name[0] + '*' + user_name.slice(2)
       }
 
@@ -84,7 +94,17 @@ const PostPage = async (props: any) => {
 
       // `user_name`의 두 번째 글자를 '*'로 교체
       let modifiedUserName = user_name
-      if (user_name.length > 1) {
+      if (user_name.length === 4) {
+        // 마지막 글자가 숫자 또는 영어인 경우
+        const lastChar = user_name[user_name.length - 1]
+        if (/[0-9A-Za-z]/.test(lastChar)) {
+          modifiedUserName = user_name[0] + '*' + user_name.slice(2)
+        } else {
+          // 한글 이름인 경우
+          modifiedUserName = user_name.slice(0, 2) + '*' + user_name.slice(3)
+        }
+      } else if (user_name.length > 1) {
+        // 일반적인 경우 (두 번째 글자를 *)
         modifiedUserName = user_name[0] + '*' + user_name.slice(2)
       }
 
