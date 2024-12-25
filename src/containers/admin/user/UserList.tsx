@@ -17,6 +17,7 @@ import {
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import UserUpdate from './UserUpdate'
+import UserAllUpdate from './UserAllUpdate'
 
 const UserListContainer = styled.div`
   width: 100%;
@@ -113,6 +114,33 @@ const UserList = () => {
     getUserData()
   }
 
+  // 체크박스 상태 관리
+  const [selectedUsers, setSelectedUsers] = useState<Set<string>>(new Set())
+
+  const toggleSelectUser = (userId: string) => {
+    const newSelectedUsers = new Set(selectedUsers)
+    if (newSelectedUsers.has(userId)) {
+      newSelectedUsers.delete(userId)
+    } else {
+      newSelectedUsers.add(userId)
+    }
+    setSelectedUsers(newSelectedUsers)
+  }
+
+  const toggleSelectAll = () => {
+    if (selectedUsers.size === showUsers?.length) {
+      setSelectedUsers(new Set())
+    } else {
+      const allUserIds = showUsers?.map(user => user.user_id)
+      setSelectedUsers(new Set(allUserIds))
+    }
+  }
+
+  const [isAllOpen, setIsAllOpen] = useState<boolean>(false)
+  const onAllClose = () => {
+    setIsAllOpen(false)
+  }
+
   return (
     <UserListContainer>
       <ContentBoxCellContentContainer>
@@ -188,12 +216,30 @@ const UserList = () => {
         >
           필터 초기화
         </Button>
+
+        <Button
+          style={{ marginTop: '10px' }}
+          color="green"
+          fullWidth
+          onClick={() => {
+            setIsAllOpen(true)
+          }}
+        >
+          {selectedUsers.size}명 일괄 수정
+        </Button>
       </ContentBoxCellContentContainer>
 
       <Card className="h-full w-full overflow-scroll mt-10">
         <table className="w-full min-w-max table-auto text-left">
           <thead>
             <tr>
+              <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4">
+                <input
+                  type="checkbox"
+                  checked={selectedUsers.size === showUsers?.length}
+                  onChange={toggleSelectAll}
+                />
+              </th>
               {TABLE_HEAD.map(head => (
                 <th
                   key={head}
@@ -225,6 +271,13 @@ const UserList = () => {
 
               return (
                 <tr key={index}>
+                  <td className={classes}>
+                    <input
+                      type="checkbox"
+                      checked={selectedUsers.has(user.user_id)}
+                      onChange={() => toggleSelectUser(user.user_id)}
+                    />
+                  </td>
                   <td className={classes}>
                     <Typography
                       variant="small"
@@ -295,6 +348,14 @@ const UserList = () => {
         isOpen={isOpen}
         onClose={onClose}
         user={updateUser}
+        grades={grades}
+        branches={branches}
+      />
+
+      <UserAllUpdate
+        isOpen={isAllOpen}
+        onClose={onAllClose}
+        users={selectedUsers}
         grades={grades}
         branches={branches}
       />

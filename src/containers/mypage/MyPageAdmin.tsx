@@ -42,6 +42,14 @@ const MyPageAdmin = () => {
           </ContentBoxClickableContentWrapper>
         </Link>
 
+        <Link href="/admin/qna">
+          <ContentBoxClickableContentWrapper>
+            <ContentBoxCellContentTitle>
+              질문게시판 아카이브
+            </ContentBoxCellContentTitle>
+          </ContentBoxClickableContentWrapper>
+        </Link>
+
         {/* <ContentBoxClickableContentWrapper>
           <ContentBoxCellContentTitle>출석 관리</ContentBoxCellContentTitle>
         </ContentBoxClickableContentWrapper> */}

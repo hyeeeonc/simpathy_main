@@ -157,6 +157,31 @@ const UserUpdate: React.FC<BoardUpdateProps> = ({
     }
   }
 
+  const handleUserDelete = async () => {
+    try {
+      const response = await fetch('/api/user/deleteUser', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          user_id: userData.user_id,
+        }),
+      })
+
+      if (response.ok) {
+        alert('정상적으로 반영되었습니다.')
+        onClose()
+      } else if (response.status === 403) {
+        alert('권한이 없습니다.')
+      } else {
+        alert('반영에 실패하였습니다.')
+      }
+    } catch (error: any) {
+      alert('반영에 실패하였습니다.')
+    }
+  }
+
   return (
     <>
       <AdminBranchUpdateWrapper
@@ -282,8 +307,15 @@ const UserUpdate: React.FC<BoardUpdateProps> = ({
                 >
                   비번초기화
                 </Button>
-                <Button color="blue" onClick={handleSubmit}>
+                <Button
+                  style={{ marginRight: '10px' }}
+                  color="blue"
+                  onClick={handleSubmit}
+                >
                   수정하기
+                </Button>
+                <Button color="red" onClick={handleUserDelete}>
+                  회원 삭제
                 </Button>
               </AdminBoardButtonContainer>
             </ContentBoxCellContentContainer>

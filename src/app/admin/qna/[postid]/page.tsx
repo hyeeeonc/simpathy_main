@@ -157,7 +157,7 @@ const PostPage = async (props: any) => {
   return (
     <>
       <div className="w-full rounded-[5px] md:border-solid md:border md:border-gray-300 md:p-6">
-        <QnaBreadcrumb isAdmin={false} />
+        <QnaBreadcrumb isAdmin={true} />
 
         <div className="w-full mt-[20px] mb-[20px] border-solid border-b border-b-gray-300">
           <div className="text-sky-800 text-3xl font-bold mb-[40px]">
