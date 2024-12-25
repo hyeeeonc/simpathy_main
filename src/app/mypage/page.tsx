@@ -22,7 +22,7 @@ async function Mypage() {
       where: { grade_id: currentUser?.grade_id },
       select: { grade_name: true },
     })
-    const currnetUserReplies = await prisma.reply.count({
+    const currnetUserReplies = await prisma.qnareply.count({
       where: { user_id: currentUser?.user_id },
     })
     const currentUserBoards = await prisma.post.count({

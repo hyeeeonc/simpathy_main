@@ -71,7 +71,7 @@ const BoardPage = async (props: any) => {
         )} */}
 
         <>
-          <QnaBoardTable isUser={true} posts={formattedPosts} />
+          <QnaBoardTable isAdmin={false} isUser={true} posts={formattedPosts} />
         </>
       </div>
     </>

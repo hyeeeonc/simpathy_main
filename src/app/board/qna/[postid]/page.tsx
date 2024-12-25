@@ -52,6 +52,8 @@ const PostPage = async (props: any) => {
           // 한글 이름인 경우
           modifiedUserName = user_name.slice(0, 2) + '*' + user_name.slice(3)
         }
+      } else if (user_name === '(알 수 없음)') {
+        modifiedUserName = user_name
       } else if (user_name.length > 1) {
         // 일반적인 경우 (두 번째 글자를 *)
         modifiedUserName = user_name[0] + '*' + user_name.slice(2)
@@ -103,6 +105,8 @@ const PostPage = async (props: any) => {
           // 한글 이름인 경우
           modifiedUserName = user_name.slice(0, 2) + '*' + user_name.slice(3)
         }
+      } else if (user_name === '(알 수 없음)') {
+        modifiedUserName = user_name
       } else if (user_name.length > 1) {
         // 일반적인 경우 (두 번째 글자를 *)
         modifiedUserName = user_name[0] + '*' + user_name.slice(2)

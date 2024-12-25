@@ -6,7 +6,6 @@ export async function PUT(request: Request) {
     grade_id, // 업데이트할 grade_id
     branch_id, // 업데이트할 branch_id
   } = await request.json()
-  console.log(user_ids, grade_id, branch_id)
 
   // user_ids 배열을 이용해 updateMany로 여러 사용자의 정보를 업데이트
   const updatedUsers = await prisma.user.updateMany({
