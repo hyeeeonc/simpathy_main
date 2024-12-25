@@ -1,8 +1,8 @@
 import prisma from '@/libs/prisma'
 import getCurrentUser from '@/services/getCurrentUser'
-import QnaBoardTable from '@/containers/board/QnaBoardTable'
+import QnaReplyTable from '@/containers/board/QnaReplyTable'
 import QnaPagination from '@/containers/board/QnaPagination'
-// import qnaPagination from '@/services/board/qnaPagination'
+import QnaReplyPagenation from '@/containers/board/QnaReplyPagenation'
 
 interface WhereCondition {
   post_isAnswered?: number | undefined
@@ -22,14 +22,13 @@ interface WhereCondition {
 
 const QnaReplyPage = async (props: any) => {
   const user = await getCurrentUser()
+  const user_id = decodeURIComponent(props.params.userid)
 
-  if (!user) {
-    return <div>로그인이 필요합니다.</div>
-  }
-
-  // const posts = await prisma.qnapost.findMany()
-
-  if (user?.grade_id === undefined || user?.grade_id >= 6) {
+  if (
+    !user ||
+    user.grade_id >= 6 ||
+    (user.grade_id >= 3 && user.user_id !== user_id)
+  ) {
     return (
       <div className="w-full flex justify-center text-xl font-bold mb-[100px]">
         접근 권한이 없습니다.
@@ -37,7 +36,7 @@ const QnaReplyPage = async (props: any) => {
     )
   }
 
-  const pageSize = 15 // 한 페이지당 노출할 post 개수
+  const pageSize = 15
 
   const pageHandler = () => {
     const page = props.searchParams.page
@@ -79,86 +78,75 @@ const QnaReplyPage = async (props: any) => {
     ]
   }
 
-  const posts = await prisma.qnapost.findMany({
-    where: whereCondition,
+  // 데이터베이스에서 qnapost와 qnareply를 조인하여 가져오기
+  const replies = await prisma.qnareply.findMany({
+    where: {
+      user_id: user_id, // 사용자가 작성한 reply만 필터링
+      qnapost: {
+        // qnapost의 필터링 조건을 whereCondition에 반영
+        ...whereCondition,
+      },
+    },
     take: pageSize,
     skip: (page - 1) * pageSize,
     orderBy: {
-      post_id: 'desc', // 'asc'로 설정하면 오래된 순으로 정렬
+      reply_upload_time: 'desc', // 최신 순으로 정렬
     },
-  })
-
-  const postIds = posts.map(post => post.post_id)
-
-  const repliesCount = await prisma.qnareply.groupBy({
-    by: ['post_id'],
-    _count: {
-      post_id: true,
-    },
-    where: {
-      post_id: {
-        in: postIds,
+    include: {
+      qnapost: {
+        select: {
+          post_id: true,
+          post_title: true,
+          post_contents: true,
+          post_qnatype: true,
+          post_qnatarget: true,
+          post_isAnswered: true,
+          post_upload_time: true,
+          user: {
+            select: {
+              user_id: true,
+              grade_id: true,
+            },
+          },
+        },
       },
     },
   })
 
-  const postsWithReplyCount = posts.map(post => {
-    const replyCount =
-      repliesCount.find(reply => reply.post_id === post.post_id)?._count
-        .post_id || 0
-    return {
-      ...post,
-      replyCount,
-    }
-  })
-
-  const totalPost = await prisma.qnapost.count({
-    where: whereCondition,
+  const totalPost = await prisma.qnareply.count({
+    where: {
+      user_id: user_id, // 사용자가 작성한 reply만 필터링
+      qnapost: {
+        // qnapost의 필터링 조건을 whereCondition에 반영
+        ...whereCondition,
+      },
+    },
   })
 
   const totalPage = Math.ceil(totalPost / pageSize)
 
-  // posts를 순회하면서 날짜를 변경하고 포맷팅
-  const formattedPosts = postsWithReplyCount.map(post => {
-    // Prisma에서 받아온 날짜 데이터를 JavaScript Date 객체로 변환
-    const uploadTime = new Date(post.post_upload_time)
-
-    // 한국 표준시로 변경 (UTC+9)
-    const koreanTime = new Date(uploadTime.getTime())
-
-    // 날짜를 'yyyy.mm.dd hh.mm.ss' 형식의 문자열로 변환
-    const formattedDate = `${koreanTime.getFullYear()}.${(
-      koreanTime.getMonth() + 1
-    )
-      .toString()
-      .padStart(2, '0')}.${koreanTime.getDate().toString().padStart(2, '0')}`
-
-    // 변환된 값을 포함하는 새로운 객체를 반환
-    return {
-      ...post,
-      formattedDate,
-    }
-  })
-
-  return (
-    <>
-      <div className="w-full mt-20">
-        <div className="text-sky-800 text-3xl font-bold mb-[100px]">
-          질문게시판
-        </div>
-        {/* {posts.length === 0 && (
-          <div className="w-full flex justify-center text-xl font-bold mb-[100px]">
-            등록된 게시글이 없습니다.
+  if (user) {
+    return (
+      <>
+        <div className="w-full mt-20">
+          <div className="text-sky-800 text-3xl font-bold mb-10 ">
+            {user_id} 답변 목록
           </div>
-        )} */}
-
-        <>
-          <QnaBoardTable isUser={false} posts={formattedPosts} />
-          <QnaPagination page={page} totalPage={totalPage} />
-        </>
+          <QnaReplyTable userId={user_id} replies={replies} />
+          <QnaReplyPagenation
+            userId={user_id}
+            page={page}
+            totalPage={totalPage}
+          />
+        </div>
+      </>
+    )
+  } else
+    return (
+      <div className="w-full flex justify-center text-xl font-bold mb-[100px]">
+        접근 권한이 없습니다.
       </div>
-    </>
-  )
+    )
 }
 
 export default QnaReplyPage

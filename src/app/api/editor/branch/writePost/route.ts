@@ -3,8 +3,6 @@ import prisma from '@/libs/prisma'
 export async function POST(request: Request) {
   const { branch_id, user_id, post_title, post_contents } = await request.json()
 
-  console.log(branch_id, user_id, post_title, post_contents)
-
   const post = await prisma.branchpost.create({
     data: {
       branch_id,
