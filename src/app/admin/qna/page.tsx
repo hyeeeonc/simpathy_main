@@ -32,7 +32,7 @@ const BoardPage = async (props: any) => {
 
   // const posts = await prisma.qnapost.findMany()
 
-  if (user?.grade_id === undefined || user?.grade_id >= 6) {
+  if (user?.grade_id === undefined || user?.grade_id > 2) {
     return (
       <div className="w-full flex justify-center text-xl font-bold mb-[100px]">
         접근 권한이 없습니다.
@@ -148,7 +148,7 @@ const BoardPage = async (props: any) => {
     <>
       <div className="w-full mt-20">
         <div className="text-sky-800 text-3xl font-bold mb-[100px]">
-          질문게시판
+          질문게시판 아카이브
         </div>
         {/* {posts.length === 0 && (
           <div className="w-full flex justify-center text-xl font-bold mb-[100px]">
@@ -157,7 +157,7 @@ const BoardPage = async (props: any) => {
         )} */}
 
         <>
-          <QnaBoardTable isUser={false} posts={formattedPosts} />
+          <QnaBoardTable isAdmin={true} isUser={false} posts={formattedPosts} />
           <AdminQnaPagination page={page} totalPage={totalPage} />
         </>
       </div>

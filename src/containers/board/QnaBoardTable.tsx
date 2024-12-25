@@ -185,9 +185,11 @@ const QnaAnswerType = ({ isAnswered }: { isAnswered: number }) => {
 const QnaBoardTable = ({
   isUser,
   posts,
+  isAdmin,
 }: {
   isUser: boolean
   posts: any[]
+  isAdmin: boolean
 }) => {
   const [showPosts, setShowPosts] = useState<any[]>(posts)
   const router = useRouter()
@@ -343,7 +345,13 @@ const QnaBoardTable = ({
                     </BoardTableCell>
 
                     <BoardTableCellTitle>
-                      <Link href={`/board/qna/${post?.post_id}`}>
+                      <Link
+                        href={
+                          isAdmin
+                            ? `/admin/qna/${post?.post_id}`
+                            : `/board/qna/${post?.post_id}`
+                        }
+                      >
                         <span style={{ fontWeight: 'bold' }}>
                           &#91;
                           {post?.post_qnatype}
@@ -374,7 +382,13 @@ const QnaBoardTable = ({
         <BoardTableMobileContainer>
           {showPosts.map((post: any, index: number) => {
             return (
-              <Link href={`/board/qna/${post?.post_id}`}>
+              <Link
+                href={
+                  isAdmin
+                    ? `/admin/qna/${post?.post_id}`
+                    : `/board/qna/${post?.post_id}`
+                }
+              >
                 <BoardTableMobileItemContainer key={index}>
                   <BoardTableMobileItemTitle>
                     <BoardTableMobileDoublelineTitle>

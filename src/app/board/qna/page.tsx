@@ -209,7 +209,11 @@ const BoardPage = async (props: any) => {
         )} */}
 
         <>
-          <QnaBoardTable isUser={false} posts={formattedPosts} />
+          <QnaBoardTable
+            isAdmin={false}
+            isUser={false}
+            posts={formattedPosts}
+          />
           <QnaPagination page={page} totalPage={totalPage} />
         </>
       </div>
