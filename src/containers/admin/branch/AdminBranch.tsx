@@ -84,9 +84,31 @@ const AdminBranch = () => {
   return (
     <AdminMainContainer>
       {branches?.map((branch, index) => (
-        <ContentBoxCellContainer>
-          <ContentBoxCellTitle>{branch.branch_name}</ContentBoxCellTitle>
-          <ContentBoxCellContentContainer>
+        <ContentBoxCellContainer
+          style={{
+            marginTop: '10px',
+            padding: '5px 10px',
+          }}
+        >
+          <ContentBoxClickableContentWrapper
+            style={{
+              color: '#797b84',
+              display: 'flex',
+              padding: '20px',
+              // justifyContent: 'center',
+            }}
+            onClick={() => modalHandler(branch)}
+          >
+            <ContentBoxCellTitle
+              style={{
+                color: 'black',
+              }}
+            >
+              {branch.branch_name}
+            </ContentBoxCellTitle>
+            수정하기
+          </ContentBoxClickableContentWrapper>
+          {/* <ContentBoxCellContentContainer>
             <ContentBoxCellContentWrapper>
               <ContentBoxCellContentTitle>현재 교재</ContentBoxCellContentTitle>
               <ContentBoxCellContent>
@@ -134,18 +156,7 @@ const AdminBranch = () => {
                 {branch.branch_text_preview}
               </ContentBoxCellContent>
             </ContentBoxCellContentWrapper>
-
-            <ContentBoxClickableContentWrapper
-              style={{
-                color: '#797b84',
-                display: 'flex',
-                justifyContent: 'center',
-              }}
-              onClick={() => modalHandler(branch)}
-            >
-              수정하기
-            </ContentBoxClickableContentWrapper>
-          </ContentBoxCellContentContainer>
+          </ContentBoxCellContentContainer> */}
         </ContentBoxCellContainer>
       ))}
       <AdminBranchUpdate

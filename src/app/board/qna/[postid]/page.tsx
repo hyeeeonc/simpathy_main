@@ -23,18 +23,114 @@ const PostPage = async (props: any) => {
   const currentUser = await getCurrentUser()
   const currentPost = await prisma.qnapost.findUnique({
     where: { post_id },
+    include: {
+      user: {
+        select: {
+          user_name: true,
+          grade_id: true,
+        },
+      },
+    },
   })
+
+  // `user_name`과 `user_id` 수정 로직
+  if (currentPost && currentPost.user) {
+    const { user_id, user } = currentPost
+
+    // `user`가 존재하고 `user_id`가 null이 아닌지 체크
+    if (user.grade_id >= 3 && user_id !== null) {
+      const { user_name } = user
+
+      // `user_name`의 두 번째 글자를 '*'로 교체
+      let modifiedUserName = user_name
+      if (user_name.length === 4) {
+        // 마지막 글자가 숫자 또는 영어인 경우
+        const lastChar = user_name[user_name.length - 1]
+        if (/[0-9A-Za-z]/.test(lastChar)) {
+          modifiedUserName = user_name[0] + '*' + user_name.slice(2)
+        } else {
+          // 한글 이름인 경우
+          modifiedUserName = user_name.slice(0, 2) + '*' + user_name.slice(3)
+        }
+      } else if (user_name === '(알 수 없음)') {
+        modifiedUserName = user_name
+      } else if (user_name.length > 1) {
+        // 일반적인 경우 (두 번째 글자를 *)
+        modifiedUserName = user_name[0] + '*' + user_name.slice(2)
+      }
+
+      // `user_id`에서 기존 `user_name`을 수정된 `user_name`으로 교체
+      const modifiedUserId = user_id.replace(user_name, modifiedUserName)
+
+      // 수정된 결과 반영
+      currentPost.user_id = modifiedUserId
+      currentPost.user.user_name = modifiedUserName // `user_name`도 수정된 값을 반영
+    }
+  }
+
+  if (!currentPost) {
+    return <div>존재하지 않는 게시물입니다.</div>
+  }
 
   const currentReply = await prisma.qnareply.findMany({
     where: { post_id },
     orderBy: {
       reply_upload_time: 'asc',
     },
+    include: {
+      user: {
+        select: {
+          user_name: true,
+          grade_id: true,
+        },
+      },
+    },
   })
 
-  if (!currentPost) {
-    return <div>존재하지 않는 게시물입니다.</div>
-  }
+  // `user_name`과 `user_id` 수정 로직
+  const updatedReplies = currentReply.map(reply => {
+    const { user_id, user } = reply
+
+    if (user && user.grade_id >= 3) {
+      const { user_name } = user
+
+      // `user_name`의 두 번째 글자를 '*'로 교체
+      let modifiedUserName = user_name
+      if (user_name.length === 4) {
+        // 마지막 글자가 숫자 또는 영어인 경우
+        const lastChar = user_name[user_name.length - 1]
+        if (/[0-9A-Za-z]/.test(lastChar)) {
+          modifiedUserName = user_name[0] + '*' + user_name.slice(2)
+        } else {
+          // 한글 이름인 경우
+          modifiedUserName = user_name.slice(0, 2) + '*' + user_name.slice(3)
+        }
+      } else if (user_name === '(알 수 없음)') {
+        modifiedUserName = user_name
+      } else if (user_name.length > 1) {
+        // 일반적인 경우 (두 번째 글자를 *)
+        modifiedUserName = user_name[0] + '*' + user_name.slice(2)
+      }
+
+      // `user_id`에서 기존 `user_name`을 수정된 `user_name`으로 교체
+      const modifiedUserId = user_id
+        ? user_id.replace(user_name, modifiedUserName)
+        : ''
+
+      // 결과 반환
+      return {
+        ...reply,
+        user_id: modifiedUserId,
+        user: {
+          ...user,
+          user_name: modifiedUserName, // `user_name`도 수정된 값을 반영
+        },
+      }
+    }
+
+    // 조건을 만족하지 않으면 원본 데이터 유지
+    return reply
+  })
 
   if (
     !currentUser ||
@@ -65,7 +161,7 @@ const PostPage = async (props: any) => {
   return (
     <>
       <div className="w-full rounded-[5px] md:border-solid md:border md:border-gray-300 md:p-6">
-        <QnaBreadcrumb />
+        <QnaBreadcrumb isAdmin={false} />
 
         <div className="w-full mt-[20px] mb-[20px] border-solid border-b border-b-gray-300">
           <div className="text-sky-800 text-3xl font-bold mb-[40px]">
@@ -96,7 +192,7 @@ const PostPage = async (props: any) => {
         <div className="text-sky-800 text-xl font-bold my-[20px]">답변</div>
         <QnaReplyList
           user={currentUser}
-          replies={currentReply}
+          replies={updatedReplies}
           post_id={post_id}
         />
         <QnaReplyEditor post_id={post_id} origin_id={null} />

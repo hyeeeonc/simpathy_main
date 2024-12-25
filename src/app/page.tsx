@@ -1,12 +1,15 @@
 // import SignInButton from '@/containers/auth/SignInButton'
 import MainNoticeBoard from '@/containers/board/MainNoticeBoard'
 import LandingBranches from '@/containers/landing/LandingBranches'
+import LandingModal from '@/containers/landing/LandingModal'
 import LandingPosts from '@/containers/landing/LandingPosts'
 import LandingWebtoon from '@/containers/landing/LandingWebtoon'
 import LandingWindow from '@/containers/landing/LandingWindow'
 import prisma from '@/libs/prisma'
+import getCurrentUser from '@/services/getCurrentUser'
 
 export default async function Home() {
+  const currentUser = await getCurrentUser()
   const noticePosts = await prisma.post.findMany({
     where: { isNotice: true },
     orderBy: {
@@ -38,6 +41,7 @@ export default async function Home() {
 
   return (
     <>
+      {currentUser && <LandingModal />}
       <img src="/images/landing/Head.jpeg" className="w-full" />
       {/* 공지사항 */}
       <>

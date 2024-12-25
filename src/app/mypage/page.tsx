@@ -22,7 +22,7 @@ async function Mypage() {
       where: { grade_id: currentUser?.grade_id },
       select: { grade_name: true },
     })
-    const currnetUserReplies = await prisma.reply.count({
+    const currnetUserReplies = await prisma.qnareply.count({
       where: { user_id: currentUser?.user_id },
     })
     const currentUserBoards = await prisma.post.count({
@@ -47,7 +47,7 @@ async function Mypage() {
             user_id={currentUser?.user_id}
             questions={currentUserQuestions}
           />
-          {currentUser.grade_id > 2 && (
+          {/* {currentUser.grade_id > 2 && (
             <MyPageProgress
               totalPage={currentUserBranch.branch_textbook_total || 0}
               nowPage={currentUserBranch.branch_textbook_now || 0}
@@ -57,7 +57,7 @@ async function Mypage() {
               branchName={currentUserBranch.branch_name}
               textbook={currentUserBranch.branch_textbook || ''}
             />
-          )}
+          )} */}
           {currentUser.grade_id <= 2 && <MyPageAdmin />}
         </>
       )
