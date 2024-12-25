@@ -61,28 +61,29 @@ const ModalEditor = ({ modal = {} }: ModalEditorProps) => {
   const [modalEndTime, setModalEndTime] = useState('')
 
   // Helper: Convert UTC to Local
-  const convertUTCToLocal = (utcDate: string): string => {
-    console.log('utc data', utcDate)
-    const date = new Date(utcDate)
-    console.log('date', date)
-    console.log('data getHours', date.getHours())
-    date.setHours(date.getHours()) // UTC+9 시간대로 조정
-    return date.toISOString().slice(0, 16) // `YYYY-MM-DDTHH:mm` 형식 반환
+  const convertUTCToLocal = (utcDateTime: string) => {
+    const utcDate = new Date(utcDateTime)
+    // 한국 시간(KST, UTC+9)으로 변환
+    const localDate = new Date(utcDate.getTime() + 9 * 60 * 60 * 1000) // 9시간 더하기
+    return localDate.toISOString().slice(0, 16) // 'YYYY-MM-DDTHH:mm' 형식으로 반환
   }
 
   // Helper: Convert Local to UTC
-  const convertLocalToUTC = (localDateTime: string): string => {
-    const localDate = new Date(localDateTime)
-    return new Date(
-      localDate.getTime() + localDate.getTimezoneOffset() * 60000,
-    ).toISOString()
+  const convertLocalToUTC = (localDateTime: string) => {
+    const [date, time] = localDateTime.split('T')
+    const [hour, minute] = time.split(':')
+    const localDate = new Date(date)
+    localDate.setHours(parseInt(hour), parseInt(minute), 0, 0) // 입력받은 시간만큼 설정
+
+    // localDate를 그대로 ISO 형식으로 변환 (UTC 타임존으로 저장됨)
+    return localDate.toISOString() // 2024-12-31T14:59:00.000Z (UTC)
   }
 
   useEffect(() => {
     if (modal.modal_endtime) {
-      console.log('modal.modal_endtime', modal.modal_endtime)
+      // console.log('modal.modal_endtime', modal.modal_endtime)
       const localTime = convertUTCToLocal(modal.modal_endtime)
-      console.log('localTime', localTime)
+      // console.log('localTime', localTime)
       setModalEndTime(localTime)
     }
   }, [modal.modal_endtime])
@@ -161,6 +162,8 @@ const ModalEditor = ({ modal = {} }: ModalEditorProps) => {
   }, [])
 
   const handleSubmit = async () => {
+    console.log('contents', contents)
+    console.log('modalEndTime', modalEndTime)
     if (contents === '') {
       alert('내용을 입력해주세요')
       return
@@ -172,13 +175,15 @@ const ModalEditor = ({ modal = {} }: ModalEditorProps) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          content: contents,
+          modal_contents: contents,
+          modal_endtime: convertLocalToUTC(modalEndTime),
         }),
       })
 
       if (response.ok) {
         alert('공지가 등록되었습니다.')
-        window.location.reload()
+        // console.log('response', response.json())
+        // window.location.reload()
         // Handle success, e.g., redirect or show a success message
       } else {
         alert('공지 등록에 실패하였습니다.')
