@@ -209,3 +209,10 @@ model qnareply {
   @@index([post_id], map: "post_id")
   @@index([user_id], map: "user_id")
 }
+
+model modal {
+  modal_id        Int      @id
+  modal_contents  String   @db.Text
+  modal_endtime   DateTime @db.DateTime(0)
+  modal_is_active Boolean
+}

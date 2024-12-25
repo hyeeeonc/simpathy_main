@@ -4,6 +4,22 @@ import QnaBoardTable from '@/containers/board/QnaBoardTable'
 import QnaPagination from '@/containers/board/QnaPagination'
 // import qnaPagination from '@/services/board/qnaPagination'
 
+interface WhereCondition {
+  post_isAnswered?: number | undefined
+  post_qnatype?: '문학' | '독서' | '기타' | undefined
+  post_qnatarget?:
+    | '기출문제'
+    | '강의'
+    | '기타'
+    | '교재(강의교재)'
+    | '교재(학습자료)'
+    | undefined
+  OR?: {
+    post_title?: { contains: string } | undefined
+    post_contents?: { contains: string } | undefined
+  }[]
+}
+
 const QnaReplyPage = async (props: any) => {
   const user = await getCurrentUser()
 

@@ -7,5 +7,6 @@ export const config = {
     '/editor/:path*',
     '/consulting/:path*',
     '/board/:path*',
+    '/api/:path*',
   ],
 }
