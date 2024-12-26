@@ -225,11 +225,16 @@ const QnaBoardTable = ({
       qnaTarget === '' &&
       search === ''
     ) {
-      router.refresh()
-      router.push('/board/qna')
+      if (isAdmin) {
+        router.refresh()
+        router.push('/admin/qna')
+      } else {
+        router.refresh()
+        router.push('/board/qna')
+      }
     }
 
-    let addr = '/board/qna?'
+    let addr = isAdmin ? '/admin/qna?' : '/board/qna?'
 
     let flag = false
     if (isAnswered !== '') {

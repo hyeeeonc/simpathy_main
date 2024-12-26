@@ -162,8 +162,6 @@ const ModalEditor = ({ modal = {} }: ModalEditorProps) => {
   }, [])
 
   const handleSubmit = async () => {
-    console.log('contents', contents)
-    console.log('modalEndTime', modalEndTime)
     if (contents === '') {
       alert('내용을 입력해주세요')
       return
