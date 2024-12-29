@@ -230,7 +230,7 @@ export function NavBar() {
             </ListItem>
           </Link>
 
-          <Link href={'/board/branch'}>
+          {/* <Link href={'/board/branch'}>
             <ListItem onClick={closeDrawer}>
               <ListItemPrefix>
                 <svg
@@ -245,7 +245,7 @@ export function NavBar() {
               </ListItemPrefix>
               복습 영상 게시판
             </ListItem>
-          </Link>
+          </Link> */}
 
           <Link href={'/board/qna'}>
             <ListItem onClick={closeDrawer}>
