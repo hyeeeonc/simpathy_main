@@ -1,7 +1,7 @@
 import BoardTable from '@/containers/board/BoardTable'
 import prisma from '@/libs/prisma'
 import getCurrentUser from '@/services/getCurrentUser'
-import pagination from '@/services/board/pagination'
+import { getPaginatedPosts } from '@/services/board/pagination'
 import BoardPagination from '@/containers/board/BoardPagination'
 import BoardWriteButton from '@/containers/board/BoardWriteButton'
 
@@ -20,9 +20,14 @@ const BoardPage = async (props: any) => {
     else return Number(page)
   }
 
-  const totalPost = await prisma.post.count({
-    where: { board_id },
-  })
+  // const totalPost = await prisma.post.count({
+  //   where: {
+  //     board_id,
+  //     NOT: {
+  //       user_id: '(알 수 없음)', // user_id가 "(알 수 없음)"인 데이터를 제외
+  //     },
+  //   },
+  // })
 
   const page = pageHandler()
 
@@ -40,9 +45,16 @@ const BoardPage = async (props: any) => {
 
   const searchText = props.searchParams.search
   const searchType = props.searchParams.searchType
+  let { posts, totalPost } = await getPaginatedPosts(
+    board_id,
+    page,
+    pageSize,
+    searchText,
+    searchType,
+  )
   const totalPage = Math.ceil(totalPost / pageSize)
 
-  let posts = await pagination(board_id, page, pageSize, searchText, searchType)
+  // let posts = await pagination(board_id, page, pageSize, searchText, searchType)
 
   if (page === 1) {
     const noticePosts = await prisma.post.findMany({

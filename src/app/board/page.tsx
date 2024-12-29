@@ -1,7 +1,7 @@
 import BoardTable from '@/containers/board/BoardTable'
 import prisma from '@/libs/prisma'
 import getCurrentUser from '@/services/getCurrentUser'
-import pagination from '@/services/board/pagination'
+import { getPaginatedPosts } from '@/services/board/pagination'
 import BoardPagination from '@/containers/board/BoardPagination'
 
 const BoardPage = async (props: any) => {
@@ -14,13 +14,20 @@ const BoardPage = async (props: any) => {
     else return Number(page)
   }
 
-  const totalPost = await prisma.post.count()
+  // const totalPost = await prisma.post.count()
 
   const page = pageHandler()
 
   const searchText = props.searchParams.search
   const searchType = props.searchParams.searchType
-  let posts = await pagination(0, page, pageSize, searchText, searchType)
+  // let posts = await pagination(0, page, pageSize, searchText, searchType)
+  let { posts, totalPost } = await getPaginatedPosts(
+    0,
+    page,
+    pageSize,
+    searchText,
+    searchType,
+  )
   const totalPage = Math.ceil(totalPost / pageSize)
 
   if (page === 1) {
