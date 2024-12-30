@@ -1,6 +1,7 @@
 // import SignInButton from '@/containers/auth/SignInButton'
 import MainNoticeBoard from '@/containers/board/MainNoticeBoard'
 import LandingBranches from '@/containers/landing/LandingBranches'
+import LandingMainImage from '@/containers/landing/LandingMainImage'
 import LandingModal from '@/containers/landing/LandingModal'
 import LandingPosts from '@/containers/landing/LandingPosts'
 import LandingWebtoon from '@/containers/landing/LandingWebtoon'
@@ -42,7 +43,8 @@ export default async function Home() {
   return (
     <>
       {currentUser && <LandingModal />}
-      <img src="/images/landing/Head.jpeg" className="w-full" />
+      {/* <img src="/images/landing/Head.jpeg" className="w-full" /> */}
+      <LandingMainImage />
       {/* 공지사항 */}
       <>
         <br />
@@ -59,11 +61,12 @@ export default async function Home() {
         <br />
       </>
       {/* <LandingWindow /> */}
-      <div className="flex justify-between items-center my-[50px] flex-wrap">
+
+      {/* <div className="flex justify-between items-center my-[50px] flex-wrap">
         <img src="/images/landing/epilog.jpeg" className="w-1/2 mob:w-1/3" />
         <img src="/images/landing/books.jpeg" className="w-1/2 mob:w-1/3" />
         <LandingWebtoon />
-      </div>
+      </div> */}
 
       {/* <LandingPosts /> */}
       <img src="/images/landing/timetable.png" className="w-full" />
