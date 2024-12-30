@@ -6,13 +6,16 @@ const LandingMainImageContainer = styled.div`
   width: 100%;
   overflow: hidden;
 
-  @media (max-width: 1000px) {
-    height: 250px;
-    padding-top: 60px;
+  @media (max-width: 768px) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 160px;
+    padding-top: 40px;
   }
 
   @media (max-width: 350px) {
-    height: 200px;
+    height: 150px;
   }
 `
 
@@ -21,12 +24,13 @@ const LandingMainImg = styled.img`
   height: auto;
   object-fit: cover;
 
-  @media (max-width: 1000px) {
-    height: 250px;
+  @media (max-width: 768px) {
+    width: auto;
+    height: 160px;
   }
 
   @media (max-width: 350px) {
-    height: 200px;
+    height: 150px;
   }
 `
 

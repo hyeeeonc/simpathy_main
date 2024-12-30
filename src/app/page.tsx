@@ -50,8 +50,6 @@ export default async function Home() {
         <br />
         <br />
         <br />
-        <br />
-        <br />
 
         <h1 className="text-2xl font-bold md:text-3xl">공지사항</h1>
         <br />
