@@ -12,13 +12,13 @@ export const HeaderButtons = styled.div`
   box-sizing: border-box;
 
   text-decoration: none;
-  font-weight: 600;
-  font-size: 11px;
+  font-weight: 700;
+  font-size: 13px;
   text-transform: uppercase;
 
-  background: rgba(238, 238, 238, 0.5);
-  backdrop-filter: blur(5px);
-  border-radius: 5px;
+  // background: rgba(238, 238, 238, 0.5);
+  // backdrop-filter: blur(5px);
+  // border-radius: 5px;
 
   color: black;
 
@@ -31,9 +31,9 @@ export const HeaderButtons = styled.div`
   }
 
   @media (max-width: 767px) {
-    width: 75px;
+    width: 65px;
     height: 35px;
 
-    font-size: 10px;
+    font-size: 11px;
   }
 `

@@ -22,7 +22,7 @@ const NavButtonFixer = styled.div`
   align-items: center;
 
   position: absolute;
-  top: calc(64px - 14px);
+  top: calc(48px - 14px);
   left: calc((100vw - 1100px) / 2 + 1100px - 28px);
   z-index: 999;
 

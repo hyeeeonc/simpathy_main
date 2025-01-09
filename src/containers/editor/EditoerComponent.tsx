@@ -2,7 +2,7 @@
 
 import QuillNoSSRWrapper from './WysiwygEditor'
 import ReactQuill, { Quill } from 'react-quill'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { use, useEffect, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { ImageResize } from 'quill-image-resize-module-ts'
 import {
@@ -72,6 +72,21 @@ const EditorHeaderSelectorContainer = styled.div`
 `
 
 const EditorQnaNoticeContainer = styled.div`
+  width: 100%;
+
+  padding: 15px;
+  margin: 10px 0;
+
+  line-height: 24px;
+
+  font-size: 14px;
+  background: #f9f9fa;
+  color: #323232;
+
+  border: 1px solid #ebecef;
+`
+
+const NoticeContainer = styled.div`
   width: 100%;
 
   padding: 15px;
@@ -459,6 +474,14 @@ const EditorComponent = ({
     }
   }
 
+  // 보강신청 복습영상 신청
+  useEffect(() => {
+    if (selectedBoard === 14) setContents('결석 일자: <br/>결석 사유: ')
+    else if (selectedBoard === 19)
+      setContents('결석 일자: <br/>보강 수업 수강 희망 지점: ')
+    else setContents('')
+  }, [selectedBoard])
+
   return (
     <>
       <EditorHeaderConatier>
@@ -559,6 +582,48 @@ const EditorComponent = ({
                 기타
               </Button>
             </div>
+          </>
+        )}
+        {boardType === 0 && selectedBoard === 19 && (
+          <>
+            <NoticeContainer>
+              <strong>• 목동 시대인재 (화/18:30~22:00)</strong>
+              <br />
+              학원 주소: 양천구 목동서로 225(예술인회관)
+              <br />
+              학원 연락처: 02-2643-1237
+              <br />
+              수업 교실: 608호
+              <br />
+              <br />
+              <strong>• 송파 로고스(수/18:30~22:00)</strong>
+              <br />
+              학원 주소: 송파구 백제고분로27길 40
+              <br />
+              학원 연락처: 0507-1491-5540
+              <br />
+              수업 교실: 4층
+              <br />
+              <br />
+              <strong>• 대치 오르비(토/13:30~17:00)</strong>
+              <br />
+              학원 주소: 강남구 삼성로61길 15, SM타워
+              <br />
+              학원 연락처: 02-522-0207
+              <br />
+              수업 교실: L층
+              <br />
+              <br />
+              <strong>• 대치 예섬(토/18:30~22:00)</strong>
+              <br />
+              학원 주소: 서울 강남구 도곡로 418
+              <br />
+              학원 연락처: 02-558-8822
+              <br />
+              수업 교실: 301호
+              <br />
+            </NoticeContainer>
+            <br />
           </>
         )}
         <EditorHeaderSelectorContainer>
