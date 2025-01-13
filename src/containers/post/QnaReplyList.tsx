@@ -175,7 +175,7 @@ const QnaReplyList = ({
           <>
             <ReplyItemContainer key={reply.reply_id}>
               <ReplyItemHeader>
-                <ReplyItemWriter>{reply.user_id}</ReplyItemWriter>
+                <ReplyItemWriter>{reply.author}</ReplyItemWriter>
 
                 <ReplyItemButtons>
                   {(user.user_id === reply.user_id || user.grade_id === 1) && (

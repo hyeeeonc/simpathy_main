@@ -195,7 +195,6 @@ const QnaReplyTable = ({
   replies: any
   userId: string
 }) => {
-  console.log(replies)
   const [showReplies, setShowReplies] = useState(replies)
   const router = useRouter()
   const [isAnswered, setIsAnswered] = useState<string>('')
@@ -275,7 +274,6 @@ const QnaReplyTable = ({
 
   useEffect(() => {
     setShowReplies(replies)
-    console.log(replies)
   }, [replies])
 
   return (

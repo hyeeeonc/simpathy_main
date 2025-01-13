@@ -160,7 +160,7 @@ const AdminUser = () => {
                 value={user.user_pw}
                 onChange={handleChange}
                 type="text"
-                placeholder="연락처 뒷 네자리"
+                placeholder="생년월일 6자리"
               />
             </ContentBoxCellContent>
           </ContentBoxCellContentWrapper>

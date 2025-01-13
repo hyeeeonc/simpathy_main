@@ -4,9 +4,9 @@ import { HeaderButtons } from '@/components/Buttons'
 import React from 'react'
 
 export function SignInButton() {
-  return <HeaderButtons onClick={() => signIn()}>login</HeaderButtons>
+  return <HeaderButtons onClick={() => signIn()}>로그인</HeaderButtons>
 }
 
 export function SignOutButton() {
-  return <HeaderButtons onClick={() => signOut()}>logout</HeaderButtons>
+  return <HeaderButtons onClick={() => signOut()}>로그아웃</HeaderButtons>
 }

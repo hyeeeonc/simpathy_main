@@ -45,8 +45,6 @@ const MainModal = ({ modal }: MainModalProps) => {
     // modal_endtime이 존재하는지 확인하고, 현재 시간이 그 이하일 때만 모달을 노출
     const currentDateTime = new Date()
     const modalEndTime = new Date(modal.modal_endtime)
-    console.log('mod', modalEndTime)
-    console.log('cur', currentDateTime)
 
     if (modalEndTime >= currentDateTime) {
       setIsOpen(true)

@@ -22,7 +22,7 @@ const NavButtonFixer = styled.div`
   align-items: center;
 
   position: absolute;
-  top: calc(64px - 14px);
+  top: calc(48px - 14px);
   left: calc((100vw - 1100px) / 2 + 1100px - 28px);
   z-index: 999;
 
@@ -230,7 +230,7 @@ export function NavBar() {
             </ListItem>
           </Link>
 
-          <Link href={'/board/branch'}>
+          {/* <Link href={'/board/branch'}>
             <ListItem onClick={closeDrawer}>
               <ListItemPrefix>
                 <svg
@@ -245,7 +245,7 @@ export function NavBar() {
               </ListItemPrefix>
               복습 영상 게시판
             </ListItem>
-          </Link>
+          </Link> */}
 
           <Link href={'/board/qna'}>
             <ListItem onClick={closeDrawer}>

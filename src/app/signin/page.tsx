@@ -107,7 +107,7 @@ function Login() {
           <LoginNotice>
             회원 초기 설정
             <br />
-            ID : 학원 이름
+            ID : 학원(한 칸 띄우고)이름
             <br />
             (ex. 목동시대 ○○○ / 로고스 ○○○ /
             <br />

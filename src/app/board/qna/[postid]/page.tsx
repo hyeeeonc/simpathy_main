@@ -33,6 +33,8 @@ const PostPage = async (props: any) => {
     },
   })
 
+  let modifiedAuthor = ''
+
   // `user_name`과 `user_id` 수정 로직
   if (currentPost && currentPost.user) {
     const { user_id, user } = currentPost
@@ -60,11 +62,11 @@ const PostPage = async (props: any) => {
       }
 
       // `user_id`에서 기존 `user_name`을 수정된 `user_name`으로 교체
-      const modifiedUserId = user_id.replace(user_name, modifiedUserName)
+      modifiedAuthor = user_id.replace(user_name, modifiedUserName)
 
-      // 수정된 결과 반영
-      currentPost.user_id = modifiedUserId
-      currentPost.user.user_name = modifiedUserName // `user_name`도 수정된 값을 반영
+      // // 수정된 결과 반영
+      // currentPost.user_id = modifiedUserId
+      // currentPost.user.user_name = modifiedUserName // `user_name`도 수정된 값을 반영
     }
   }
 
@@ -120,7 +122,7 @@ const PostPage = async (props: any) => {
       // 결과 반환
       return {
         ...reply,
-        user_id: modifiedUserId,
+        author: modifiedUserId,
         user: {
           ...user,
           user_name: modifiedUserName, // `user_name`도 수정된 값을 반영
@@ -129,7 +131,10 @@ const PostPage = async (props: any) => {
     }
 
     // 조건을 만족하지 않으면 원본 데이터 유지
-    return reply
+    return {
+      ...reply,
+      author: user_id,
+    }
   })
 
   if (
@@ -176,7 +181,7 @@ const PostPage = async (props: any) => {
           </div>
           <div className="flex justify-end">
             <div className="text-sky-800 text-sm mb-[10px] text-right">
-              <p className="font-bold">{currentPost.user_id}</p>
+              <p className="font-bold">{modifiedAuthor}</p>
 
               <p className="text-gray-500">{formattedDate}</p>
             </div>
