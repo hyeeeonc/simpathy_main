@@ -122,6 +122,7 @@ const EditorComponent = ({
 
   // 이미지 서버
   const imageHandler = async () => {
+    console.log('imageHandler')
     const input = document.createElement('input')
     input.setAttribute('type', 'file')
     input.setAttribute('accept', 'image/*')
@@ -158,6 +159,7 @@ const EditorComponent = ({
         if (!range) return
         // 가져온 위치에 이미지를 삽입한다
         editor.insertEmbed(range.index, 'image', IMG_URL)
+        console.log('imageHandler finish')
       } catch (error) {
         console.log(error)
       }

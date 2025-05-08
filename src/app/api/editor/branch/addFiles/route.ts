@@ -11,7 +11,7 @@ export async function POST(request: Request) {
         post_id: post_id,
       })),
     })
-    console.log(cratedfiles)
+    // console.log(cratedfiles)
 
     if (!cratedfiles) return new Response(null, { status: 404 })
     return new Response(null, { status: 200 })
