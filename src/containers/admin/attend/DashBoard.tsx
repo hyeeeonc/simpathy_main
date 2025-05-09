@@ -430,7 +430,11 @@ function DashBoard() {
       grade_id: newStudentGrade
     }
 
-    setUsers(prev => [...prev, newUser])
+    setUsers(prev => {
+      const next = [...prev, newUser]
+      next.sort((a, b) => a.user_name.localeCompare(b.user_name, 'ko'))
+      return next
+    })
     setAttend(prev => ({ ...prev, [newUser.user_id]: 'O' }))
 
     setNewStudentName('')
