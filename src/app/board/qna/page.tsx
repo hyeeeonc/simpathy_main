@@ -24,6 +24,9 @@ interface WhereCondition {
   }
 }
 
+export const dynamic = 'force-dynamic'
+
+
 const BoardPage = async (props: any) => {
   const user = await getCurrentUser()
 

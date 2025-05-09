@@ -187,6 +187,7 @@ model qnapost {
   post_isAnswered  Int
   post_upload_time DateTime   @db.DateTime(0)
   post_update_time DateTime?  @db.DateTime(0)
+  reserve_user_id  String?    @db.VarChar(50)
   user             user       @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "user_id_fk")
   qnareply         qnareply[]
 
