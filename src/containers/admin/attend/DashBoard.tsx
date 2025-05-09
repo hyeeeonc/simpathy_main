@@ -4,14 +4,6 @@ import { useEffect, useState } from 'react'
 import Calendar from 'react-calendar'
 import 'react-calendar/dist/Calendar.css'
 import styled, { css } from 'styled-components'
-import {
-  ContentBoxCellContainer,
-  ContentBoxCellTitle,
-  ContentBoxCellContentContainer,
-  ContentBoxCellContentWrapper,
-  ContentBoxCellContentTitle,
-  ContentBoxCellContent,
-} from '@/components/ContentBox'
 import { HeaderButtons } from '@/components/Buttons'
 import * as XLSX from 'xlsx-js-style'
 
@@ -143,8 +135,7 @@ function DashBoard() {
   const [note, setNote] = useState<Record<string, string>>({})
   const [refund, setRefund] = useState<number>(0)
   const [newcomer, setNewcomer] = useState<number>(0)
-  const [reRegister, setReRegister] = useState<number>(0)
-  const [summaryMemo, setSummaryMemo] = useState<string>('')
+  const [reregister, setReregister] = useState<number>(0)
   const [branchMove, setBranchMove] = useState<string>('')
   const [branchMoveCount, setBranchMoveCount] = useState<number>(0)
   const [newStudent, setNewStudent] = useState<string>('')
@@ -154,6 +145,13 @@ function DashBoard() {
   const [statusFilter, setStatusFilter] = useState<AttendStatus | 'ALL'>('ALL')
   const [searchTerm, setSearchTerm] = useState<string>('')
   const [searchType, setSearchType] = useState<'name' | 'phone'>('name')
+
+  // 학생 추가 모달 상태
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false)
+  const [newStudentName, setNewStudentName] = useState('')
+  const [newStudentPhone, setNewStudentPhone] = useState('')
+  const [newStudentParentPhone, setNewStudentParentPhone] = useState('')
+  const [newStudentGrade, setNewStudentGrade] = useState<number>(3)
 
   // 요약 계산
   const presentCount = Object.values(attend).filter(v => v === 'O').length
@@ -184,65 +182,6 @@ function DashBoard() {
       .then(data => setBranches(data))
   }, [])
 
-  // 지점 선택 시 학생 리스트 불러오기 및 출석 디폴트 O로 세팅
-  useEffect(() => {
-    if (selectedBranch) {
-      fetch(`/api/user/getUserAll`)
-        .then(res => res.json())
-        .then(data => {
-          // branch_id와 grade_id(3, 4)만 필터링
-          const filtered = data.filter(
-            (u: User) => u.branch_id === selectedBranch && (u.grade_id === 3 || u.grade_id === 4)
-          )
-          setUsers(filtered)
-          // 출석 디폴트 O로 세팅
-          const defaultAttend: Record<string, AttendStatus> = {}
-          filtered.forEach((u: User) => { defaultAttend[u.user_id] = 'O' })
-          setAttend(defaultAttend)
-          setNote({})
-        })
-    } else {
-      setUsers([])
-      setAttend({})
-      setNote({})
-    }
-  }, [selectedBranch])
-
-  // 출석 상태 변경
-  const handleAttendChange = (user_id: string, status: AttendStatus) => {
-    setAttend(prev => ({ ...prev, [user_id]: status }))
-  }
-
-  // 비고 변경
-  const handleNoteChange = (user_id: string, value: string) => {
-    setNote(prev => ({ ...prev, [user_id]: value }))
-  }
-
-  // 제출 (mock API)
-  const handleSubmit = async () => {
-    if (users.some(u => !attend[u.user_id])) {
-      alert('모든 학생의 출석 상태를 선택해주세요.')
-      return
-    }
-    const res = await fetch('/api/attend/mockSubmit', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        branch_id: selectedBranch,
-        date: moment(value).format('YYYY-MM-DD'),
-        attendances: users.map(u => ({
-          user_id: u.user_id,
-          status: attend[u.user_id],
-          note: note[u.user_id] || ''
-        })),
-        refund,
-        newcomer
-      })
-    })
-    if (res.ok) alert('제출 완료!')
-    else alert('제출 실패')
-  }
-
   // 날짜 변경 핸들러
   const handleCalendarChange = (date: Value) => {
     if (hasAnyInput) {
@@ -258,16 +197,20 @@ function DashBoard() {
     setSpecialNote('')
     setRefund(0)
     setNewcomer(0)
+    setReregister(0)
+    setBranchMoveCount(0)
     setSelectedBranch(null)
     setUsers([])
   }
 
   // 지점 변경 핸들러
-  const handleBranchChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleBranchChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     if (hasAnyInput) {
       if (!window.confirm('모든 내용이 삭제됩니다. 계속하시겠습니까?')) return
     }
-    setSelectedBranch(Number(e.target.value))
+    const branchId = Number(e.target.value)
+    setSelectedBranch(branchId)
+    
     // 나머지 값 초기화
     setAttend({})
     setNote({})
@@ -278,7 +221,127 @@ function DashBoard() {
     setSpecialNote('')
     setRefund(0)
     setNewcomer(0)
+    setReregister(0)
+    setBranchMoveCount(0)
     setUsers([])
+
+    // 날짜와 지점이 모두 선택된 경우에만 데이터 불러오기
+    if (branchId && value) {
+      try {
+        const res = await fetch('/api/attend/getAttendByDate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            date: moment(value).format('YYYY-MM-DD'),
+            branch_id: branchId
+          })
+        })
+
+        const data = await res.json()
+        
+        if (res.ok && data.ok) {
+          // 1. users 설정
+          setUsers(data.data.users)
+          
+          // 2. attend 상태 설정
+          const attendMap: Record<string, AttendStatus> = {}
+          data.data.users.forEach((u: any) => {
+            attendMap[u.user_id] = u.status
+          })
+          setAttend(attendMap)
+          
+          // 3. note 설정
+          const noteMap: Record<string, string> = {}
+          data.data.users.forEach((u: any) => {
+            if (u.note) noteMap[u.user_id] = u.note
+          })
+          setNote(noteMap)
+          
+          // 4. summary 데이터 설정
+          if (data.data.summary) {
+            const s = data.data.summary
+            setRefund(s.refund || 0)
+            setNewcomer(s.newcomer || 0)
+            setReregister(s.reregister || 0)
+            setBranchMoveCount(s.branch_move || 0)
+            setBranchMove(s.branch_move_detail || '')
+            setNewStudent(s.newcomer_student || '')
+            setAbsentStudent(s.absent_student || '')
+            setRefundStudent(s.refund_student || '')
+            setSpecialNote(s.special_note || '')
+          }
+        } else {
+          // 데이터가 없는 경우 (404)면 현재 학생 목록을 불러온다
+          if (res.status === 404) {
+            fetch(`/api/user/getUserAll`)
+            .then(res => res.json())
+            .then(data => {
+              const filtered = data.filter(
+                (u: User) => u.branch_id === branchId && (u.grade_id === 3 || u.grade_id === 4)
+              )
+              setUsers(filtered)
+              const defaultAttend: Record<string, AttendStatus> = {}
+              filtered.forEach((u: User) => { defaultAttend[u.user_id] = 'O' })
+              setAttend(defaultAttend)
+            })
+          } else {
+            alert('데이터를 불러오는데 실패했습니다: ' + (data.error || '알 수 없는 오류'))
+          }
+        }
+      } catch (error) {
+        console.error('Error loading attend data:', error)
+        alert('데이터를 불러오는데 실패했습니다.')
+      }
+    }
+  }
+
+  // 출석 상태 변경
+  const handleAttendChange = (user_id: string, status: AttendStatus) => {
+    setAttend(prev => ({ ...prev, [user_id]: status }))
+  }
+
+  // 비고 변경
+  const handleNoteChange = (user_id: string, value: string) => {
+    setNote(prev => ({ ...prev, [user_id]: value }))
+  }
+
+  // 제출
+  const handleSubmit = async () => {
+    if (users.some(u => !attend[u.user_id])) {
+      alert('모든 학생의 출석 상태를 선택해주세요.')
+      return
+    }
+    const res = await fetch('/api/attend/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        branch_id: selectedBranch,
+        date: moment(value).format('YYYY-MM-DD'),
+        attendances: users.map(u => ({
+          user_id: u.user_id,
+          user_name: u.user_name,
+          user_phone: u.user_phone,
+          user_parent_phone: u.user_parent_phone,
+          grade_id: u.grade_id,
+          status: attend[u.user_id],
+          note: note[u.user_id] || ''
+        })),
+        summary: {
+          refund,
+          newcomer,
+          reregister,
+          branch_move: branchMoveCount,
+          special_note: specialNote,
+          newcomer_student: newStudent,
+          absent_student: absentStudent,
+          refund_student: refundStudent,
+          branch_move_detail: branchMove
+        }
+      })
+    })
+    const data = await res.json()
+    if (res.ok && data.ok) alert('제출 완료!')
+    else alert('제출 실패: ' + (data.error || '알 수 없는 오류'))
   }
 
   // 필터링된 학생 리스트 계산
@@ -299,7 +362,7 @@ function DashBoard() {
   const getMonthDay = (date: Date) => {
     if (!date) return ''
     const d = new Date(date)
-    return `${d.getMonth() + 1}월 ${d.getDate()}일`
+    return `${d.getMonth() + 1}.${d.getDate()}`
   }
 
   // 엑셀 다운로드 함수
@@ -348,7 +411,50 @@ function DashBoard() {
 
     const wb = XLSX.utils.book_new()
     XLSX.utils.book_append_sheet(wb, ws, '출석명단')
-    XLSX.writeFile(wb, `출석명단_${dateStr}.xlsx`)
+    XLSX.writeFile(wb, `${branches.find(b => b.branch_id === selectedBranch)?.branch_name}출석명단_${dateStr}.xlsx`)
+  }
+
+  // 학생 추가 핸들러
+  const handleAddStudent = () => {
+    if (!newStudentName.trim()) {
+      alert('학생 이름을 입력해주세요.')
+      return
+    }
+
+    const newUser: User = {
+      user_id: `temp_${Date.now()}`,
+      user_name: newStudentName,
+      user_phone: newStudentPhone || undefined,
+      user_parent_phone: newStudentParentPhone || undefined,
+      branch_id: selectedBranch!,
+      grade_id: newStudentGrade
+    }
+
+    setUsers(prev => [...prev, newUser])
+    setAttend(prev => ({ ...prev, [newUser.user_id]: 'O' }))
+
+    setNewStudentName('')
+    setNewStudentPhone('')
+    setNewStudentParentPhone('')
+    setNewStudentGrade(3)
+    setIsAddModalOpen(false)
+  }
+
+  // 학생 삭제 핸들러
+  const handleDeleteStudent = (userId: string) => {
+    if (!window.confirm('정말 삭제하시겠습니까?')) return
+
+    setUsers(prev => prev.filter(u => u.user_id !== userId))
+    setAttend(prev => {
+      const newAttend = { ...prev }
+      delete newAttend[userId]
+      return newAttend
+    })
+    setNote(prev => {
+      const newNote = { ...prev }
+      delete newNote[userId]
+      return newNote
+    })
   }
 
   return (
@@ -361,7 +467,7 @@ function DashBoard() {
       }}
     >
       {/* 왼쪽: 달력 + 요약 */}
-      <div style={{ width: 400 }}>
+      <div style={{ width: 330 }}>
         <Calendar
           onChange={handleCalendarChange}
           formatDay={(locale, date) => moment(date).format('D')}
@@ -388,7 +494,7 @@ function DashBoard() {
             <AttendDashboardSummaryLabel>환불 : {refund}명 </AttendDashboardSummaryLabel>
           </AttendDashboardSummaryRow>
           <AttendDashboardSummaryRow>
-            <AttendDashboardSummaryLabel>재등록 : {reRegister}명 </AttendDashboardSummaryLabel>
+            <AttendDashboardSummaryLabel>재등록 : {reregister}명 </AttendDashboardSummaryLabel>
           </AttendDashboardSummaryRow>
 
           <AttendDashboardSummarySection>
@@ -432,7 +538,7 @@ function DashBoard() {
       </div>
 
       {/* 오른쪽: 날짜+지점 모두 선택 시에만 표시 */}
-      <div style={{ flex: 1 }}>
+      <div style={{ flex: 1, minWidth: 0 }}>
         {/* 지점 선택 */}
         <div className="mb-4">
           <select
@@ -477,8 +583,8 @@ function DashBoard() {
                 <input
                   type="number"
                   min={0}
-                  value={reRegister}
-                  onChange={e => setReRegister(Number(e.target.value))}
+                  value={reregister}
+                  onChange={e => setReregister(Number(e.target.value))}
                   style={{ width: 60, borderRadius: 6, border: '1px solid #e5e7eb', padding: '2px 6px' }}
                 />
               </div>
@@ -553,6 +659,21 @@ function DashBoard() {
             {/* 엑셀 다운로드 버튼 */}
             <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 12 }}>
               <button
+                onClick={() => setIsAddModalOpen(true)}
+                style={{
+                  background: '#4f8cff',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: 6,
+                  padding: '8px 18px',
+                  fontSize: 15,
+                  cursor: 'pointer',
+                  marginRight: 8
+                }}
+              >
+                학생 추가
+              </button>
+              <button
                 onClick={handleExcelDownload}
                 style={{
                   background: '#4f8cff',
@@ -579,6 +700,7 @@ function DashBoard() {
                     <th>부모님휴대폰</th>
                     <th>출석상태</th>
                     <th>비고</th>
+                    <th>관리</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -610,11 +732,141 @@ function DashBoard() {
                           placeholder="비고"
                         />
                       </td>
+                      <td>
+                        <button
+                          onClick={() => handleDeleteStudent(u.user_id)}
+                          style={{
+                            background: '#ef4444',
+                            color: '#fff',
+                            border: 'none',
+                            borderRadius: 4,
+                            padding: '4px 8px',
+                            fontSize: 13,
+                            cursor: 'pointer'
+                          }}
+                        >
+                          삭제
+                        </button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
               </Table>
             </AttendDashboardTableContainer>
+
+            {/* 학생 추가 모달 */}
+            {isAddModalOpen && (
+              <div style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                background: 'rgba(0, 0, 0, 0.5)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 1000
+              }}>
+                <div style={{
+                  background: '#fff',
+                  padding: 24,
+                  borderRadius: 12,
+                  width: 400,
+                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                }}>
+                  <h3 style={{ marginBottom: 16, fontSize: 18, fontWeight: 'bold' }}>학생 추가</h3>
+                  <div style={{ marginBottom: 16 }}>
+                    <label style={{ display: 'block', marginBottom: 4 }}>이름 *</label>
+                    <input
+                      type="text"
+                      value={newStudentName}
+                      onChange={e => setNewStudentName(e.target.value)}
+                      style={{
+                        width: '100%',
+                        padding: 8,
+                        borderRadius: 6,
+                        border: '1px solid #e5e7eb'
+                      }}
+                      placeholder="학생 이름"
+                    />
+                  </div>
+                  <div style={{ marginBottom: 16 }}>
+                    <label style={{ display: 'block', marginBottom: 4 }}>휴대폰</label>
+                    <input
+                      type="text"
+                      value={newStudentPhone}
+                      onChange={e => setNewStudentPhone(e.target.value)}
+                      style={{
+                        width: '100%',
+                        padding: 8,
+                        borderRadius: 6,
+                        border: '1px solid #e5e7eb'
+                      }}
+                      placeholder="학생 휴대폰"
+                    />
+                  </div>
+                  <div style={{ marginBottom: 16 }}>
+                    <label style={{ display: 'block', marginBottom: 4 }}>부모님 휴대폰</label>
+                    <input
+                      type="text"
+                      value={newStudentParentPhone}
+                      onChange={e => setNewStudentParentPhone(e.target.value)}
+                      style={{
+                        width: '100%',
+                        padding: 8,
+                        borderRadius: 6,
+                        border: '1px solid #e5e7eb'
+                      }}
+                      placeholder="부모님 휴대폰"
+                    />
+                  </div>
+                  <div style={{ marginBottom: 24 }}>
+                    <label style={{ display: 'block', marginBottom: 4 }}>학년</label>
+                    <select
+                      value={newStudentGrade}
+                      onChange={e => setNewStudentGrade(Number(e.target.value))}
+                      style={{
+                        width: '100%',
+                        padding: 8,
+                        borderRadius: 6,
+                        border: '1px solid #e5e7eb'
+                      }}
+                    >
+                      <option value={3}>현장 수강생</option>
+                      <option value={4}>현장 수강생(영상 미시청)</option>
+                    </select>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
+                    <button
+                      onClick={() => setIsAddModalOpen(false)}
+                      style={{
+                        padding: '8px 16px',
+                        borderRadius: 6,
+                        border: '1px solid #e5e7eb',
+                        background: '#fff',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      취소
+                    </button>
+                    <button
+                      onClick={handleAddStudent}
+                      style={{
+                        padding: '8px 16px',
+                        borderRadius: 6,
+                        border: 'none',
+                        background: '#4f8cff',
+                        color: '#fff',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      추가
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* 세분화 textarea */}
             <div style={{ marginTop: 28 }}>
