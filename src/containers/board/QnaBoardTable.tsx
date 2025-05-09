@@ -159,27 +159,43 @@ const BoardTableReplyIndicator = styled.p`
   color: red;
 `
 
-const QnaAnswerType = ({ isAnswered }: { isAnswered: number }) => {
+const QnaAnswerType = ({
+  isAnswered,
+  reserveUserName,
+}: {
+  isAnswered: number
+  reserveUserName?: string
+}) => {
   if (isAnswered === 1) {
     return (
-      <BoardTableAnsweredIndicator
-        style={{ backgroundColor: 'rgb(2 132 199)' }}
-      >
+      <BoardTableAnsweredIndicator style={{ backgroundColor: 'rgb(2 132 199)' }}>
         답변완료
       </BoardTableAnsweredIndicator>
     )
-  } else if (isAnswered === 0) {
-    return (
-      <BoardTableAnsweredIndicator style={{ backgroundColor: '#999' }}>
-        답변대기
-      </BoardTableAnsweredIndicator>
-    )
+  } else {
+    if (reserveUserName) {
+      return (
+        <BoardTableAnsweredIndicator style={{ backgroundColor: '#f87171'}}>
+          예약중
+        </BoardTableAnsweredIndicator>
+      )
+    } else {
+      if (isAnswered === 0) {
+        return (
+          <BoardTableAnsweredIndicator style={{ backgroundColor: '#999' }}>
+            답변대기
+          </BoardTableAnsweredIndicator>
+        )
+      }
+      return (
+        <>
+          <BoardTableAnsweredIndicator style={{ backgroundColor: '#2EC4B6' }}>
+            재질문
+          </BoardTableAnsweredIndicator>
+        </>
+      )
+    }
   }
-  return (
-    <BoardTableAnsweredIndicator style={{ backgroundColor: '#2EC4B6' }}>
-      재질문
-    </BoardTableAnsweredIndicator>
-  )
 }
 
 const QnaBoardTable = ({
@@ -346,7 +362,7 @@ const QnaBoardTable = ({
                 return (
                   <tr key={index}>
                     <BoardTableCell>
-                      <QnaAnswerType isAnswered={post?.post_isAnswered} />
+                      <QnaAnswerType isAnswered={post?.post_isAnswered} reserveUserName={post?.reserve_user_id ? 'Y' : ''} />
                     </BoardTableCell>
 
                     <BoardTableCellTitle>
@@ -397,7 +413,7 @@ const QnaBoardTable = ({
                 <BoardTableMobileItemContainer key={index}>
                   <BoardTableMobileItemTitle>
                     <BoardTableMobileDoublelineTitle>
-                      <QnaAnswerType isAnswered={post?.post_isAnswered} />
+                      <QnaAnswerType isAnswered={post?.post_isAnswered} reserveUserName={post?.reserve_user_id ? 'Y' : ''} />
                       <span style={{ fontWeight: 'bold' }}>
                         &#91;
                         {post?.post_qnatype}

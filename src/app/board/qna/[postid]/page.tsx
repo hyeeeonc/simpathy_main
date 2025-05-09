@@ -17,6 +17,9 @@ import {
 import QnaReplyList from '@/containers/post/QnaReplyList'
 import QnaReplyEditor from '@/containers/editor/QnaReplyEditor'
 import QnaNotice from '@/containers/post/QnaNotice'
+import { Button } from '@/components/ui/button'
+import { ReserveButton } from '@/components/ui/reserve-button'
+import { useRouter } from 'next/navigation'
 
 const PostPage = async (props: any) => {
   const post_id = Number(props.params.postid)
@@ -31,7 +34,32 @@ const PostPage = async (props: any) => {
         },
       },
     },
-  })
+  }) as {
+    post_id: number
+    user_id: string
+    post_title: string
+    post_contents: string
+    post_qnatype: string
+    post_qnatarget: string
+    post_isAnswered: number
+    post_upload_time: Date
+    post_update_time: Date | null
+    reserve_user_id: string | null
+    user: {
+      user_name: string
+      grade_id: number
+    }
+  }
+
+  // 예약자 정보 가져오기
+  let reserveUserName = ''
+  if (currentPost?.reserve_user_id) {
+    const reserveUser = await prisma.user.findUnique({
+      where: { user_id: currentPost.reserve_user_id },
+      select: { user_name: true },
+    })
+    reserveUserName = reserveUser?.user_name || ''
+  }
 
   let modifiedAuthor = ''
 
@@ -163,6 +191,71 @@ const PostPage = async (props: any) => {
       .toString()
       .padStart(2, '0')}`
 
+  const renderReplyEditor = () => {
+    // grade_id가 3 이상인 경우
+    if (currentUser.grade_id > 2) {
+      return <QnaReplyEditor post_id={post_id} origin_id={null} />
+    }
+
+    // grade_id가 1 또는 2인 경우
+    if (currentUser.grade_id <= 2) {
+      // 답변 대기 중이고 예약이 없는 경우
+      if ((currentPost.post_isAnswered === 0 || currentPost.post_isAnswered === 2) && !currentPost.reserve_user_id) {
+        return (
+          <div className="flex justify-center items-center p-0 border rounded-lg bg-gray-100 w-full mx-auto h-16">
+            <ReserveButton post_id={post_id} type="reserve" className="h-full">
+              예약하기
+            </ReserveButton>
+          </div>
+        )
+      }
+
+      // 예약자가 있고 현재 사용자가 예약자인 경우
+      if (currentPost.reserve_user_id === currentUser.user_id) {
+        return (
+        <>
+          <QnaReplyEditor post_id={post_id} origin_id={null} />
+          <ReserveButton
+            post_id={post_id}
+            type="cancel"
+            className="mt-4 bg-red-300 text-white hover:bg-red-700 active:bg-red-800 transition-colors"
+          >
+            예약 취소하기
+          </ReserveButton>
+        </>
+        )
+      }
+
+      // 예약자가 있고 현재 사용자가 예약자가 아닌 경우
+      if (currentPost.reserve_user_id && currentPost.reserve_user_id !== currentUser.user_id) {
+        if (currentUser.grade_id === 1) {
+          return (
+            <div className="flex justify-center items-center p-4 border rounded-lg bg-gray-50 w-fit mx-auto">
+              <div className="flex flex-col items-center gap-2">
+                <p className="text-gray-600">현재 {reserveUserName}님이 답변 예약중입니다.</p>
+                <ReserveButton
+                  post_id={post_id}
+                  type="cancel"
+                  className="bg-red-600 text-white hover:bg-red-700 active:bg-red-800 transition-colors"
+                >
+                  예약 취소하기
+                </ReserveButton>
+              </div>
+            </div>
+          )
+        } else if (currentUser.grade_id === 2) {
+          return (
+            <div className="flex justify-center items-center p-4 border rounded-lg bg-gray-50 w-fit mx-auto">
+              <p className="text-gray-600">현재 {reserveUserName}님이 답변을 예약중입니다.</p>
+            </div>
+          )
+        }
+      }
+    }
+
+    return null
+  }
+
   return (
     <>
       <div className="w-full rounded-[5px] md:border-solid md:border md:border-gray-300 md:p-6">
@@ -200,7 +293,7 @@ const PostPage = async (props: any) => {
           replies={updatedReplies}
           post_id={post_id}
         />
-        <QnaReplyEditor post_id={post_id} origin_id={null} />
+        {renderReplyEditor()}
       </div>
       <div className="flex justify-end items-center w-full my-[20px]">
         {currentUser.grade_id <= 2 && <QnaAnsweredButton post_id={post_id} />}

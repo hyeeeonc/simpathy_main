@@ -194,13 +194,13 @@ const QnaReplyList = ({
               <ReplyItemContent>{reply.reply_content}</ReplyItemContent>
               <ReplyFooterContainer>
                 <ReplyDate>{formattedDate}</ReplyDate>
-                <ReplyCommentButton
+                {/* <ReplyCommentButton
                   onClick={() => {
                     subReplyEditorOpenHandler(reply.reply_id)
                   }}
                 >
                   답글쓰기
-                </ReplyCommentButton>
+                </ReplyCommentButton> */}
               </ReplyFooterContainer>
             </ReplyItemContainer>
 
