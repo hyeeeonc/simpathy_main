@@ -50,7 +50,9 @@
     "react-responsive": "^9.0.2",
     "styled-components": "^6.0.7",
     "tailwindcss": "3.3.3",
-    "typescript": "5.2.2"
+    "typescript": "5.2.2",
+    "xlsx": "^0.18.5",
+    "xlsx-js-style": "^1.2.0"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",

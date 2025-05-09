@@ -2,8 +2,8 @@ import prisma from '@/libs/prisma'
 
 export async function POST(request: Request) {
   const { files, post_id } = await request.json()
-  console.log(files)
-  console.log(post_id)
+  // console.log(files)
+  // console.log(post_id)
   try {
     const cratedfiles = await prisma.file.createMany({
       data: files.map((file: any) => ({
@@ -12,7 +12,7 @@ export async function POST(request: Request) {
         post_id: post_id,
       })),
     })
-    console.log(cratedfiles)
+    // console.log(cratedfiles)
 
     if (!cratedfiles) return new Response(null, { status: 404 })
     return new Response(null, { status: 200 })

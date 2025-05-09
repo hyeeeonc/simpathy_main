@@ -28,6 +28,12 @@ const MyPageAdmin = () => {
           </ContentBoxClickableContentWrapper>
         </Link>
 
+        <Link href="/admin/attend">
+          <ContentBoxClickableContentWrapper>
+            <ContentBoxCellContentTitle>출석 관리</ContentBoxCellContentTitle>
+          </ContentBoxClickableContentWrapper>
+        </Link>
+
         <Link href="/admin/branch">
           <ContentBoxClickableContentWrapper>
             <ContentBoxCellContentTitle>지점 관리</ContentBoxCellContentTitle>

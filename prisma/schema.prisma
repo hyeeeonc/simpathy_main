@@ -216,3 +216,46 @@ model modal {
   modal_endtime   DateTime @db.DateTime(0)
   modal_is_active Boolean
 }
+
+model attend_snapshot {
+  id                BigInt                 @id @default(autoincrement())
+  attend_date       DateTime               @db.Date
+  branch_id         Int
+  user_id           String                 @db.VarChar(64)
+  user_name         String                 @db.VarChar(64)
+  user_phone        String?                @db.VarChar(32)
+  user_parent_phone String?                @db.VarChar(32)
+  grade_id          Int?
+  status            attend_snapshot_status
+  note              String?                @db.VarChar(255)
+  created_at        DateTime?              @default(now()) @db.DateTime(0)
+  updated_at        DateTime?              @default(now()) @db.DateTime(0)
+
+  @@unique([attend_date, branch_id, user_id], map: "unique_attend")
+}
+
+model attend_summary {
+  id                 BigInt    @id @default(autoincrement())
+  attend_date        DateTime  @db.Date
+  branch_id          Int
+  refund             Int?      @default(0)
+  newcomer           Int?      @default(0)
+  reregister         Int?      @default(0)
+  branch_move        Int?      @default(0)
+  special_note       String?   @db.Text
+  newcomer_student   String?   @db.Text
+  absent_student     String?   @db.Text
+  refund_student     String?   @db.Text
+  branch_move_detail String?   @db.Text
+  created_at         DateTime? @default(now()) @db.DateTime(0)
+  updated_at         DateTime? @default(now()) @db.DateTime(0)
+
+  @@unique([attend_date, branch_id], map: "unique_summary")
+}
+
+enum attend_snapshot_status {
+  O
+  O_VIDEO
+  O_OTHER_BRANCH
+  X
+}
