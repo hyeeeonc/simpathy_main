@@ -21,6 +21,8 @@ import { Button } from '@/components/ui/button'
 import { ReserveButton } from '@/components/ui/reserve-button'
 import { useRouter } from 'next/navigation'
 
+export const dynamic = 'force-dynamic'
+
 const PostPage = async (props: any) => {
   const post_id = Number(props.params.postid)
   const currentUser = await getCurrentUser()
@@ -195,10 +197,7 @@ const PostPage = async (props: any) => {
     // grade_id가 3 이상인 경우
     if (currentUser.grade_id > 2) {
       return <QnaReplyEditor post_id={post_id} origin_id={null} />
-    }
-
-    // grade_id가 1 또는 2인 경우
-    if (currentUser.grade_id <= 2) {
+    } else {
       // 답변 대기 중이고 예약이 없는 경우
       if ((currentPost.post_isAnswered === 0 || currentPost.post_isAnswered === 2) && !currentPost.reserve_user_id) {
         return (
@@ -253,7 +252,7 @@ const PostPage = async (props: any) => {
       }
     }
 
-    return null
+    return <QnaReplyEditor post_id={post_id} origin_id={null} />
   }
 
   return (
