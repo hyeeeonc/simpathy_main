@@ -9,7 +9,10 @@ export async function PUT(request: Request) {
     if (user && user.grade_id <= 2) {
       const post = await prisma.qnapost.update({
         where: { post_id },
-        data: { post_isAnswered: 1 },
+        data: {
+          post_isAnswered: 1,
+          reserve_user_id: null,
+         },
       })
       if (!post) return new Response(null, { status: 404 })
       return new Response(null, { status: 200 })
