@@ -20,6 +20,10 @@ const PostUpdatePage = async (props: any) => {
     },
   })
 
+  const currentFiles = await prisma.file.findMany({
+    where: { post_id },
+  })
+
   const currentPost: any =
     board_type === 0
       ? await prisma.post.findUnique({
@@ -41,6 +45,8 @@ const PostUpdatePage = async (props: any) => {
         존재하지 않는 게시물입니다.
       </div>
     )
+  } else {
+    currentPost.files = currentFiles
   }
 
   if (
