@@ -94,50 +94,6 @@ const UpdateEditorComponent = ({
 
   const quillInstance = useRef<ReactQuill>(null)
 
-  // 이미지 서버
-  // const imageHandler = async () => {
-  //   const input = document.createElement('input')
-  //   input.setAttribute('type', 'file')
-  //   input.setAttribute('accept', 'image/*')
-  //   input.click()
-  //   input.addEventListener('change', async () => {
-  //     //이미지를 담아 전송할 file을 만든다
-  //     const file = input.files?.[0]
-  //     try {
-  //       //업로드할 파일의 이름으로 Date 사용
-  //       const name = Date.now()
-  //       //생성한 s3 관련 설정들
-  //       AWS.config.update({
-  //         region: process.env.NEXT_PUBLIC_AWS_REGION,
-  //         accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID,
-  //         secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY,
-  //       })
-  //       //앞서 생성한 file을 담아 s3에 업로드하는 객체를 만든다
-  //       const upload = new AWS.S3.ManagedUpload({
-  //         params: {
-  //           ACL: 'public-read',
-  //           Bucket: `${process.env.NEXT_PUBLIC_AWS_BUCKET_NAME}`,
-  //           Key: `upload/${name}`,
-  //           Body: file,
-  //         },
-  //       })
-  //       //이미지 업로드 후
-  //       //곧바로 업로드 된 이미지 url을 가져오기
-  //       const IMG_URL = await upload.promise().then(res => res.Location)
-  //       //useRef를 사용해 에디터에 접근한 후
-  //       //에디터의 현재 커서 위치에 이미지 삽입
-  //       const editor = quillInstance?.current?.getEditor()
-  //       if (!editor) return
-  //       const range = editor.getSelection()
-  //       if (!range) return
-  //       // 가져온 위치에 이미지를 삽입한다
-  //       editor.insertEmbed(range.index, 'image', IMG_URL)
-  //     } catch (error) {
-  //       console.log(error)
-  //     }
-  //   })
-  // }
-
   const modules = useMemo(() => {
     return {
       toolbar: {
@@ -181,7 +137,6 @@ const UpdateEditorComponent = ({
 
   const boardHandler = (e: any) => {
     setSelectedBoard(Number(e))
-    console.log(e)
   }
 
   const titleHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -194,91 +149,166 @@ const UpdateEditorComponent = ({
   }, [])
 
   // 파일 업로드 관련
+  const [beforeFiles, setBeforeFiles] = useState<any[]>([])
   const [selectedFiles, setSelectedFiles] = useState<File[]>([])
+  const [deleteFiles, setDeleteFiles] = useState<File[]>([])
+
+  useEffect(() => {
+    setBeforeFiles(post.files)
+  }, [])
+
+  const handleRemoveBeforeFile = (index: number) => {
+    setDeleteFiles(prevFiles => [...prevFiles, beforeFiles[index]])
+    setBeforeFiles(prevFiles => prevFiles.filter((_, i) => i !== index))
+  }
 
   const handleRemoveFile = (index: number) => {
     // 선택 목록에서 파일 제거
     setSelectedFiles(prevFiles => prevFiles.filter((_, i) => i !== index))
   }
 
-  // const FileHandler = async (post_id: number) => {
-  //   try {
-  //     const uploadedUrls = []
-  //     for (let i = 0; i < selectedFiles.length; i++) {
-  //       const file = selectedFiles[i]
+  const FileHandler = async (post_id: number) => {
+    try {
+      // AWS S3 설정
+      AWS.config.update({
+        region: process.env.NEXT_PUBLIC_AWS_REGION,
+        accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY,
+      })
 
-  //       //업로드할 파일의 이름으로 Date 사용
-  //       const name = file.name
-  //       //생성한 s3 관련 설정들
-  //       AWS.config.update({
-  //         region: process.env.NEXT_PUBLIC_AWS_REGION,
-  //         accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID,
-  //         secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY,
-  //       })
-  //       //앞서 생성한 file을 담아 s3에 업로드하는 객체를 만든다
-  //       const upload = new AWS.S3.ManagedUpload({
-  //         params: {
-  //           ACL: 'public-read',
-  //           Bucket: `${process.env.NEXT_PUBLIC_AWS_BUCKET_NAME}`,
-  //           Key: `files/${name}`,
-  //           Body: file,
-  //         },
-  //       })
-  //       //이미지 업로드 후
-  //       //곧바로 업로드 된 이미지 url을 가져오기
-  //       const IMG_URL = await upload.promise().then(res => res.Location)
-  //       uploadedUrls.push({ name, url: IMG_URL })
-  //     }
+      const s3 = new AWS.S3()
 
-  //     if (boardType === 0) {
-  //       try {
-  //         const response = await fetch('/api/editor/addFiles', {
-  //           method: 'POST',
-  //           headers: {
-  //             'Content-Type': 'application/json',
-  //           },
-  //           body: JSON.stringify({
-  //             files: uploadedUrls,
-  //             post_id: post_id,
-  //           }),
-  //         })
+      // 삭제된 파일 처리
+      if (deleteFiles.length > 0) {
+        // S3에서 파일 삭제
+        const deleteS3Promises = deleteFiles.map((file: any) => {
+          const key = file.file_addr.split('/').pop() // URL에서 파일명 추출
+          return s3.deleteObject({
+            Bucket: `${process.env.NEXT_PUBLIC_AWS_BUCKET_NAME}`,
+            Key: `files/${key}`,
+          }).promise()
+        })
 
-  //         if (response.ok) {
-  //           alert('파일 업로드가 완료되었습니다.')
-  //         } else {
-  //           alert('파일 업로드에 실패하였습니다.')
-  //           // Handle errors, e.g., show an error message to the user
-  //         }
-  //       } catch (error: any) {
-  //         alert('파일 업로드에 실패하였습니다.')
-  //       }
-  //     } else if (boardType === 2) {
-  //       try {
-  //         const response = await fetch('/api/editor/branch/addFiles', {
-  //           method: 'POST',
-  //           headers: {
-  //             'Content-Type': 'application/json',
-  //           },
-  //           body: JSON.stringify({
-  //             files: uploadedUrls,
-  //             post_id: post_id,
-  //           }),
-  //         })
+        await Promise.all(deleteS3Promises)
 
-  //         if (response.ok) {
-  //           alert('파일 업로드가 완료되었습니다.')
-  //         } else {
-  //           alert('파일 업로드에 실패하였습니다.')
-  //           // Handle errors, e.g., show an error message to the user
-  //         }
-  //       } catch (error: any) {
-  //         alert('파일 업로드에 실패하였습니다.')
-  //       }
-  //     }
-  //   } catch (error) {
-  //     alert('파일 업로드에 실패하였습니다.')
-  //   }
-  // }
+        if (boardType === 0) {
+          try {
+            const response = await fetch('/api/editor/deleteFiles', {
+              method: 'DELETE',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                files: deleteFiles,
+                post_id: post_id,
+              }),
+            });
+
+            if (!response.ok) {
+              throw new Error('파일 삭제에 실패했습니다.');
+            }
+          } catch (error) {
+            console.error('파일 삭제 중 오류 발생:', error);
+            throw error;
+          }
+        } else if (boardType === 2) {
+          try {
+            const response = await fetch('/api/editor/branch/deleteFiles', {
+              method: 'DELETE',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                files: deleteFiles,
+                post_id: post_id,
+              }),
+            });
+
+            if (!response.ok) {
+              throw new Error('파일 삭제에 실패했습니다.');
+            }
+          } catch (error) {
+            console.error('파일 삭제 중 오류 발생:', error);
+            throw error;
+          }
+        }
+      }
+
+      // 새로운 파일 업로드
+      const uploadedUrls = []
+      for (let i = 0; i < selectedFiles.length; i++) {
+        const file = selectedFiles[i]
+
+        // 파일명 생성 로직 수정
+        const originalName = file.name
+        const timestamp = Date.now()
+        const newFileName = `${timestamp}_${originalName}`
+        //앞서 생성한 file을 담아 s3에 업로드하는 객체를 만든다
+        const upload = new AWS.S3.ManagedUpload({
+          params: {
+            ACL: 'public-read',
+            Bucket: `${process.env.NEXT_PUBLIC_AWS_BUCKET_NAME}`,
+            Key: `files/${newFileName}`,
+            Body: file,
+          },
+        })
+        //이미지 업로드 후
+        //곧바로 업로드 된 이미지 url을 가져오기
+        const IMG_URL = await upload.promise().then(res => res.Location)
+        uploadedUrls.push({ name: originalName, url: IMG_URL })
+      }
+
+      if (uploadedUrls.length > 0) {
+        if (boardType === 0) {
+          try {
+            const response = await fetch('/api/editor/addFiles', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                files: uploadedUrls,
+                post_id: post_id,
+              }),
+            })
+
+            if (response.ok) {
+              alert('파일 업로드가 완료되었습니다.')
+            } else {
+              alert('파일 업로드에 실패하였습니다.')
+              // Handle errors, e.g., show an error message to the user
+            }
+          } catch (error: any) {
+            alert('파일 업로드에 실패하였습니다.')
+          }
+        } else if (boardType === 2) {
+          try {
+            const response = await fetch('/api/editor/branch/addFiles', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                files: uploadedUrls,
+                post_id: post_id,
+              }),
+            })
+
+            if (response.ok) {
+              alert('파일 업로드가 완료되었습니다.')
+            } else {
+              alert('파일 업로드에 실패하였습니다.')
+              // Handle errors, e.g., show an error message to the user
+            }
+          } catch (error: any) {
+            alert('파일 업로드에 실패하였습니다.')
+          }
+        }
+      }
+    } catch (error) {
+      alert('파일 업로드에 실패하였습니다.')
+    }
+  }
 
   // 질문게시판 관련
   const [qnaType, setQnaType] = useState('문학')
@@ -335,7 +365,7 @@ const UpdateEditorComponent = ({
           const { post_id, board_id } = responseData // post_id 추출
 
           // 파일 업로드
-          // FileHandler(post_id)
+          await FileHandler(post_id)
           alert('수정이 완료되었습니다.')
           setSelectedBoard(0)
           setTitle('')
@@ -377,7 +407,7 @@ const UpdateEditorComponent = ({
           const { post_id } = responseData // post_id 추출
 
           // 파일 업로드
-          // FileHandler(post_id)
+          await FileHandler(post_id)
           alert('작성이 완료되었습니다.')
           setSelectedBoard(0)
           setTitle('')
@@ -429,6 +459,7 @@ const UpdateEditorComponent = ({
           const { post_id } = responseData // post_id 추출
 
           // 파일 업로드
+          await FileHandler(post_id)
           alert('수정이 완료되었습니다.')
           setSelectedBoard(0)
           setTitle('')
@@ -567,12 +598,36 @@ const UpdateEditorComponent = ({
           placeholder="내용을 입력해주세요."
         />
       </StyledVideo>
-      {/* {(boardType === 0 || boardType === 2) && (
+      {(boardType === 0 || boardType === 2) && (
         <>
           <MyComponent setSelectedFiles={setSelectedFiles} />
 
           <div className="my-[20px]">
             <div className="mb-[10px] text-lg font-bold">첨부파일</div>
+            
+            {beforeFiles.map((file, index) => (
+              <div key={index} className="flex items-center mb-[5px]">
+                <div>{file.file_name}</div>
+                
+                <svg
+                  style={{ marginLeft: '10px', cursor: 'pointer' }}
+                  onClick={() => handleRemoveBeforeFile(index)}
+                  width={20}
+                  height={20}
+                  clipRule="evenodd"
+                  fillRule="evenodd"
+                  strokeLinejoin="round"
+                  strokeMiterlimit="2"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="m12 10.93 5.719-5.72c.146-.146.339-.219.531-.219.404 0 .75.324.75.749 0 .193-.073.385-.219.532l-5.72 5.719 5.719 5.719c.147.147.22.339.22.531 0 .427-.349.75-.75.75-.192 0-.385-.073-.531-.219l-5.719-5.719-5.719 5.719c-.146.146-.339.219-.531.219-.401 0-.75-.323-.75-.75 0-.192.073-.384.22-.531l5.719-5.719-5.72-5.719c-.146-.147-.219-.339-.219-.532 0-.425.346-.749.75-.749.192 0 .385.073.531.219z" />
+                </svg>
+
+                
+              </div>
+            ))}
+            
 
             {selectedFiles.map((file, index) => (
               <div key={index} className="flex items-center mb-[5px]">
@@ -583,10 +638,10 @@ const UpdateEditorComponent = ({
                   onClick={() => handleRemoveFile(index)}
                   width={20}
                   height={20}
-                  clip-rule="evenodd"
-                  fill-rule="evenodd"
-                  stroke-linejoin="round"
-                  stroke-miterlimit="2"
+                  clipRule="evenodd"
+                  fillRule="evenodd"
+                  strokeLinejoin="round"
+                  strokeMiterlimit="2"
                   viewBox="0 0 24 24"
                   xmlns="http://www.w3.org/2000/svg"
                 >
@@ -598,7 +653,7 @@ const UpdateEditorComponent = ({
             ))}
           </div>
         </>
-      )} */}
+      )}
       <Button
         onClick={handleSubmit}
         color="blue-gray"
@@ -615,87 +670,87 @@ const UpdateEditorComponent = ({
 
 export default UpdateEditorComponent
 
-// const MyComponent = ({
-//   setSelectedFiles,
-// }: {
-//   setSelectedFiles: (value: File[] | ((prevValue: File[]) => File[])) => void
-// }) => {
-//   const [inputKey, setInputKey] = useState<number>(Date.now())
+const MyComponent = ({
+  setSelectedFiles,
+}: {
+  setSelectedFiles: (value: File[] | ((prevValue: File[]) => File[])) => void
+}) => {
+  const [inputKey, setInputKey] = useState<number>(Date.now())
 
-//   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-//     const files = event.target.files
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files
 
-//     if (files) {
-//       // FileList를 배열로 변환하여 기존 목록에 추가
-//       setSelectedFiles(prevFiles => [...prevFiles, ...Array.from(files)])
-//       // 선택된 파일들을 input에서 제거 (재선택을 위해)
-//       setInputKey(Date.now())
-//     }
-//   }
+    if (files) {
+      // FileList를 배열로 변환하여 기존 목록에 추가
+      setSelectedFiles(prevFiles => [...prevFiles, ...Array.from(files)])
+      // 선택된 파일들을 input에서 제거 (재선택을 위해)
+      setInputKey(Date.now())
+    }
+  }
 
-//   // MyComponent 내에서 handleDroppedFiles 함수를 추가합니다.
-//   const handleDroppedFiles = (droppedFiles: FileList) => {
-//     // FileList를 배열로 변환하여 기존 목록에 추가
-//     setSelectedFiles(prevFiles => [...prevFiles, ...Array.from(droppedFiles)])
-//     // 선택된 파일들을 input에서 제거 (재선택을 위해)
-//     setInputKey(Date.now())
-//   }
+  // MyComponent 내에서 handleDroppedFiles 함수를 추가합니다.
+  const handleDroppedFiles = (droppedFiles: FileList) => {
+    // FileList를 배열로 변환하여 기존 목록에 추가
+    setSelectedFiles(prevFiles => [...prevFiles, ...Array.from(droppedFiles)])
+    // 선택된 파일들을 input에서 제거 (재선택을 위해)
+    setInputKey(Date.now())
+  }
 
-//   return (
-//     <>
-//       <div
-//         className="flex items-center justify-center w-full mb-10"
-//         onDragEnter={e => {
-//           e.preventDefault()
-//           // 드래그 진입 시 추가 스타일링 (필요시)
-//         }}
-//         onDragOver={e => {
-//           e.preventDefault()
-//           // 드래그 중일 때 추가 스타일링 (필요시)
-//         }}
-//         onDragLeave={e => {
-//           e.preventDefault()
-//           // 드래그 떠날 때 추가 스타일링 제거 (필요시)
-//         }}
-//         onDrop={e => {
-//           e.preventDefault()
-//           handleDroppedFiles(e.dataTransfer.files)
-//         }}
-//       >
-//         <label
-//           htmlFor="dropzone-file"
-//           className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
-//         >
-//           <div className="flex flex-col items-center justify-center pt-5 pb-6">
-//             <svg
-//               className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
-//               aria-hidden="true"
-//               xmlns="http://www.w3.org/2000/svg"
-//               fill="none"
-//               viewBox="0 0 20 16"
-//             >
-//               <path
-//                 stroke="currentColor"
-//                 strokeLinecap="round"
-//                 strokeLinejoin="round"
-//                 strokeWidth="2"
-//                 d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
-//               />
-//             </svg>
-//             <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-//               <span className="font-semibold">Click to upload</span> or drag and
-//               drop
-//             </p>
-//           </div>
-//           <input
-//             key={inputKey}
-//             id="dropzone-file"
-//             type="file"
-//             className="hidden"
-//             onChange={handleFileChange}
-//           />
-//         </label>
-//       </div>
-//     </>
-//   )
-// }
+  return (
+    <>
+      <div
+        className="flex items-center justify-center w-full mb-10"
+        onDragEnter={e => {
+          e.preventDefault()
+          // 드래그 진입 시 추가 스타일링 (필요시)
+        }}
+        onDragOver={e => {
+          e.preventDefault()
+          // 드래그 중일 때 추가 스타일링 (필요시)
+        }}
+        onDragLeave={e => {
+          e.preventDefault()
+          // 드래그 떠날 때 추가 스타일링 제거 (필요시)
+        }}
+        onDrop={e => {
+          e.preventDefault()
+          handleDroppedFiles(e.dataTransfer.files)
+        }}
+      >
+        <label
+          htmlFor="dropzone-file"
+          className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+        >
+          <div className="flex flex-col items-center justify-center pt-5 pb-6">
+            <svg
+              className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 20 16"
+            >
+              <path
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+              />
+            </svg>
+            <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+              <span className="font-semibold">Click to upload</span> or drag and
+              drop
+            </p>
+          </div>
+          <input
+            key={inputKey}
+            id="dropzone-file"
+            type="file"
+            className="hidden"
+            onChange={handleFileChange}
+          />
+        </label>
+      </div>
+    </>
+  )
+}

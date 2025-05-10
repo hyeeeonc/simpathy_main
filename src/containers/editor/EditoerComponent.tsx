@@ -122,7 +122,6 @@ const EditorComponent = ({
 
   // 이미지 서버
   const imageHandler = async () => {
-    console.log('imageHandler')
     const input = document.createElement('input')
     input.setAttribute('type', 'file')
     input.setAttribute('accept', 'image/*')
@@ -159,7 +158,6 @@ const EditorComponent = ({
         if (!range) return
         // 가져온 위치에 이미지를 삽입한다
         editor.insertEmbed(range.index, 'image', IMG_URL)
-        console.log('imageHandler finish')
       } catch (error) {
         console.log(error)
       }
@@ -234,8 +232,11 @@ const EditorComponent = ({
       for (let i = 0; i < selectedFiles.length; i++) {
         const file = selectedFiles[i]
 
-        //업로드할 파일의 이름으로 Date 사용
-        const name = file.name
+        // 파일명 생성 로직 수정
+        const originalName = file.name
+        const timestamp = Date.now()
+        const newFileName = `${timestamp}_${originalName}`
+
         //생성한 s3 관련 설정들
         AWS.config.update({
           region: process.env.NEXT_PUBLIC_AWS_REGION,
@@ -247,14 +248,14 @@ const EditorComponent = ({
           params: {
             ACL: 'public-read',
             Bucket: `${process.env.NEXT_PUBLIC_AWS_BUCKET_NAME}`,
-            Key: `files/${name}`,
+            Key: `files/${newFileName}`,
             Body: file,
           },
         })
         //이미지 업로드 후
         //곧바로 업로드 된 이미지 url을 가져오기
         const IMG_URL = await upload.promise().then(res => res.Location)
-        uploadedUrls.push({ name, url: IMG_URL })
+        uploadedUrls.push({ name: originalName, url: IMG_URL })
       }
 
       if (boardType === 0) {
