@@ -7,6 +7,7 @@ import { ChangeEvent, useEffect, useState } from 'react'
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
 import { Select, Option, Input, Button } from '@material-tailwind/react'
 import { useRouter } from 'next/navigation'
+import TooltipPortal from './TooltipPortal'
 
 const BoardTableContainer = styled.table`
   width: 100%;
@@ -53,13 +54,6 @@ const BoardTableWriter = styled.td`
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-
-  a {
-    cursor: pointer;
-    &:hover {
-      font-weight: bold;
-    }
-  }
 `
 
 const BoardTableCellTitle = styled.td`
@@ -202,10 +196,12 @@ const QnaBoardTable = ({
   isUser,
   posts,
   isAdmin,
+  currentUser,
 }: {
   isUser: boolean
   posts: any[]
   isAdmin: boolean
+  currentUser: any
 }) => {
   const [showPosts, setShowPosts] = useState<any[]>(posts)
   const router = useRouter()
@@ -293,10 +289,20 @@ const QnaBoardTable = ({
     query: '(max-width:767px)',
   })
 
+  // 툴팁 상태
+  const [tooltip, setTooltip] = useState<{x: number, y: number, text: string} | null>(null)
+
   useEffect(() => {
     setShowPosts(posts)
   }, [posts])
 
+  useEffect(() => {
+    console.log(showPosts)
+  }, [showPosts])
+
+  useEffect(() => {
+    console.log(currentUser)
+  }, [])
   return (
     <>
       {!isUser && (
@@ -389,7 +395,29 @@ const QnaBoardTable = ({
                       </Link>
                     </BoardTableCellTitle>
 
-                    <BoardTableWriter>{post?.user_id}</BoardTableWriter>
+                    <BoardTableWriter>
+                      {post?.original_user_id && currentUser?.grade_id <= 2 ? (
+                        <span
+                          style={{ cursor: 'pointer' }}
+                          onMouseEnter={e => {
+                            const rect = (e.target as HTMLElement).getBoundingClientRect();
+                            setTooltip({
+                              x: rect.left + rect.width / 2,
+                              y: rect.top - 8,
+                              text: post.original_user_id
+                            });
+                          }}
+                          onMouseLeave={() => setTooltip(null)}
+                          onClick={() => {
+                            window.location.href = `/board/qna/user/${post.original_user_id}`;
+                          }}
+                        >
+                          {post?.user_id}
+                        </span>
+                      ) : (
+                        post?.user_id
+                      )}
+                    </BoardTableWriter>
 
                     <BoardTableCell>{post?.formattedDate}</BoardTableCell>
                   </tr>
@@ -397,6 +425,15 @@ const QnaBoardTable = ({
               })}
             </tbody>
           </BoardTableContainer>
+          {tooltip && (
+            <TooltipPortal
+              x={tooltip.x}
+              y={tooltip.y}
+              onClose={() => setTooltip(null)}
+            >
+              {tooltip.text}
+            </TooltipPortal>
+          )}
         </>
       )}
       {isMobile && (

@@ -123,6 +123,7 @@ const BoardPage = async (props: any) => {
 
   // *표 넣기
   const updatedPosts = posts.map(post => {
+    const original_user_id = post.user_id
     const { user_id, user } = post
 
     if (user && user.grade_id >= 3) {
@@ -150,6 +151,7 @@ const BoardPage = async (props: any) => {
       return {
         ...post,
         user_id: modifiedUserId,
+        original_user_id: original_user_id,
         user: {
           ...user,
           user_name: modifiedUserName, // user_name도 수정된 값을 반영
@@ -216,6 +218,7 @@ const BoardPage = async (props: any) => {
             isAdmin={false}
             isUser={false}
             posts={formattedPosts}
+            currentUser={user}
           />
           <QnaPagination page={page} totalPage={totalPage} />
         </>
