@@ -79,6 +79,7 @@ const UserUpdate: React.FC<BoardUpdateProps> = ({
     grade_id: 1,
     branch_id: 1,
   })
+  const [newUserId, setNewUserId] = useState('')
 
   useEffect(() => {
     setUserData(prevData => ({
@@ -90,6 +91,7 @@ const UserUpdate: React.FC<BoardUpdateProps> = ({
       grade_id: user ? user.grade_id : 1,
       branch_id: user ? user.branch_id : 1,
     }))
+    setNewUserId(user ? user.user_id : '')
   }, [user])
 
   const handleSelectChange = (e: ChangeEvent<HTMLSelectElement>) => {
@@ -182,6 +184,44 @@ const UserUpdate: React.FC<BoardUpdateProps> = ({
     }
   }
 
+  const handleUserIdUpdate = async () => {
+    if (!newUserId) {
+      alert('새로운 사용자 ID를 입력해주세요.')
+      return
+    }
+
+    try {
+      const response = await fetch('/api/user/updateUserId', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          old_user_id: userData.user_id,
+          new_user_id: newUserId,
+        }),
+      })
+
+      const data = await response.text()
+
+      if (response.ok) {
+        alert('사용자 ID가 성공적으로 변경되었습니다.')
+        onClose()
+        window.location.reload()
+      } else if (response.status === 403) {
+        alert('권한이 없습니다.')
+      } else if (response.status === 404) {
+        alert('사용자를 찾을 수 없습니다.')
+      } else if (response.status === 400) {
+        alert('이미 존재하는 사용자 ID입니다.')
+      } else {
+        alert(data || '변경에 실패했습니다.')
+      }
+    } catch (error) {
+      alert('변경에 실패했습니다.')
+    }
+  }
+
   return (
     <>
       <AdminBranchUpdateWrapper
@@ -192,6 +232,19 @@ const UserUpdate: React.FC<BoardUpdateProps> = ({
           <ContentBoxCellContainer>
             <ContentBoxCellTitle>{userData.user_id}</ContentBoxCellTitle>
             <ContentBoxCellContentContainer>
+
+              <ContentBoxCellContentWrapper>
+                <ContentBoxCellContentTitle>새로운 ID</ContentBoxCellContentTitle>
+                <ContentBoxCellContent>
+                  <Input
+                    value={newUserId}
+                    onChange={e => setNewUserId(e.target.value)}
+                    label="새로운 ID"
+                    crossOrigin={undefined}
+                  />
+                </ContentBoxCellContent>
+              </ContentBoxCellContentWrapper>
+
               <ContentBoxCellContentWrapper>
                 <ContentBoxCellContentTitle>이름</ContentBoxCellContentTitle>
                 <ContentBoxCellContent>
@@ -279,27 +332,21 @@ const UserUpdate: React.FC<BoardUpdateProps> = ({
                 </ContentBoxCellContent>
               </ContentBoxCellContentWrapper>
 
-              {/* <ContentBoxClickableContentWrapper
-                style={{
-                  color: '#797b84',
-                  display: 'flex',
-                  justifyContent: 'center',
-                }}
-                onClick={handleSubmit}
-              >
-                수정하기
-              </ContentBoxClickableContentWrapper>
-              <ContentBoxClickableContentWrapper
-                style={{
-                  color: '#797b84',
-                  display: 'flex',
-                  justifyContent: 'center',
-                }}
-                onClick={handleSubmit}
-              >
-                비밀번호 초기화
-              </ContentBoxClickableContentWrapper> */}
               <AdminBoardButtonContainer>
+              <Button
+                  style={{ marginRight: '10px' }}
+                  color="blue"
+                  onClick={handleUserIdUpdate}
+                >
+                  ID 변경
+                </Button>
+                <Button
+                  style={{ marginRight: '10px' }}
+                  color="blue"
+                  onClick={handleSubmit}
+                >
+                  정보 수정
+                </Button>
                 <Button
                   style={{ marginRight: '10px' }}
                   color="red"
@@ -307,13 +354,7 @@ const UserUpdate: React.FC<BoardUpdateProps> = ({
                 >
                   비번초기화
                 </Button>
-                <Button
-                  style={{ marginRight: '10px' }}
-                  color="blue"
-                  onClick={handleSubmit}
-                >
-                  수정하기
-                </Button>
+
                 <Button color="red" onClick={handleUserDelete}>
                   회원 삭제
                 </Button>
