@@ -295,14 +295,7 @@ const QnaBoardTable = ({
   useEffect(() => {
     setShowPosts(posts)
   }, [posts])
-
-  useEffect(() => {
-    console.log(showPosts)
-  }, [showPosts])
-
-  useEffect(() => {
-    console.log(currentUser)
-  }, [])
+  
   return (
     <>
       {!isUser && (

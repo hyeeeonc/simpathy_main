@@ -6,7 +6,7 @@ import QnaPagination from '@/containers/board/QnaPagination'
 
 export const revalidate = 1
 interface WhereCondition {
-  post_isAnswered?: number | undefined
+  post_isAnswered?: number | { in: number[] } | undefined
   post_qnatype?: '문학' | '독서' | '기타' | undefined
   post_qnatarget?:
     | '기출문제'
@@ -62,8 +62,12 @@ const BoardPage = async (props: any) => {
 
   const whereCondition: WhereCondition = {
     post_isAnswered:
-      isAnswered === '0' || isAnswered === '1' || isAnswered === '2'
-        ? Number(isAnswered)
+      isAnswered === '0'
+        ? { in: [0, 2] } // 0과 2 둘 다 포함
+        : isAnswered === '1'
+        ? 1
+        : isAnswered === '2'
+        ? 2
         : undefined,
     post_qnatype:
       qnaType === '문학' || qnaType === '독서' || qnaType === '기타'

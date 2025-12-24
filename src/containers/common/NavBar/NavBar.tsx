@@ -84,7 +84,11 @@ const NavBoardName = styled.p`
   }
 `
 
-export function NavBar() {
+interface NavBarProps {
+  activeBoards: { board_id: number; board_name: string }[]
+}
+
+export function NavBar({ activeBoards }: NavBarProps) { 
   const [open, setOpen] = React.useState(false)
   const [categories, setCategories] = useState<Category[]>()
   const [boards, setBoards] = useState<Board[]>()
@@ -288,7 +292,16 @@ export function NavBar() {
                           onClick={closeDrawer}
                           href={`/board/${board.board_id}`}
                         >
-                          <NavBoardName>{board.board_name}</NavBoardName>
+                          <NavBoardName>
+                            {board.board_name}
+                            {activeBoards.some(
+                              (b) => b.board_id === board.board_id
+                            ) && (
+                              <span style={{ marginLeft: "4px", color: "red", fontSize: "11px", verticalAlign: "middle", display: "inline-block" }}>
+                                🅝
+                              </span>
+                            )}
+                          </NavBoardName>
                         </Link>
                       </NavBoardContainer>
                     )}
