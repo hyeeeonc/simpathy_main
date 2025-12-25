@@ -150,9 +150,11 @@ const BoardTableMobileNoticeIndicater = styled.div`
 `
 
 const BoardTable = ({
+  isAdmin = false,
   posts,
   board_id,
 }: {
+  isAdmin?: boolean
   posts: any[]
   board_id: number
 }) => {
@@ -197,22 +199,26 @@ const BoardTable = ({
   return (
     <>
       <BoardSearchContainer>
-        <Select label="검색 범위" onChange={handleSearchType}>
-          <Option value="content">글 + 제목</Option>
-          <Option value="writer">작성자</Option>
-        </Select>
-        <Input
-          label="검색"
-          onChange={handleSearch}
-          onKeyPress={handleKeyPress}
-          icon={
-            <MagnifyingGlassIcon
-              className="h-5 w-5 cursor-pointer"
-              onClick={searchSubmit}
+        {!isAdmin && (
+          <>
+            <Select label="검색 범위" onChange={handleSearchType}>
+              <Option value="content">글 + 제목</Option>
+              <Option value="writer">작성자</Option>
+            </Select>
+            <Input
+              label="검색"
+              onChange={handleSearch}
+              onKeyPress={handleKeyPress}
+              icon={
+                <MagnifyingGlassIcon
+                  className="h-5 w-5 cursor-pointer"
+                  onClick={searchSubmit}
+                />
+              }
+              crossOrigin={undefined}
             />
-          }
-          crossOrigin={undefined}
-        />
+          </>
+        )}
       </BoardSearchContainer>
       {isDesktop && (
         <>
@@ -237,7 +243,12 @@ const BoardTable = ({
                   <BoardTableCell>{post?.post_id}</BoardTableCell>
 
                   <BoardTableCellTitle>
-                    <Link href={`/board/${post?.board_id}/${post?.post_id}`}>
+                    <Link href={
+                      isAdmin
+                        ? `/admin/notice/${post?.post_id}`
+                        : `/board/${post?.board_id}/${post?.post_id}`
+                      }
+                    >
                       {post?.post_title}
                       {post?.replyCount > 0 && (
                         <span style={{ color: 'red' }}>
@@ -247,13 +258,19 @@ const BoardTable = ({
                     </Link>
                   </BoardTableCellTitle>
 
-                  <BoardTableWriter>
-                    <Link
-                      href={`/board?search=${post?.user_id}&searchType=writer`}
-                    >
-                      {post?.user_id}
-                    </Link>
-                  </BoardTableWriter>
+                  {isAdmin ? (
+                      <BoardTableWriter>
+                          {post?.user_id}
+                      </BoardTableWriter>
+                    ) : (
+                      <BoardTableWriter>
+                        <Link
+                          href={`/board?search=${post?.user_id}&searchType=writer`}
+                        >
+                          {post?.user_id}
+                        </Link>
+                      </BoardTableWriter>
+                    )}
 
                   <BoardTableCell>{post?.formattedDate}</BoardTableCell>
                 </tr>
@@ -265,7 +282,12 @@ const BoardTable = ({
       {isMobile && (
         <BoardTableMobileContainer>
           {posts.map((post: any, index: number) => (
-            <Link href={`/board/${post?.board_id}/${post?.post_id}`}>
+            <Link href={
+                isAdmin
+                  ? `/admin/notice/${post?.post_id}`
+                  : `/board/${post?.board_id}/${post?.post_id}`
+              }
+            >
               <BoardTableMobileItemContainer
                 key={index}
                 style={{

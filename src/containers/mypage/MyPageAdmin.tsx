@@ -56,6 +56,14 @@ const MyPageAdmin = () => {
           </ContentBoxClickableContentWrapper>
         </Link>
 
+        <Link href="/admin/notice">
+          <ContentBoxClickableContentWrapper>
+            <ContentBoxCellContentTitle>
+              공지사항 아카이브
+            </ContentBoxCellContentTitle>
+          </ContentBoxClickableContentWrapper>
+        </Link>
+
         {/* <ContentBoxClickableContentWrapper>
           <ContentBoxCellContentTitle>출석 관리</ContentBoxCellContentTitle>
         </ContentBoxClickableContentWrapper> */}
