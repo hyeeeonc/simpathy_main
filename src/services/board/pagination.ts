@@ -9,6 +9,12 @@ function buildConditions(
   searchText: string | undefined,
   searchType: string | undefined,
 ): object {
+  if (searchType === 'fornotice') {
+    return {
+      board_id,
+      user_id: '(알 수 없음)', // user_id가 "(알 수 없음)"인 데이터만 포함
+    }
+  }
   return {
     NOT: {
       user_id: '(알 수 없음)', // user_id가 "(알 수 없음)"인 데이터를 제외
