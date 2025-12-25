@@ -196,7 +196,6 @@ const PostPage = async (props: any) => {
           replies={updatedReplies}
           post_id={post_id}
         />
-        <QnaReplyEditor post_id={post_id} origin_id={null} />
       </div>
     </>
   )

@@ -178,6 +178,17 @@ const QnaReplyList = ({
                 <ReplyItemWriter>{reply.author}</ReplyItemWriter>
 
                 <ReplyItemButtons>
+                  {user.grade_id === 1 && (
+                    <Button
+                      onClick={() => {
+                        subReplyEditorOpenHandler(reply.reply_id)
+                      }}
+                      size="sm"
+                      variant="text"
+                    >
+                      수정
+                    </Button>
+                  )}
                   {(user.user_id === reply.user_id || user.grade_id === 1) && (
                     <Button
                       onClick={() => {
@@ -263,13 +274,11 @@ const QnaReplyList = ({
               </SubReplyContainer>
             )}
 
-            <div
-              style={{
-                display: openHandler === reply.reply_id ? 'block' : 'none',
-              }}
-            >
-              <QnaReplyEditor post_id={post_id} origin_id={reply.reply_id} />
-            </div>
+            {openHandler === reply.reply_id && (
+              <>
+              <QnaReplyEditor post_id={post_id} origin_id={reply.reply_id} content={reply.reply_content} />
+              </>
+            )}
           </>
         )
       })}
