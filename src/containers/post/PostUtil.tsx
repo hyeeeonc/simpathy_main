@@ -26,11 +26,13 @@ export const PostDeleteButton = ({
   board_id,
   board_type,
   can_edit,
+  qna_can_delete = false
 }: {
   post_id: number
   board_id: number
   board_type: number
   can_edit: boolean
+  qna_can_delete?: boolean
 }) => {
   const router = useRouter()
   const [open, setOpen] = useState(false)
@@ -63,6 +65,33 @@ export const PostDeleteButton = ({
     }
   }
 
+    const qnaPostDeleteHandler = async () => {
+    try {
+      const response = await fetch('/api/editor/qna/deletePost', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          post_id,
+        }),
+      })
+
+      if (response.ok) {
+        alert('글이 삭제되었습니다.')
+        router.refresh()
+        router.push(`/board/qna`)
+      } else if (response.status === 401) {
+        alert('권한이 없습니다.')
+        // Handle errors, e.g., show an error message to the user
+      } else {
+        alert('서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.')
+      }
+    } catch (error: any) {
+      alert('서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.')
+    }
+  }
+
   const handleUpdate = () => {
     router.push(`/editor/update/${board_type}/${post_id}`)
   }
@@ -78,7 +107,7 @@ export const PostDeleteButton = ({
           수정
         </Button>
       )}
-      {board_type !== 1 && (
+      {(board_type !== 1 || qna_can_delete) && (
         <Button onClick={handleOpen} variant="gradient">
           삭제
         </Button>
@@ -96,7 +125,7 @@ export const PostDeleteButton = ({
           >
             <span>취소</span>
           </Button>
-          <Button variant="gradient" color="red" onClick={postDeleteHandler}>
+          <Button variant="gradient" color="red" onClick={ qna_can_delete ? qnaPostDeleteHandler : postDeleteHandler}>
             <span>삭제</span>
           </Button>
         </DialogFooter>
