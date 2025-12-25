@@ -3,7 +3,6 @@ import prisma from '@/libs/prisma'
 import getCurrentUser from '@/services/getCurrentUser'
 import { getPaginatedPosts } from '@/services/board/pagination'
 import BoardPagination from '@/containers/board/BoardPagination'
-import BoardWriteButton from '@/containers/board/BoardWriteButton'
 
 const BoardPage = async (props: any) => {
   const pageSize = 15 // 한 페이지당 노출할 post 개수
@@ -19,15 +18,6 @@ const BoardPage = async (props: any) => {
     else if (Number(page) < 1) return 1
     else return Number(page)
   }
-
-  // const totalPost = await prisma.post.count({
-  //   where: {
-  //     board_id,
-  //     NOT: {
-  //       user_id: '(알 수 없음)', // user_id가 "(알 수 없음)"인 데이터를 제외
-  //     },
-  //   },
-  // })
 
   const page = pageHandler()
 
@@ -115,6 +105,7 @@ const BoardPage = async (props: any) => {
           <>
             <BoardTable isAdmin={true} posts={formattedPosts} board_id={board_id} />
             <BoardPagination
+              isAdmin={true}
               board_id={board_id}
               page={page}
               totalPage={totalPage}

@@ -4,10 +4,12 @@ import { useRouter } from 'next/navigation'
 import { Button, CardFooter, IconButton } from '@material-tailwind/react'
 
 const BoardPagination = ({
+  isAdmin = false,
   board_id,
   page,
   totalPage,
 }: {
+  isAdmin?: boolean
   board_id: number
   page: number
   totalPage: number
@@ -28,6 +30,7 @@ const BoardPagination = ({
       .map(([key, value]) => `${key}=${value}`)
       .join('&')
     if (board_id === 0) router.push(`/board?page=${page}&${queryParamsString}`)
+    else if (isAdmin) router.push(`/admin/notice?page=${page}&${queryParamsString}`)
     else router.push(`/board/${board_id}?page=${page}&${queryParamsString}`)
   }
   const nextSectionHandler = () => {

@@ -1,10 +1,6 @@
-import ReplyEditor from '@/containers/editor/ReplyEditor'
 import 'react-quill/dist/quill.snow.css'
 import '../../../../styles/post.css'
 
-import BoardTable from '@/containers/board/BoardTable'
-import Breadcrumb from '@/containers/post/Breadcrumb'
-import { PostDeleteButton, PostNoticeButton } from '@/containers/post/PostUtil'
 import prisma from '@/libs/prisma'
 import getCurrentUser from '@/services/getCurrentUser'
 import PostUserName from '@/containers/post/PostUserName'
@@ -67,7 +63,6 @@ const PostPage = async (props: any) => {
   return (
     <>
       <div className="w-full rounded-[5px] md:border-solid md:border md:border-gray-300 md:p-6">
-        <Breadcrumb board_id={board_id} board_name={currentBoard?.board_name} />
 
         <div className="w-full mt-[20px] mb-[20px] border-solid border-b border-b-gray-300">
           <div className="text-sky-800 text-3xl font-bold mb-[40px]">

@@ -258,9 +258,10 @@ const BoardTable = ({
                     </Link>
                   </BoardTableCellTitle>
 
-                  {isAdmin ? (
+                  {isAdmin ?
+                    (
                       <BoardTableWriter>
-                          {post?.user_id}
+                        {post?.user_id}
                       </BoardTableWriter>
                     ) : (
                       <BoardTableWriter>
@@ -270,7 +271,8 @@ const BoardTable = ({
                           {post?.user_id}
                         </Link>
                       </BoardTableWriter>
-                    )}
+                    )
+                  }
 
                   <BoardTableCell>{post?.formattedDate}</BoardTableCell>
                 </tr>
