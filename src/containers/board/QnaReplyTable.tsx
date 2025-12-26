@@ -326,7 +326,11 @@ const QnaReplyTable = ({
         <ul className="space-y-4">
           {showReplies.map((reply: any) => (
             <Link
-              href={`/board/qna/${reply.qnapost.post_id}`}
+              href={
+                reply.qnapost.user.user_id === '(알 수 없음)'
+                  ? `/admin/qna/${reply.qnapost.post_id}`
+                  : `/board/qna/${reply.qnapost.post_id}`
+              }
               key={reply.reply_id}
             >
               <li key={reply.reply_id} className="border p-4 rounded shadow-sm">

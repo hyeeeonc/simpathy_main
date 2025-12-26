@@ -313,6 +313,17 @@ const PostPage = async (props: any) => {
             />
           </>
         )}
+        {currentUser.grade_id <= 1 && (
+          <>
+            <PostDeleteButton
+              can_edit={false}
+              qna_can_delete={currentUser.grade_id <= 1}
+              board_type={1}
+              post_id={post_id}
+              board_id={0}
+            />
+          </>
+        )}
       </div>
     </>
   )

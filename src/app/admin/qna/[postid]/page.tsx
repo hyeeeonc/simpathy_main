@@ -196,27 +196,6 @@ const PostPage = async (props: any) => {
           replies={updatedReplies}
           post_id={post_id}
         />
-        <QnaReplyEditor post_id={post_id} origin_id={null} />
-      </div>
-      <div className="flex justify-end items-center w-full my-[20px]">
-        {currentUser.grade_id <= 2 && <QnaAnsweredButton post_id={post_id} />}
-        {currentUser.user_id === currentPost.user_id &&
-          currentPost.post_isAnswered === 1 && (
-            <QnaReansweredButton
-              post_id={post_id}
-              user_id={currentPost.user_id}
-            />
-          )}
-        {currentPost.user_id === currentUser?.user_id && (
-          <>
-            <PostDeleteButton
-              can_edit={currentPost.user_id === currentUser?.user_id}
-              board_type={1}
-              post_id={post_id}
-              board_id={0}
-            />
-          </>
-        )}
       </div>
     </>
   )

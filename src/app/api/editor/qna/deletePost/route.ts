@@ -1,11 +1,11 @@
 import prisma from '@/libs/prisma'
 import { getServerSession } from 'next-auth'
 
-export async function DELETE(request: Request) {
+export async function PUT(request: Request) {
   const session = await getServerSession()
   const { post_id } = await request.json()
 
-  const post = await prisma.branchpost.findUnique({
+  const post = await prisma.qnapost.findUnique({
     where: {
       post_id,
     },
@@ -17,11 +17,10 @@ export async function DELETE(request: Request) {
     },
   })
 
-  if (post && user && (post.user_id === user.user_id || user.grade_id === 1)) {
-    const delete_post = await prisma.branchpost.delete({
-      where: {
-        post_id,
-      },
+  if (post && user && user.grade_id === 1) {
+    const delete_post = await prisma.qnapost.update({
+      where: { post_id },
+      data: { user_id: '(알 수 없음)' },
     })
 
     if (!delete_post) return new Response(null, { status: 500 })
